@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 
 export default function AboutPage() {
   return (
-    <main className="min-h-screen bg-neutral-dark text-white">
+    <main className="min-h-screen bg-black text-white">
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-20 text-center">
         <motion.h1 
@@ -14,7 +14,7 @@ export default function AboutPage() {
         >
           BankiiSwap
         </motion.h1>
-        <p className="text-xl text-neutral-light/80 max-w-2xl mx-auto mb-8">
+        <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-8">
           Swap $BNKY & Solana tokens with best rates via Jupiter aggregator
         </p>
         <Link 
@@ -28,17 +28,17 @@ export default function AboutPage() {
       {/* Value Props - 3 Cards */}
       <section className="container mx-auto px-4 py-16">
         <div className="grid md:grid-cols-3 gap-8">
-          <div className="bg-neutral-card rounded-card p-6 border border-bankii-grey/20">
+          <div className="bg-gray-900 rounded-card p-6 border border-gray-800">
             <h3 className="text-xl font-heading-bold mb-3">Jupiter Routing</h3>
-            <p className="text-bankii-grey">Best prices via smart route optimization across all Solana DEXes</p>
+            <p className="text-gray-400">Best prices via smart route optimization across all Solana DEXes</p>
           </div>
-          <div className="bg-neutral-card rounded-card p-6 border border-bankii-grey/20">
+          <div className="bg-gray-900 rounded-card p-6 border border-gray-800">
             <h3 className="text-xl font-heading-bold mb-3">BNKY Utility</h3>
-            <p className="text-bankii-grey">Reduced fees, staking rewards, and Bankii card integration</p>
+            <p className="text-gray-400">Reduced fees, staking rewards, and Bankii card integration</p>
           </div>
-          <div className="bg-neutral-card rounded-card p-6 border border-bankii-grey/20">
+          <div className="bg-gray-900 rounded-card p-6 border border-gray-800">
             <h3 className="text-xl font-heading-bold mb-3">Bankii Ecosystem</h3>
-            <p className="text-bankii-grey">
+            <p className="text-gray-400">
               Seamlessly connect with <a href="https://bankii.finance" className="text-accent-start hover:underline">Bankii Finance</a> wallet & crypto cards
             </p>
           </div>
@@ -51,22 +51,22 @@ export default function AboutPage() {
         <div className="grid md:grid-cols-3 gap-6">
           <div>
             <div className="text-4xl font-bold text-accent-start mb-2">$--</div>
-            <div className="text-bankii-grey">24h Volume</div>
+            <div className="text-gray-400">24h Volume</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-accent-start mb-2">--</div>
-            <div className="text-bankii-grey">Total Swaps</div>
+            <div className="text-gray-400">Total Swaps</div>
           </div>
           <div>
             <div className="text-4xl font-bold text-accent-start mb-2">$--</div>
-            <div className="text-bankii-grey">BNKY Price</div>
+            <div className="text-gray-400">BNKY Price</div>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-bankii-grey/20 py-8">
-        <div className="container mx-auto px-4 text-center text-bankii-grey text-sm">
+      <footer className="border-t border-gray-800 py-8">
+        <div className="container mx-auto px-4 text-center text-gray-400 text-sm">
           <div className="flex justify-center gap-6 mb-4">
             <Link href="/legal/terms" className="hover:text-white">Terms</Link>
             <Link href="/legal/privacy" className="hover:text-white">Privacy</Link>

@@ -23,7 +23,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "BankiiSwap | Swap $BNKY & Solana Tokens",
-  description: "Swap $BNKY and Solana tokens with best rates via Jupiter aggregator. Integrated with Bankii Finance crypto banking.",
+  description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
   keywords: [
     "BankiiSwap",
     "BNKY token",
@@ -45,8 +45,8 @@ export const metadata: Metadata = {
     canonical: 'https://bankiiswap.com',
   },
   openGraph: {
-    title: "BankiiSwap | Swap BNKY & Solana Tokens",
-    description: "Best rates for $BNKY swaps via Jupiter. Part of Bankii Finance ecosystem.",
+    title: "BankiiSwap | Swap $BNKY & Solana Tokens",
+    description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
     url: 'https://bankiiswap.com',
     siteName: 'BankiiSwap',
     type: 'website',
@@ -62,8 +62,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: "BankiiSwap | Swap BNKY & Solana Tokens",
-    description: "Best rates for $BNKY swaps via Jupiter. Part of Bankii Finance ecosystem.",
+    title: "BankiiSwap | Swap $BNKY & Solana Tokens",
+    description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
     images: ['/assets/logos/bankii-logo.jpg'],
     creator: '@BankiiFinance',
     site: '@BankiiFinance',
