@@ -97,7 +97,7 @@ html:not(.dark) body {
    ============================================ */
    
 .wallet-adapter-button {
-  @apply !bg-brand-purple hover:!bg-brand-purple/90 !text-white !font-semibold !rounded-xl !my-1 !transition-colors !border-2 !border-brand-purple;
+  @apply !bg-bankii-blue hover:!bg-bankii-blue/90 !text-white !font-semibold !rounded-xl !my-1 !transition-colors !border-2 !border-bankii-blue;
   box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.3);
 }
 
@@ -186,12 +186,12 @@ html:not(.dark) .wallet-adapter-modal-list-more {
 
 /* Primary CTA button - Purple only, no gradients */
 .btn-primary {
-  @apply btn-premium bg-brand-purple hover:bg-brand-purple/90 text-white border-brand-purple;
+  @apply btn-premium bg-bankii-blue hover:bg-bankii-blue/90 text-white border-bankii-blue;
 }
 
 /* Secondary button - Outlined purple */
 .btn-secondary {
-  @apply btn-premium bg-transparent border-brand-purple text-brand-purple hover:bg-brand-purple/10;
+  @apply btn-premium bg-transparent border-bankii-blue text-bankii-blue hover:bg-bankii-blue/10;
 }
 
 /* ============================================

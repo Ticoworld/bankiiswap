@@ -31,9 +31,9 @@ export default function RouteLoader() {
         >
           <div className="relative">
             {/* Outer ring */}
-            <div className="w-16 h-16 border-4 border-brand-purple/30 border-t-brand-purple rounded-full animate-spin" />
+            <div className="w-16 h-16 border-4 border-bankii-blue/30 border-t-bankii-blue rounded-full animate-spin" />
             {/* Glow effect */}
-            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-brand-purple rounded-full animate-spin blur-sm" />
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-bankii-blue rounded-full animate-spin blur-sm" />
           </div>
         </motion.div>
       )}

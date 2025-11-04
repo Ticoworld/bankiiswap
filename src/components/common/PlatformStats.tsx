@@ -166,9 +166,9 @@ export default function PlatformStats({
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                className="bg-black/60 backdrop-blur-sm border-2 border-gray-800/50 rounded-2xl p-4 lg:p-6 hover:border-brand-purple/30 hover:bg-black/80 transition-all duration-300"
+                className="bg-black/60 backdrop-blur-sm border-2 border-gray-800/50 rounded-2xl p-4 lg:p-6 hover:border-bankii-blue/30 hover:bg-black/80 transition-all duration-300"
               >
-                <div className="text-2xl font-bold text-brand-purple mb-1">
+                <div className="text-2xl font-bold text-bankii-blue mb-1">
                   {stat.value}
                 </div>
                 <div className="text-gray-400 text-sm">

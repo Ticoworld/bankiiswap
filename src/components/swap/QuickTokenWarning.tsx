@@ -80,7 +80,7 @@ export default function QuickTokenWarning({
                   </button>
                   <button
                     onClick={onConfirm}
-                    className="flex-1 px-3 py-2 bg-brand-purple text-white rounded-lg hover:bg-brand-purple/90 transition-colors text-sm font-medium"
+                    className="flex-1 px-3 py-2 bg-bankii-blue text-white rounded-lg hover:bg-bankii-blue/90 transition-colors text-sm font-medium"
                   >
                     Trade Anyway
                   </button>

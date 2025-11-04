@@ -31,19 +31,19 @@ export function DappFooter() {
               <div className="flex flex-col space-y-1">
                 <a
                   href="/legal/terms"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
+                  className="text-gray-600 dark:text-gray-500 hover:text-bankii-blue dark:hover:text-bankii-blue text-sm"
                 >
                   Terms
                 </a>
                 <a
                   href="/legal/privacy"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
+                  className="text-gray-600 dark:text-gray-500 hover:text-bankii-blue dark:hover:text-bankii-blue text-sm"
                 >
                   Privacy
                 </a>
                 <a
                   href="/legal/disclaimer"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
+                  className="text-gray-600 dark:text-gray-500 hover:text-bankii-blue dark:hover:text-bankii-blue text-sm"
                 >
                   Disclaimer
                 </a>
@@ -55,19 +55,19 @@ export function DappFooter() {
               <div className="flex flex-col space-y-1">
                 <a
                   href="/nfts"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
+                  className="text-gray-600 dark:text-gray-500 hover:text-bankii-blue dark:hover:text-bankii-blue text-sm"
                 >
                   NFTs
                 </a>
                 <a
                   href="/staking"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
+                  className="text-gray-600 dark:text-gray-500 hover:text-bankii-blue dark:hover:text-bankii-blue text-sm"
                 >
                   Staking
                 </a>
                 <a
                   href="/dao"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
+                  className="text-gray-600 dark:text-gray-500 hover:text-bankii-blue dark:hover:text-bankii-blue text-sm"
                 >
                   DAO
                 </a>

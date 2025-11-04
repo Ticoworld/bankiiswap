@@ -158,7 +158,7 @@ export default function ErrorDisplay({
         {shouldShowRetry && (
           <div className="flex justify-center pt-1">
             <button
-              className="px-4 py-2 bg-brand-purple text-white rounded-lg text-sm font-bold hover:bg-brand-purple/90 transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple focus:ring-offset-2 focus:ring-offset-gray-800"
+              className="px-4 py-2 bg-bankii-blue text-white rounded-lg text-sm font-bold hover:bg-bankii-blue/90 transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-offset-2 focus:ring-offset-gray-800"
               onClick={onRetry}
               aria-label="Retry the operation"
             >

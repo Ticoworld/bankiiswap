@@ -31,7 +31,7 @@ export function DappHeader() {
   const isSwap = pathname === "/" || pathname.startsWith("/swap");
 
   return (
-    <header className="bg-black border-b-2 border-brand-purple/10 sticky top-0 z-50">
+    <header className="bg-black border-b-2 border-bankii-blue/10 sticky top-0 z-50">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
@@ -54,14 +54,14 @@ export function DappHeader() {
             <Link
               href="/swap"
               className={`relative px-3 py-2 rounded-card text-body-md font-medium transition-all duration-300 ${
-                isSwap ? "text-brand-purple" : "text-gray-400 hover:text-white"
+                isSwap ? "text-bankii-blue" : "text-gray-400 hover:text-white"
               }`}
             >
               Swap
               {isSwap && (
                 <motion.span 
                   layoutId="nav-underline" 
-                  className="absolute left-0 right-0 -bottom-px h-0.5 bg-gradient-to-r from-brand-purple to-brand-blue rounded-full" 
+                  className="absolute left-0 right-0 -bottom-px h-0.5 bg-gradient-to-r from-bankii-blue to-brand-blue rounded-full" 
                 />
               )}
             </Link>

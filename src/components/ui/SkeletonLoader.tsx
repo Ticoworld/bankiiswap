@@ -72,8 +72,8 @@ export const TokenListSkeleton = () => (
 export const QuoteLoader = () => (
   <div className="flex flex-col items-center justify-center py-4">
     {/* Spin animation for visual loading feedback */}
-    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-purple mb-2" />
-    <p className="text-brand-purple text-sm">Finding best price...</p>
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-bankii-blue mb-2" />
+    <p className="text-bankii-blue text-sm">Finding best price...</p>
   </div>
 );
 

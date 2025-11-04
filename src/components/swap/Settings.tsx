@@ -102,7 +102,7 @@ export default function Settings({ slippage, setSlippage }: SettingsProps) {
                         key={preset}
                         className={`flex-1 py-2 text-sm rounded-lg ${
                           slippage === preset
-                            ? 'bg-brand-purple text-white'
+                            ? 'bg-bankii-blue text-white'
                             : 'bg-gray-700 hover:bg-gray-600'
                         }`}
                         onClick={() => handlePresetClick(preset)}
@@ -129,7 +129,7 @@ export default function Settings({ slippage, setSlippage }: SettingsProps) {
               <div className="border-t border-gray-700 p-4 flex justify-end">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="bg-brand-purple hover:bg-brand-purple/90 text-white font-medium py-2 px-4 rounded-lg transition-colors"
+                  className="bg-bankii-blue hover:bg-bankii-blue/90 text-white font-medium py-2 px-4 rounded-lg transition-colors"
                 >
                   Confirm Settings
                 </button>
