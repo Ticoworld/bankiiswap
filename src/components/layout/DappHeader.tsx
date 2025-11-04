@@ -9,8 +9,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { HiMenu, HiX } from "react-icons/hi";
 
-const AnalyticsMenu = dynamic(() => import("@/components/navigation/AnalyticsMenu"), { ssr: false });
-const UserMenu = dynamic(() => import("@/components/navigation/UserMenu"), { ssr: false });
+// Removed AnalyticsMenu and UserMenu in Bankii minimal surface
 const MobileDrawer = dynamic(() => import("@/components/navigation/MobileDrawer"), { ssr: false });
 import WalletButton from "@/components/ui/WalletButton";
 
@@ -66,13 +65,20 @@ export function DappHeader() {
                 />
               )}
             </Link>
-            <AnalyticsMenu />
             <Link 
-              href="/portfolio" 
+              href="/about" 
               className="px-3 py-2 rounded-card text-body-md font-medium text-gray-400 hover:text-white transition-all duration-300"
             >
-              Portfolio
+              About
             </Link>
+            <a 
+              href="https://bankii.finance" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="px-3 py-2 rounded-card text-body-md font-medium text-gray-400 hover:text-white transition-all duration-300"
+            >
+              Visit Bankii.finance
+            </a>
           </nav>
 
           {/* Right side: wallet + user + mobile toggle */}
@@ -80,9 +86,6 @@ export function DappHeader() {
             {isClient && (
               <WalletButton className="px-4 py-2" />
             )}
-            <div className="hidden md:block">
-              <UserMenu />
-            </div>
             <button
               onClick={() => setMobileOpen((v) => !v)}
               className="md:hidden text-gray-400 hover:text-white p-2 transition-colors"

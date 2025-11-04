@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { analyticsNav, moreNav } from '@/config/nav';
+// Bankii minimal: remove external nav config dependencies
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -105,63 +105,28 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
             </Link>
           </section>
 
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Analytics</h4>
-            {analyticsNav.map((i) => (
-              <Link
-                key={i.href}
-                href={i.href}
-                onClick={onClose}
-                className={pathname === i.href ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-              >
-                {i.label}
-              </Link>
-            ))}
-          </section>
+          {/* Removed analytics section */}
 
           <section className="mb-4">
             <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">More</h4>
-            {moreNav.map((i) => (
-              <Link
-                key={i.href}
-                href={i.href}
-                onClick={onClose}
-                className={pathname === i.href ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-              >
-                {i.label}
-                {i.badge && (
-                  <span className="ml-2 text-xxs uppercase bg-brand-purple text-white rounded px-1.5 py-0.5">
-                    {i.badge}
-                  </span>
-                )}
-              </Link>
-            ))}
+            <Link
+              href="/about"
+              onClick={onClose}
+              className={pathname === '/about' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
+            >
+              About
+            </Link>
+            <a
+              href="https://bankii.finance"
+              target="_blank"
+              rel="noopener noreferrer"
+              className='block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+            >
+              Visit Bankii.finance
+            </a>
           </section>
 
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Account</h4>
-            <Link
-              href="/settings"
-              onClick={onClose}
-              className={pathname === '/settings' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-            >
-              Settings
-            </Link>
-            <Link
-              href="/profile"
-              onClick={onClose}
-              className={pathname === '/profile' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-            >
-              Profile
-            </Link>
-            <Link
-              href="/referrals"
-              onClick={onClose}
-              className={pathname === '/referrals' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-            >
-              Referrals
-            </Link>
-          </section>
+          {/* Account section removed in minimal surface */}
         </div>
 
         {/* Pinned CTA distinct from navigation */}
