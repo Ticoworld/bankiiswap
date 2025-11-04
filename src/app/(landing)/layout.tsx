@@ -1,5 +1,5 @@
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
+import { DappHeader } from '@/components/layout/DappHeader';
+import { DappFooter } from '@/components/layout/DappFooter';
 import { AnalyticsProvider } from '@/components/common/AnalyticsProvider';
 
 export default function LandingLayout({
@@ -10,9 +10,9 @@ export default function LandingLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <AnalyticsProvider />
-      <Header />
+      <DappHeader />
       <main className="flex-grow">{children}</main>
-      <Footer />
+      <DappFooter />
     </div>
   );
 }
