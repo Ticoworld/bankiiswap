@@ -18,12 +18,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           root.classList.toggle('dark', !!prefersDark);
         }
       };
-      const saved = localStorage.getItem('frenzy_pref_theme') || 'system';
+      const saved = localStorage.getItem('bankii_pref_theme') || 'system';
       applyTheme(saved);
       // respond to system changes when in system mode
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
       const listener = () => {
-        const mode = localStorage.getItem('frenzy_pref_theme') || 'system';
+        const mode = localStorage.getItem('bankii_pref_theme') || 'system';
         if (mode === 'system') applyTheme('system');
       };
       mql.addEventListener?.('change', listener);
@@ -34,8 +34,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const preloadAssets = [
       '/assets/tokens/sol.png',
-      '/assets/tokens/meme.png',
-      '/assets/logos/frenzyswap_logomark.svg'
+      '/assets/tokens/bnky.png',
+      '/assets/logos/bankii-logo.jpg'
     ];
     preloadAssets.forEach(src => {
       const img = new Image();
@@ -67,7 +67,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
             style: {
               background: '#1a1a1a',
               color: '#fff',
-              border: '1px solid #8b5cf6', // brand-purple
+              border: '1px solid #0049FF', // bankii-blue
               padding: '12px 16px',
               fontSize: '0.875rem',
               fontWeight: '500'
@@ -95,7 +95,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               }
             },
             iconTheme: {
-              primary: '#8b5cf6', // brand-purple
+              primary: '#0049FF', // bankii-blue
               secondary: '#1a1a1a'
             }
           }}

@@ -17,7 +17,7 @@ const TOKEN_ADDRESSES = {
   'SOL': 'So11111111111111111111111111111111111111112',
   'USDC': 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
   'USDT': 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB',
-  'MEME': process.env.NEXT_PUBLIC_MEME_TOKEN_ADDRESS || '94fzsMkuHAuFP4J8iMZS43euWr2CLtuvwLgyjPHyqcnY',
+  'BNKY': process.env.NEXT_PUBLIC_BNKY_TOKEN_ADDRESS || 'C1MAQ3hbSVR6d5isBRRcBAJKnPrbVwfajDhiNLhJNrff',
 };
 
 // Get token price from Jupiter's price API

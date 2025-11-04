@@ -9,19 +9,19 @@ export function DappFooter() {
             <div className="flex items-center mb-2">
               {/* Large screen logo */}
               <img
-                src="/assets/logos/Frenzyswap.svg"
-                alt="FrenzySwap Logo"
+                src="/assets/logos/bankii-logo.jpg"
+                alt="BankiiSwap Logo"
                 className="h-10 w-auto hidden md:block"
               />
               {/* Small screen logo */}
               <img
-                src="/assets/logos/frenzyswap_logomark.svg"
-                alt="FrenzySwap Logo"
+                src="/assets/logos/bankii-logo.jpg"
+                alt="BankiiSwap Logo"
                 className="h-10 w-auto md:hidden"
               />
             </div>
             <p className="text-gray-600 dark:text-gray-500 text-sm">
-              Part of the MemeFrenzy ecosystem
+              BankiiSwap • Solana DEX aggregator
             </p>
           </div>
 
@@ -78,7 +78,7 @@ export function DappFooter() {
               <h4 className="text-gray-700 dark:text-gray-400 mb-2">Community</h4>
               <div className="flex flex-col space-y-1">
                 <a
-                  href="https://t.me/frenzyswap_dex"
+                  href="https://t.me/bankiiswap"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
@@ -86,7 +86,7 @@ export function DappFooter() {
                   Telegram
                 </a>
                 <a
-                  href="https://x.com/frenzyswapdefi"
+                  href="https://x.com/bankiiswap"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-600 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
@@ -99,7 +99,7 @@ export function DappFooter() {
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 text-center text-gray-600 dark:text-gray-500 text-sm">
-          <p>© {currentYear} FrenzySwap. All rights reserved.</p>
+          <p>© {currentYear} BankiiSwap. All rights reserved.</p>
           <p className="mt-1">Built by Ticoworld</p>
         </div>
       </div>

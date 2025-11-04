@@ -49,7 +49,7 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
             <div className="bg-gradient-to-r from-brand-purple/10 to-brand-blue/10 border border-brand-purple/30 rounded-card p-3 sm:p-4 mb-4 sm:mb-6">
               <h3 className="text-brand-purple font-semibold mb-2 text-sm sm:text-base">🎯 Limited Access</h3>
               <p className="text-gray-300 text-xs sm:text-sm leading-relaxed">
-                FrenzySwap is scaling gradually to ensure the best experience. Request access to be notified when we expand!
+                BankiiSwap is scaling gradually to ensure the best experience. Request access to be notified when we expand!
               </p>
             </div>
 

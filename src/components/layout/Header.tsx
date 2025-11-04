@@ -33,14 +33,14 @@ export default function Header() {
             <Link href="/" className="flex items-center group">
               {/* Large screen logo */}
               <img
-                src="/assets/logos/Frenzyswap.svg"
-                alt="FrenzySwap Logo"
+                src="/assets/logos/bankii-logo.jpg"
+                alt="BankiiSwap Logo"
                 className="h-10 w-auto hidden md:block transition-opacity group-hover:opacity-80"
               />
               {/* Small screen logo */}
               <img
-                src="/frenzyswap_logomark.svg"
-                alt="FrenzySwap Logo"
+                src="/assets/logos/bankii-logo.jpg"
+                alt="BankiiSwap Logo"
                 className="h-10 w-auto md:hidden transition-opacity group-hover:opacity-80"
               />
             </Link>

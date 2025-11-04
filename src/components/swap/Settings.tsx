@@ -121,7 +121,7 @@ export default function Settings({ slippage, setSlippage }: SettingsProps) {
                 <div className="pt-4 border-t border-gray-700">
                   <h4 className="font-medium mb-2">Platform Fees</h4>
                   <p className="text-sm text-gray-300">
-                    FrenzySwap charges a 0.3% fee on swaps. These fees are used to buy back and burn the $MEME token, supporting long-term ecosystem growth.
+                    BankiiSwap charges a 0.3% fee on swaps. These fees are used to support the Bankii ecosystem and BNKY utility.
                   </p>
                 </div>
               </div>

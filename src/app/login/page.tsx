@@ -101,13 +101,13 @@ export default function LoginPage() {
         {/* Header */}
         <div className="text-center mb-8">
           <Image
-            src="/assets/logos/frenzyswap_logomark.svg"
-            alt="FrenzySwap Logo"
+            src="/assets/logos/bankii-logo.jpg"
+            alt="BankiiSwap Logo"
             width={64}
             height={64}
             className="mx-auto mb-4"
           />
-          <h1 className="text-2xl font-bold text-white mb-2">FrenzySwap Beta</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">BankiiSwap</h1>
           <p className="text-gray-400">Private access for invited wallets only</p>
         </div>
 
@@ -167,7 +167,7 @@ export default function LoginPage() {
                 </div>
                 <p className="text-green-400 font-bold text-lg mb-2">Access Granted! 🎉</p>
                 <p className="text-gray-400 text-sm mb-4">
-                  Welcome to FrenzySwap Beta. Redirecting to the app...
+                  Welcome to BankiiSwap. Redirecting to the app...
                 </p>
                 <div className="flex justify-center">
                   <div className="animate-pulse flex space-x-1">
@@ -190,7 +190,7 @@ export default function LoginPage() {
                 </div>
                 <p className="text-yellow-400 font-bold text-lg mb-2">Beta Access Required</p>
                 <p className="text-gray-400 text-sm mb-6">
-                  FrenzySwap is in private beta. Join the waitlist or use a valid invite link to gain access.
+                  BankiiSwap is opening access gradually. Join the waitlist to be notified.
                 </p>
                 
                 {/* Waitlist Form */}
@@ -218,7 +218,7 @@ export default function LoginPage() {
         {/* Footer */}
         <div className="mt-8 pt-6 border-t border-gray-700 text-center">
           <p className="text-gray-500 text-xs">
-            FrenzySwap • Private Beta • Solana DeFi
+            BankiiSwap • Solana DeFi
           </p>
         </div>
       </motion.div>

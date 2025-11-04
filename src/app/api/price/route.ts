@@ -20,7 +20,7 @@ export async function GET(request: NextRequest) {
         {
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'FrenzySwap/1.0',
+            'User-Agent': 'BankiiSwap/1.0',
           },
           signal: AbortSignal.timeout(8000),
         }

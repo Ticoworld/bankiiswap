@@ -3,10 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase, isAnalyticsEnabled } from '@/lib/supabase'
 import { supabaseAdmin } from '@/lib/supabaseAdmin'
 import { checkRateLimit } from '@/lib/auth'
-import { awardPoints, PointsPolicy, upsertStreak, logEvent } from '@/lib/gamification'
 import { upsertUserPnlCache, getUserPnl } from '@/lib/pnl'
-import { verifyReferralIfAny } from '@/lib/referrals'
-import { evaluateAndAwardBadges } from '@/lib/badges'
 import { SwapLogSchema, validateInput } from '@/lib/validation' // 🔒 SECURITY: Import validation
 
 export async function POST(request: NextRequest) {
@@ -51,7 +48,6 @@ export async function POST(request: NextRequest) {
       blockTime,
       jupiterFee,
       platformFee,
-      memeBurned,
       slippage,
       routePlan,
       fee_token_symbol,
@@ -73,7 +69,6 @@ export async function POST(request: NextRequest) {
   block_time: blockTime !== undefined && blockTime !== null ? parseInt(String(blockTime)) : null,
   jupiter_fee: jupiterFee !== undefined ? parseFloat(String(jupiterFee)) : null,
   platform_fee: platformFee !== undefined ? parseFloat(String(platformFee)) : null,
-  meme_burned: memeBurned !== undefined ? parseFloat(String(memeBurned)) : null,
   slippage: slippage !== undefined ? parseFloat(String(slippage)) : null,
       route_plan: routePlan || null,
       fee_token_symbol: fee_token_symbol || null,
@@ -109,21 +104,12 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Best-effort gamification hooks (non-blocking)
+    // Best-effort hooks (non-blocking) - Gamification removed in BankiiSwap rebrand
     const record = data?.[0]
     if (record) {
-      const volumeUsd = Number(record.from_usd_value || 0)
-      const points = PointsPolicy.swapBase + Math.floor((volumeUsd || 0) * PointsPolicy.volumePerUsd)
       Promise.allSettled([
-        awardPoints({ wallet: record.wallet_address, points, reason: 'swap', metadata: { volumeUsd }, signature: record.signature }),
-        upsertStreak(record.wallet_address, new Date(record.created_at || Date.now())),
-        logEvent({ event_type: 'swap_logged', wallet_address: record.wallet_address, signature: record.signature, metadata: { from: record.from_token, to: record.to_token, volumeUsd } }),
         // opportunistic P&L cache update
         (async () => { const s = await getUserPnl(record.wallet_address); await upsertUserPnlCache(record.wallet_address, s) })(),
-        // verify referral (if any) on first successful swap of referee
-        verifyReferralIfAny(record.wallet_address),
-        // evaluate badges after swap
-        evaluateAndAwardBadges(record.wallet_address),
       ])
     }
 

@@ -104,7 +104,7 @@ export default function WaitlistForm({ walletAddress, source, onSuccess }: Waitl
       <div className="text-center mb-3 sm:mb-4">
         <h3 className="text-white font-bold text-base sm:text-lg mb-2">Join the Waitlist</h3>
         <p className="text-gray-400 text-xs sm:text-sm">
-          Be the first to know when FrenzySwap opens to public
+          Be the first to know when BankiiSwap opens to public
         </p>
       </div>
 
@@ -186,7 +186,7 @@ export default function WaitlistForm({ walletAddress, source, onSuccess }: Waitl
 
       <div className="bg-gray-900 rounded-lg p-2 sm:p-3 text-center">
         <p className="text-gray-400 text-xs leading-relaxed">
-          By joining the waitlist, you&apos;ll be among the first to access FrenzySwap when we expand beyond our current beta users.
+          By joining the waitlist, you&apos;ll be among the first to access BankiiSwap when we expand beyond our current beta users.
         </p>
       </div>
     </motion.div>

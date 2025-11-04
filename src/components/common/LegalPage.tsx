@@ -21,7 +21,7 @@ export function LegalPage({ title, lastUpdated, children }: LegalPageProps) {
       <div className="mt-16 pt-8 border-t border-gray-800">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <Link href="/" className="text-2xl font-bold text-brand-purple mb-4 md:mb-0">
-            FrenzySwap
+            BankiiSwap
           </Link>
           
           <div className="flex space-x-6">

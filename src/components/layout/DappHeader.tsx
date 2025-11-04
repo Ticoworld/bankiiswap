@@ -9,7 +9,6 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { HiMenu, HiX } from "react-icons/hi";
 
-const RewardsMenu = dynamic(() => import("@/components/navigation/RewardsMenu"), { ssr: false });
 const AnalyticsMenu = dynamic(() => import("@/components/navigation/AnalyticsMenu"), { ssr: false });
 const UserMenu = dynamic(() => import("@/components/navigation/UserMenu"), { ssr: false });
 const MobileDrawer = dynamic(() => import("@/components/navigation/MobileDrawer"), { ssr: false });
@@ -39,21 +38,16 @@ export function DappHeader() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 group">
             <Image
-              src="/frenzyswap_logomark.svg"
-              alt="FrenzySwap"
-              width={40}
-              height={40}
-              className="md:hidden transition-opacity group-hover:opacity-80"
+              src="/assets/logos/bankii-logo.jpg"
+              alt="BankiiSwap"
+              width={32}
+              height={32}
+              className="rounded-lg transition-opacity group-hover:opacity-80"
               priority
             />
-            <Image
-              src="/assets/logos/Frenzyswap.svg"
-              alt="FrenzySwap"
-              width={140}
-              height={28}
-              className="hidden md:block transition-opacity group-hover:opacity-80"
-              priority
-            />
+            <span className="text-xl font-heading font-heading-bold text-white group-hover:text-accent-start transition-colors">
+              BankiiSwap
+            </span>
           </Link>
 
           {/* Desktop navigation */}
@@ -72,7 +66,6 @@ export function DappHeader() {
                 />
               )}
             </Link>
-            <RewardsMenu />
             <AnalyticsMenu />
             <Link 
               href="/portfolio" 

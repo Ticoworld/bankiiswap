@@ -4,38 +4,37 @@ export default function StructuredData() {
     "@graph": [
       {
         "@type": "Organization",
-        "@id": "https://www.frenzyswap.com/#organization",
-        "name": "FrenzySwap",
-        "url": "https://www.frenzyswap.com/",
+        "@id": "https://bankiiswap.com/#organization",
+        "name": "BankiiSwap",
+        "url": "https://bankiiswap.com/",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://www.frenzyswap.com/assets/logos/frenzyswap_logomark.svg",
+          "url": "https://bankiiswap.com/assets/logos/bankii-logo.jpg",
           "width": 200,
           "height": 200
         },
-        "description": "Premier Solana DEX aggregator for meme token trading",
-        "foundingDate": "2024",
+        "description": "Swap $BNKY and Solana tokens with best rates via Jupiter aggregator",
+        "foundingDate": "2025",
         "sameAs": [
-          "https://twitter.com/FrenzySwap",
-          "https://discord.gg/frenzyswap",
-          "https://t.me/frenzyswap"
+          "https://twitter.com/BankiiFinance",
+          "https://bankii.finance"
         ]
       },
       {
         "@type": "WebSite",
-        "@id": "https://www.frenzyswap.com/#website",
-        "url": "https://www.frenzyswap.com/",
-        "name": "FrenzySwap",
-        "description": "Leading Solana DEX aggregator for meme tokens",
+        "@id": "https://bankiiswap.com/#website",
+        "url": "https://bankiiswap.com/",
+        "name": "BankiiSwap",
+        "description": "Swap $BNKY & Solana tokens. Part of Bankii Finance ecosystem.",
         "publisher": {
-          "@id": "https://www.frenzyswap.com/#organization"
+          "@id": "https://bankiiswap.com/#organization"
         },
         "potentialAction": [
           {
             "@type": "SearchAction",
             "target": {
               "@type": "EntryPoint",
-              "urlTemplate": "https://www.frenzyswap.com/swap?search={search_term_string}"
+              "urlTemplate": "https://bankiiswap.com/swap?search={search_term_string}"
             },
             "query-input": "required name=search_term_string"
           }
@@ -43,10 +42,10 @@ export default function StructuredData() {
       },
       {
         "@type": "WebApplication",
-        "@id": "https://www.frenzyswap.com/#webapp",
-        "name": "FrenzySwap DEX",
-        "url": "https://www.frenzyswap.com/swap",
-        "description": "Solana DEX aggregator powered by Jupiter Protocol",
+        "@id": "https://bankiiswap.com/#webapp",
+        "name": "BankiiSwap DEX",
+        "url": "https://bankiiswap.com/swap",
+        "description": "Solana DEX aggregator powered by Jupiter Protocol. Trade BNKY and Solana tokens.",
         "applicationCategory": "DeFi",
         "operatingSystem": "Web Browser",
         "offers": {
@@ -57,49 +56,50 @@ export default function StructuredData() {
         "featureList": [
           "DEX aggregation",
           "Best swap rates",
-          "Meme token trading",
+          "BNKY token utility",
           "Solana blockchain",
-          "Jupiter Protocol integration"
+          "Jupiter Protocol integration",
+          "Bankii Finance ecosystem"
         ]
       },
       {
         "@type": "Article",
-        "@id": "https://www.frenzyswap.com/#article",
-        "headline": "FrenzySwap - Premier Solana DEX Aggregator",
-        "description": "Trade meme tokens on Solana with the best rates using Jupiter Protocol aggregation",
+        "@id": "https://bankiiswap.com/#article",
+        "headline": "BankiiSwap - Swap BNKY & Solana Tokens",
+        "description": "Best rates for $BNKY swaps via Jupiter aggregator. Part of Bankii Finance crypto banking ecosystem.",
         "author": {
-          "@id": "https://www.frenzyswap.com/#organization"
+          "@id": "https://bankiiswap.com/#organization"
         },
         "publisher": {
-          "@id": "https://www.frenzyswap.com/#organization"
+          "@id": "https://bankiiswap.com/#organization"
         },
         "mainEntityOfPage": {
-          "@id": "https://www.frenzyswap.com/#website"
+          "@id": "https://bankiiswap.com/#website"
         },
-        "datePublished": "2024-01-01",
-        "dateModified": "2024-12-20",
+        "datePublished": "2025-01-01",
+        "dateModified": "2025-11-04",
         "image": {
           "@type": "ImageObject",
-          "url": "https://www.frenzyswap.com/assets/frenzy-desktop.png",
+          "url": "https://bankiiswap.com/assets/logos/bankii-logo.jpg",
           "width": 1200,
           "height": 630
         }
       },
       {
         "@type": "BreadcrumbList",
-        "@id": "https://www.frenzyswap.com/#breadcrumb",
+        "@id": "https://bankiiswap.com/#breadcrumb",
         "itemListElement": [
           {
             "@type": "ListItem",
             "position": 1,
             "name": "Home",
-            "item": "https://www.frenzyswap.com/"
+            "item": "https://bankiiswap.com/"
           },
           {
             "@type": "ListItem",
             "position": 2,
             "name": "Swap",
-            "item": "https://www.frenzyswap.com/swap"
+            "item": "https://bankiiswap.com/swap"
           }
         ]
       }

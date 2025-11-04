@@ -130,7 +130,7 @@ export const SwapLogSchema = z.object({
   routePlan: z.string().optional(),
   jupiterFee: z.number().min(0).optional(),
   platformFee: z.number().min(0).optional(),
-  memeBurned: z.number().min(0).optional(),
+  // memeBurned: z.number().min(0).optional(),
   fee_token_symbol: TokenSymbolSchema.optional(),
   fee_token_mint: SolanaAddressSchema.optional()
 });

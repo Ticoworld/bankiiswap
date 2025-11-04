@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { rewardsNav, analyticsNav, moreNav } from '@/config/nav';
+import { analyticsNav, moreNav } from '@/config/nav';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -103,20 +103,6 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
             >
               Swap
             </Link>
-          </section>
-
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Rewards</h4>
-            {rewardsNav.map((i) => (
-              <Link
-                key={i.href}
-                href={i.href}
-                onClick={onClose}
-                className={pathname === i.href ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-              >
-                {i.label}
-              </Link>
-            ))}
           </section>
 
           <section className="mb-4">

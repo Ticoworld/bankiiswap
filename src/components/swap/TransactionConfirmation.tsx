@@ -12,7 +12,7 @@ interface SwapConfirmationProps {
   toToken: Token | null;
   fromAmount: string;
   toAmount: string;
-  memeFee?: number;
+  platformFee?: number;
   onContinue: () => void;
 }
 
@@ -22,7 +22,7 @@ export default function SwapConfirmation({
   toToken,
   fromAmount,
   toAmount,
-  memeFee,
+  platformFee,
   onContinue,
 }: SwapConfirmationProps) {
   const explorerUrl = `https://solscan.io/tx/${txHash}?cluster=mainnet-beta`;
@@ -103,9 +103,9 @@ export default function SwapConfirmation({
       </div>
 
       <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-3 text-center text-brand-purple text-sm mb-6">
-        🔥 {memeFee !== undefined
-          ? `${memeFee.toFixed(6)} ${fromToken?.symbol || ''} was used to buyback and burn FRENZY tokens`
-          : 'A portion of fees has been used to buyback and burn FRENZY tokens'}
+        🎉 {platformFee !== undefined
+          ? `${platformFee.toFixed(6)} ${fromToken?.symbol || ''} supports the Bankii ecosystem and BNKY utility`
+          : 'A portion of fees supports the Bankii ecosystem and BNKY utility'}
       </div>
 
       <button

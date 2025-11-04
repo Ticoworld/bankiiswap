@@ -33,7 +33,7 @@ export default function AnalyticsShowcase() {
           <div className="relative w-full rounded-2xl overflow-hidden">
             <Image
               src="/assets/landing/analytics.png"
-              alt="FrenzySwap Analytics Dashboard"
+              alt="BankiiSwap Analytics Dashboard"
               width={1920}
               height={1080}
               className="w-full h-auto"

@@ -19,14 +19,14 @@ export default function Footer() {
             <div className="flex items-center mb-4">
               {/* Large screen logo */}
               <img
-                src="/assets/logos/Frenzyswap.svg"
-                alt="FrenzySwap Logo"
+                src="/assets/logos/bankii-logo.jpg"
+                alt="BankiiSwap Logo"
                 className="h-10 w-auto hidden md:block"
               />
               {/* Small screen logo */}
               <img
-                src="/frenzyswap_logomark.svg"
-                alt="FrenzySwap Logo"
+                src="/assets/logos/bankii-logo.jpg"
+                alt="BankiiSwap Logo"
                 className="h-10 w-auto md:hidden"
               />
             </div>
@@ -88,7 +88,7 @@ export default function Footer() {
               <h4 className="text-white font-semibold mb-4 text-body-md">Community</h4>
               <div className="flex flex-col space-y-3">
                 <a
-                  href="https://t.me/frenzyswap_dex"
+                  href="https://t.me/bankiiswap"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-brand-blue transition-colors text-body-sm"
@@ -96,7 +96,7 @@ export default function Footer() {
                   Telegram
                 </a>
                 <a
-                  href="https://x.com/frenzyswapdefi"
+                  href="https://x.com/bankiiswap"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-gray-400 hover:text-brand-blue transition-colors text-body-sm"
@@ -109,7 +109,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-white/10 text-center">
-          <p className="text-gray-500 text-body-sm">© {currentYear} FrenzySwap. All rights reserved.</p>
+          <p className="text-gray-500 text-body-sm">© {currentYear} BankiiSwap. All rights reserved.</p>
           <p className="mt-2 text-gray-600 text-body-xs">Built by Ticoworld</p>
         </div>
       </div>

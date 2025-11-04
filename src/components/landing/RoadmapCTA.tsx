@@ -30,7 +30,7 @@ export default function RoadmapCTA() {
           viewport={{ once: true }}
         >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold mb-6 text-white">
-            Join the <span className="text-brand-purple">FrenzySwap</span> Revolution
+            Join the <span className="text-brand-purple">BankiiSwap</span> Revolution
           </h2>
           <p className="text-base sm:text-lg lg:text-xl text-gray-400 mb-12 max-w-2xl mx-auto">
             Experience professional DEX aggregation on Solana with best execution and transparent fees

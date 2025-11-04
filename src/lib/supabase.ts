@@ -31,7 +31,7 @@ export interface SwapRecord {
   block_time?: number | null
   jupiter_fee?: number | null
   platform_fee?: number | null
-  meme_burned?: number | null
+  // meme_burned?: number | null
   slippage?: number | null
   route_plan?: string | null
   created_at?: string
@@ -42,7 +42,7 @@ export interface PlatformStats {
   total_volume_usd: number
   total_swaps: number
   total_earnings_usd: number
-  total_meme_burned: number
+  // total_meme_burned: number
   unique_wallets: number
   last_updated: string
   created_at?: string

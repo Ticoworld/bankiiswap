@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://www.frenzyswap.com/sitemap.xml
+Sitemap: https://bankiiswap.com/sitemap.xml
 
 # Allow all crawlers to access the site
 User-agent: Googlebot
@@ -19,13 +19,10 @@ Crawl-delay: 1
 
 # Explicitly allow important pages
 Allow: /swap
-Allow: /dao
-Allow: /staking
-Allow: /nfts
-Allow: /ecosystem
+Allow: /about
 Allow: /legal/terms
 Allow: /legal/privacy
 Allow: /legal/disclaimer
 
 # Host declaration
-Host: https://www.frenzyswap.com
+Host: https://bankiiswap.com

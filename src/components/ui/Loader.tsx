@@ -60,7 +60,7 @@ export default function GlobalLoader() {
           </div>
           
           <div className="text-brand-purple text-xl font-bold mb-4">
-            {progress < 100 ? 'Loading FrenzySwap' : 'Almost Ready!'}
+            {progress < 100 ? 'Loading BankiiSwap' : 'Almost Ready!'}
           </div>
           
           <div className="w-64 h-2 bg-gray-900/50 backdrop-blur-sm rounded-full overflow-hidden border border-gray-800/50">

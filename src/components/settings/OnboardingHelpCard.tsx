@@ -35,7 +35,7 @@ export default function OnboardingHelpCard() {
   useEffect(() => { if (open) closeBtnRef.current?.focus(); }, [open]);
 
   const steps = [
-    { title: 'Welcome to FrenzySwap', body: 'Link wallets, manage privacy, and explore analytics securely.' },
+  { title: 'Welcome to BankiiSwap', body: 'Link wallets, manage privacy, and explore analytics securely.' },
     { title: 'Settings & Privacy', body: 'Control theme, language, and what data is visible to others.' },
     { title: 'Multi-Wallet', body: 'Link multiple wallets and choose a primary with one tap.' },
   ];

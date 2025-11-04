@@ -94,7 +94,7 @@ const queryDexScreener = async (mint: string): Promise<any | null> => {
   try {
     const url = `https://api.dexscreener.com/latest/dex/tokens/${encodeURIComponent(mint)}`;
     const res = await fetchWithTimeout(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'FrenzySwap/1.0' },
+  headers: { Accept: 'application/json', 'User-Agent': 'BankiiSwap/1.0' },
     }, 10_000);
     if (!res.ok) {
       // 404 means no pairs known
@@ -118,7 +118,7 @@ const queryJupiterV2 = async (mintOrQuery: string): Promise<any | null> => {
     const host = 'https://lite-api.jup.ag'; // prefer lite host (no key) for existence checks
     const url = `${host}/tokens/v2/search?query=${encodeURIComponent(mintOrQuery)}`;
     const res = await fetchWithTimeout(url, {
-      headers: { Accept: 'application/json', 'User-Agent': 'FrenzySwap/1.0' },
+  headers: { Accept: 'application/json', 'User-Agent': 'BankiiSwap/1.0' },
     }, 5_000);
 
     if (!res.ok) {

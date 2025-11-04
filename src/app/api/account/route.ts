@@ -49,7 +49,7 @@ export async function GET(request: NextRequest) {
     status: 200,
     headers: {
       'Content-Type': 'application/json',
-      'Content-Disposition': `attachment; filename="frenzyswap-export-${wallet}.json"`
+  'Content-Disposition': `attachment; filename="bankiiswap-export-${wallet}.json"`
     }
   });
 }

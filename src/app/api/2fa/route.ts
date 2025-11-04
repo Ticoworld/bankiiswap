@@ -4,7 +4,7 @@ import QRCode from 'qrcode'
 import { supabaseAdmin, isAdminEnabled } from '@/lib/supabaseAdmin'
 import { requireAuth } from '@/lib/auth'
 
-const ISSUER = process.env.NEXT_PUBLIC_APP_NAME || 'FrenzySwap'
+const ISSUER = process.env.NEXT_PUBLIC_APP_NAME || 'BankiiSwap'
 
 function randomCodes(n = 8) {
   const codes: string[] = []

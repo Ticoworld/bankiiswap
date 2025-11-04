@@ -3,8 +3,18 @@
 @tailwind utilities;
 
 /* ============================================
-   PREMIUM DESIGN SYSTEM - FRENZYSWAP
+   BANKII DESIGN SYSTEM - BANKIISWAP
    ============================================ */
+
+/* CSS Variables for Bankii Brand */
+:root {
+  --color-bankii-blue: #0049FF;
+  --color-bankii-blue-light: #00A6FF;
+  --color-bankii-dark: #161D38;
+  --color-bankii-grey: #B7B9BD;
+  --font-heading: var(--font-poppins), 'Poppins', sans-serif;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
+}
 
 /* Typography - Professional font rendering */
 @layer base {
@@ -15,17 +25,20 @@
   }
   
   body {
-    @apply bg-black text-white;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply bg-neutral-dark text-white font-body;
   }
 
   /* Semantic heading hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+  
   h1 {
-    @apply text-display-md md:text-display-lg;
+    @apply text-display-md md:text-display-lg font-heading-bold;
   }
   
   h2 {
-    @apply text-display-sm md:text-display-md;
+    @apply text-display-sm md:text-display-md font-heading-bold;
   }
   
   h3 {
@@ -45,9 +58,9 @@
   }
 }
 
-/* Light theme (premium design prefers dark, light is secondary) */
+/* Light theme */
 html:not(.dark) body {
-  @apply bg-surface-light text-gray-900;
+  @apply bg-neutral-light text-gray-900;
 }
 
 /* ============================================
@@ -61,21 +74,21 @@ html:not(.dark) body {
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-surface-card rounded-full;
+  @apply bg-neutral-card rounded-full;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-brand-purple rounded-full;
+  @apply bg-bankii-blue rounded-full;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-brand-purple-dark;
+  background-color: #0038CC; /* Darker bankii-blue */
 }
 
 /* Firefox */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #8b5cf6 #1e293b;
+  scrollbar-color: #0049FF #1e293b;
 }
 
 /* ============================================

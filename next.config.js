@@ -45,6 +45,42 @@ const nextConfig = {
     ],
     minimumCacheTTL: 86400,
   },
+  
+  // 301 Redirects for deprecated routes
+  async redirects() {
+    return [
+      {
+        source: '/nfts',
+        destination: '/swap',
+        permanent: true,
+      },
+      {
+        source: '/dao',
+        destination: '/swap',
+        permanent: true,
+      },
+      {
+        source: '/staking',
+        destination: '/swap',
+        permanent: true,
+      },
+      {
+        source: '/leaderboard',
+        destination: '/swap',
+        permanent: true,
+      },
+      {
+        source: '/ecosystem',
+        destination: '/about',
+        permanent: true,
+      },
+      {
+        source: '/referrals',
+        destination: '/swap',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

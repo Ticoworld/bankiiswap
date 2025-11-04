@@ -36,7 +36,7 @@ export default clientPromise;
 // Database helper functions
 export async function getDatabase(): Promise<Db> {
   const client = await clientPromise;
-  return client.db('frenzyswap');
+  return client.db('bankiiswap');
 }
 
 export interface WaitlistEntry {

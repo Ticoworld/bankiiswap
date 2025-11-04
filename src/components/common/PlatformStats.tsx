@@ -10,7 +10,6 @@ interface StatsData {
   totalVolume: string;
   totalSwaps: string;
   totalEarnings: string;
-  memeBurned: string;
   uniqueWallets: string;
   lastUpdated: string;
 }
@@ -43,7 +42,6 @@ export default function PlatformStats({
           totalVolume: "Analytics",
           totalSwaps: "In",
           totalEarnings: "Development",
-          memeBurned: "Coming Soon",
           uniqueWallets: "Q1 2025",
           lastUpdated: "Analytics system in development"
         });
@@ -58,7 +56,6 @@ export default function PlatformStats({
         totalVolume: "Analytics",
         totalSwaps: "In",
         totalEarnings: "Development",
-        memeBurned: "Coming Soon",
         uniqueWallets: "Q1 2025",
         lastUpdated: "Analytics system in development"
       });
@@ -124,10 +121,6 @@ export default function PlatformStats({
       label: "Total Swaps",
     },
     {
-      value: stats.memeBurned,
-      label: "Tokens Burned",
-    },
-    {
       value: stats.totalEarnings,
       label: "Platform Revenue",
     },
@@ -161,7 +154,7 @@ export default function PlatformStats({
               className="text-center mb-8"
             >
               <h2 className="text-heading-xl md:text-display-sm font-bold mb-2 text-white">Platform Statistics</h2>
-              <p className="text-body-md text-gray-400">Real-time FrenzySwap performance metrics</p>
+              <p className="text-body-md text-gray-400">Real-time BankiiSwap performance metrics</p>
             </motion.div>
           )}
 

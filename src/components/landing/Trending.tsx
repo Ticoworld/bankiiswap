@@ -57,7 +57,7 @@ export default function Trending() {
             <h2 className="text-display-sm md:text-display-md font-bold text-white flex items-center gap-3">
               <span className="text-brand-purple">Trending</span> Now
             </h2>
-            <p className="text-body-md text-gray-400 mt-2">Live on-chain activity across FrenzySwap</p>
+            <p className="text-body-md text-gray-400 mt-2">Live on-chain activity across BankiiSwap</p>
           </div>
           <div className="inline-flex rounded-2xl border-2 border-gray-800 p-1 bg-[#0a0a0a]">
             {tabs.map(t => (

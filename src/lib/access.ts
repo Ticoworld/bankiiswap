@@ -1,6 +1,5 @@
 import { supabase } from './supabase'
 import { supabaseAdmin } from './supabaseAdmin'
-import { awardPoints, PointsPolicy } from './gamification'
 
 const client = (supabaseAdmin || supabase)
 
@@ -40,10 +39,8 @@ export async function isWhitelistedEither(wallet: string) {
   return envAllowlist().includes(w)
 }
 
-
-
 // Unified access decision flow: supports /login?ref=<wallet> only
-import { createReferral } from './referrals'
+// Note: Referral system removed in BankiiSwap rebrand
 export async function hasAccessOrOnboard(wallet: string, ref?: string) {
   const w = wallet.toLowerCase()
   // DB check
@@ -51,13 +48,11 @@ export async function hasAccessOrOnboard(wallet: string, ref?: string) {
   // ENV bootstrap
   const migrated = await migrateEnvIfEligible(w)
   if (migrated) return { access: true, reason: 'env_bootstrap' as const }
-  // Referral onboarding
+  // Referral onboarding (disabled - legacy support only)
   if (ref && ref.toLowerCase() !== w) {
-    // Add to whitelist, log referral, award points
+    // Add to whitelist, log source
     await addToWhitelistDB(w, 'referral', ref.toLowerCase())
-    await createReferral(ref.toLowerCase(), w)
-    // Award points for accepted referral
-    try { await awardPoints({ wallet: ref.toLowerCase(), points: PointsPolicy.referralAccepted, reason: 'referral_accepted', metadata: { invitee: w } }) } catch {}
+    // Note: Referral tracking and points system removed
     return { access: true, reason: 'referral', inviter: ref.toLowerCase() }
   }
   // No access

@@ -24,7 +24,7 @@ export default function HowItWorks() {
           className="text-center mb-16 max-w-3xl mx-auto"
         >
           <h2 className="text-display-sm md:text-display-md font-bold mb-4">
-            How <span className="text-brand-purple">FrenzySwap</span> Works
+            How <span className="text-brand-purple">BankiiSwap</span> Works
           </h2>
           <p className="text-body-lg text-gray-400">
             Simple, transparent, and designed to create sustainable value

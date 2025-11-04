@@ -56,7 +56,7 @@ export default function MultiWalletCard({ wallet }: { wallet?: string | null }) 
     if (!owner) { toast.error('Connect your primary wallet first'); return; }
     try {
       setLoading(true);
-      const message = `Link wallet to FrenzySwap account ${owner} at ${new Date().toISOString()}`;
+  const message = `Link wallet to BankiiSwap account ${owner} at ${new Date().toISOString()}`;
       const signature = await signWithWallet(message, provider);
       const linkedWallet = provider?.publicKey?.toString?.();
       if (!linkedWallet) throw new Error('Unable to read provider public key');

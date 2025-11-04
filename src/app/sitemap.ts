@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://www.frenzyswap.com'
+  const baseUrl = 'https://bankiiswap.com'
   
   return [
     {
@@ -12,51 +12,33 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
     {
       url: `${baseUrl}/swap`,
-      lastModified: new Date('2025-01-22'),
+      lastModified: new Date(),
       changeFrequency: 'daily',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/dao`,
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/staking`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/nfts`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/ecosystem`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.7,
+      changeFrequency: 'monthly',
+      priority: 0.6,
     },
     {
       url: `${baseUrl}/legal/terms`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.3,
     },
     {
       url: `${baseUrl}/legal/privacy`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.3,
     },
     {
       url: `${baseUrl}/legal/disclaimer`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
-      priority: 0.5,
+      priority: 0.3,
     },
   ]
 }

@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import TokenSelector from './TokenSelector';
 import Settings from './Settings';
 import SwapButton from './SwapButton';
-import { Token, MEME_TOKEN } from '@/config/tokens';
+import { Token, BNKY_TOKEN, DEFAULT_INPUT_TOKEN, DEFAULT_OUTPUT_TOKEN } from '@/config/tokens';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useTokenList } from '@/hooks/useTokenList';
 import { useSwap } from '@/hooks/useSwap';
@@ -40,7 +40,7 @@ export default function SwapForm() {
   const [slippage, setSlippage] = useState(0.5);
   const [quote, setQuote] = useState<any>(null);
   const [priceImpact, setPriceImpact] = useState<number | null>(null);
-  const [memeFee, setMemeFee] = useState(0);
+  const [platformFee, setPlatformFee] = useState(0);
   const [referralFee, setReferralFee] = useState(0);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -79,8 +79,8 @@ export default function SwapForm() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `Swap ${fromToken?.symbol} for ${toToken?.symbol} on FrenzySwap`,
-          text: `Check out this swap on FrenzySwap!`,
+          title: `Swap ${fromToken?.symbol} for ${toToken?.symbol} on BankiiSwap`,
+          text: `Check out this swap on BankiiSwap!`,
           url: shareURL
         });
       } else {
@@ -106,12 +106,12 @@ export default function SwapForm() {
                          searchParams.get('from') || searchParams.get('to');
     
     if (tokens.length > 0 && !fromToken && !hasUrlParams) {
-      // Only set defaults if no URL params exist
-      const usdc = tokens.find(t => t.symbol === 'USDC');
-      if (usdc) setFromToken(usdc);
+      // Set default input token (BNKY)
+      setFromToken(DEFAULT_INPUT_TOKEN);
     }
-    if (tokens.length > 0 && !toToken && MEME_TOKEN && !hasUrlParams) {
-      setToToken(MEME_TOKEN);
+    if (tokens.length > 0 && !toToken && DEFAULT_OUTPUT_TOKEN && !hasUrlParams) {
+      // Set default output token (USDC)
+      setToToken(DEFAULT_OUTPUT_TOKEN);
     }
   }, [tokens, fromToken, toToken, searchParams]);
 
@@ -347,7 +347,7 @@ export default function SwapForm() {
       setToAmount('');
       setQuote(null);
       setPriceImpact(null);
-      setMemeFee(0);
+      setPlatformFee(0);
       setReferralFee(0);
       setError(null);
       return;
@@ -368,7 +368,7 @@ export default function SwapForm() {
           setToAmount('');
           setQuote(null);
           setPriceImpact(null);
-          setMemeFee(0);
+          setPlatformFee(0);
           setReferralFee(0);
           return;
         }
@@ -434,14 +434,14 @@ export default function SwapForm() {
 
       // ⚡ SPEED OPTIMIZATION: Pre-calculate fees
       const platformFeeAmount = parseFloat(fromAmount) * 0.003;
-      setMemeFee(platformFeeAmount * 0.67);
+      setPlatformFee(platformFeeAmount * 0.67);
       setReferralFee(platformFeeAmount * 0.33);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch quote');
       setQuote(null);
       setToAmount('');
       setPriceImpact(null);
-      setMemeFee(0);
+      setPlatformFee(0);
       setReferralFee(0);
     } finally {
       setQuoteLoading(false);
@@ -501,7 +501,7 @@ export default function SwapForm() {
 
           const fromUsdValue = fromAmountNum * fromTokenPrice;
           const toUsdValue = parseFloat(toAmount) * toTokenPrice;
-          const feesUsdValue = memeFee * fromTokenPrice;
+          const feesUsdValue = platformFee * fromTokenPrice;
 
           await fetch('/api/log-swap', {
             method: 'POST',
@@ -514,13 +514,12 @@ export default function SwapForm() {
               toAmount: parseFloat(toAmount),
               fromUsdValue,
               toUsdValue,
-              feesPaid: memeFee,
+              feesPaid: platformFee,
               feesUsdValue,
               signature: tx,
               blockTime: Math.floor(Date.now() / 1000),
               jupiterFee: referralFee,
-              platformFee: memeFee,
-              memeBurned: memeFee, // MEME tokens burned as fees
+              platformFee: platformFee,
               slippage: slippage / 100,
               routePlan: JSON.stringify(quote?.routePlan || {}),
               fee_token_symbol: fromToken.symbol,
@@ -574,12 +573,12 @@ export default function SwapForm() {
   };
 
   return (
-    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-3 sm:p-6 shadow-2xl shadow-brand-purple/5 w-full max-w-[calc(100vw-2rem)] sm:max-w-md border-2 border-brand-purple/10 hover:border-brand-purple/20 transition-all duration-300 mx-auto min-h-fit overflow-hidden">
+    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-brand-purple/5 w-full max-w-[calc(100vw-2rem)] sm:max-w-md border-2 border-brand-purple/10 hover:border-brand-purple/20 transition-all duration-300 mx-auto overflow-hidden">
       {/* Header with Network Status */}
-      <div className="flex justify-between items-center mb-3 sm:mb-4">
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-brand-purple">
-            FRENZYSWAP
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center space-x-2">
+          <h1 className="text-sm sm:text-base font-bold text-brand-purple">
+            BANKIISWAP
           </h1>
           <NetworkStatus showLabel={false} className="hidden sm:flex" />
         </div>
@@ -590,7 +589,7 @@ export default function SwapForm() {
       </div>
 
       {isConfirming ? (
-        <div className="flex flex-col items-center justify-center py-12">
+        <div className="flex flex-col items-center justify-center py-8">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple mb-4"></div>
           <h3 className="text-lg font-medium mb-1">Confirming Swap</h3>
           <p className="text-gray-400 text-sm">Approve the transaction in your wallet</p>
@@ -599,10 +598,10 @@ export default function SwapForm() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-3 sm:space-y-4"
+          className="space-y-2 sm:space-y-3"
         >
           {/* FROM */}
-          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 sm:p-4 border-2 border-gray-800/50 hover:border-brand-purple/30 transition-colors">
+          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 border-2 border-gray-800/50 hover:border-brand-purple/30 transition-colors">
             <div className="flex justify-between items-center mb-2">
               <label className="text-gray-400 text-sm font-medium">From</label>
               <div className="flex space-x-1 sm:space-x-2">
@@ -721,7 +720,7 @@ export default function SwapForm() {
           </div>
 
           {/* TO */}
-          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 sm:p-4 border-2 border-gray-800/50 hover:border-brand-purple/30 transition-colors">
+          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 border-2 border-gray-800/50 hover:border-brand-purple/30 transition-colors">
             <div className="mb-2 text-gray-400 text-sm font-medium">To</div>
             <div className="flex items-center space-x-1 overflow-hidden">
               <div className="flex-1 min-w-0">
@@ -770,7 +769,7 @@ export default function SwapForm() {
           {quoteLoading && fromAmount && toAmount ? (
             <SwapPreviewSkeleton />
           ) : quote && fromToken && toToken ? (
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 text-sm space-y-3 overflow-hidden">
+            <div className="bg-gray-800 rounded-xl p-3 border border-gray-700 text-sm space-y-2 overflow-hidden">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Rate</span>
                 <span className="font-medium text-right min-w-0 truncate">
@@ -801,9 +800,9 @@ export default function SwapForm() {
               )}
               <div className="border-t border-gray-800 pt-3 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-xs">MEME Fee (0.2%)</span>
+                  <span className="text-gray-400 text-xs">Platform Fee (0.2%)</span>
                   <span className="text-brand-purple text-xs font-medium text-right min-w-0 truncate">
-                    {memeFee.toFixed(6)} {fromToken.symbol}
+                    {platformFee.toFixed(6)} {fromToken.symbol}
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
@@ -815,20 +814,20 @@ export default function SwapForm() {
                 <div className="flex justify-between items-center pt-1 border-t border-gray-800">
                   <span className="text-gray-300 text-xs font-medium">Total Fees</span>
                   <span className="text-gray-300 text-xs font-medium text-right min-w-0 truncate">
-                    {(memeFee + referralFee).toFixed(6)} {fromToken.symbol}
+                    {(platformFee + referralFee).toFixed(6)} {fromToken.symbol}
                   </span>
                 </div>
               </div>
             </div>
           ) : null}
 
-          {/* BURN NOTICE */}
+          {/* BNKY UTILITY NOTICE */}
           <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-3 flex items-start backdrop-blur-sm overflow-hidden">
             <div className="bg-brand-purple/20 p-1 rounded mr-2 mt-0.5 flex-shrink-0">
               <FaFire className="h-4 w-4 text-brand-purple" />
             </div>
             <p className="text-brand-purple text-xs sm:text-sm min-w-0 break-words">
-              {memeFee.toFixed(6)} {fromToken?.symbol} will be used to buyback and burn MEME tokens
+              Hold BNKY tokens for reduced fees and staking rewards
             </p>
           </div>
 
@@ -852,7 +851,7 @@ export default function SwapForm() {
               !!error ||
               quoteLoading ||
               parseFloat(fromAmount) <= 0 ||
-              (balance !== null && (parseFloat(fromAmount) + memeFee + referralFee) > balance)
+              (balance !== null && (parseFloat(fromAmount) + platformFee + referralFee) > balance)
             }
             isLoading={quoteLoading}
             onClick={handleSwap}

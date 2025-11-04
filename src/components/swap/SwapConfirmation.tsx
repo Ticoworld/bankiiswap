@@ -101,7 +101,7 @@ export default function SwapConfirmation({
       </div>
 
       <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-3 text-center text-brand-purple text-sm mb-6">
-        🔥 A portion of fees has been used to buyback and burn MEME tokens
+  🎉 A portion of fees supports the Bankii ecosystem and BNKY utility
       </div>
 
       <button

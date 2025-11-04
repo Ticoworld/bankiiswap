@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
 import { FiArrowRight } from "react-icons/fi";
-import MiniSwapWidget from "./MiniSwapWidget";
+// import MiniSwapWidget from "./MiniSwapWidget";
 
 export default function Hero() {
   return (
@@ -74,7 +74,7 @@ export default function Hero() {
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, delay: 0.3 }}
         >
-          <MiniSwapWidget />
+          {/* <MiniSwapWidget /> */}
         </motion.div>
       </div>
     </section>
