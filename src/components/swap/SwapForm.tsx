@@ -41,7 +41,6 @@ export default function SwapForm() {
   const [quote, setQuote] = useState<any>(null);
   const [priceImpact, setPriceImpact] = useState<number | null>(null);
   const [platformFee, setPlatformFee] = useState(0);
-  const [referralFee, setReferralFee] = useState(0);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -348,7 +347,6 @@ export default function SwapForm() {
       setQuote(null);
       setPriceImpact(null);
       setPlatformFee(0);
-      setReferralFee(0);
       setError(null);
       return;
     }
@@ -369,7 +367,6 @@ export default function SwapForm() {
           setQuote(null);
           setPriceImpact(null);
           setPlatformFee(0);
-          setReferralFee(0);
           return;
         }
       }
@@ -388,7 +385,7 @@ export default function SwapForm() {
       const cacheKey = `${fromToken.address}-${toToken.address}-${amount}-${slippage}`;
       
       // ⚡ SPEED OPTIMIZATION: Parallel processing for quote and price data
-      const quotePromise = getQuote(fromToken.address, toToken.address, amount, slippage, referralAccount);
+      const quotePromise = getQuote(fromToken.address, toToken.address, amount, slippage, referralAccount || '');
       
       let quote;
       try {
@@ -434,15 +431,13 @@ export default function SwapForm() {
 
       // ⚡ SPEED OPTIMIZATION: Pre-calculate fees
       const platformFeeAmount = parseFloat(fromAmount) * 0.003;
-      setPlatformFee(platformFeeAmount * 0.67);
-      setReferralFee(platformFeeAmount * 0.33);
+      setPlatformFee(platformFeeAmount);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch quote');
       setQuote(null);
       setToAmount('');
       setPriceImpact(null);
       setPlatformFee(0);
-      setReferralFee(0);
     } finally {
       setQuoteLoading(false);
     }
@@ -464,7 +459,7 @@ export default function SwapForm() {
   }, [swapError]);
 
   const handleSwap = async () => {
-    if (!quote || !fromToken || !toToken || !publicKey || !referralAccount) return;
+    if (!quote || !fromToken || !toToken || !publicKey) return;
 
     const fromAmountNum = parseFloat(fromAmount);
     if (balance === null || fromAmountNum > balance) {
@@ -482,7 +477,7 @@ export default function SwapForm() {
 
     try {
       // ⚡ SPEED OPTIMIZATION: Start swap execution and logging in parallel
-      const swapPromise = performSwap(quote, publicKey.toString(), referralAccount, connection);
+      const swapPromise = performSwap(quote, publicKey.toString(), referralAccount || '', connection);
       
       // ⚡ SPEED OPTIMIZATION: Pre-calculate USD values and start price fetch early
       const pricePromise = import('@/lib/fetchTokenPrices').then(({ fetchTokenPrices }) => 
@@ -518,7 +513,7 @@ export default function SwapForm() {
               feesUsdValue,
               signature: tx,
               blockTime: Math.floor(Date.now() / 1000),
-              jupiterFee: referralFee,
+              jupiterFee: 0,
               platformFee: platformFee,
               slippage: slippage / 100,
               routePlan: JSON.stringify(quote?.routePlan || {}),
@@ -800,21 +795,9 @@ export default function SwapForm() {
               )}
               <div className="border-t border-gray-800 pt-3 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-xs">Platform Fee (0.2%)</span>
+                  <span className="text-gray-400 text-xs">Network Fee</span>
                   <span className="text-brand-purple text-xs font-medium text-right min-w-0 truncate">
                     {platformFee.toFixed(6)} {fromToken.symbol}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-xs">Referral Fee (0.1%)</span>
-                  <span className="text-brand-purple text-xs font-medium opacity-70 text-right min-w-0 truncate">
-                    {referralFee.toFixed(6)} {fromToken.symbol}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pt-1 border-t border-gray-800">
-                  <span className="text-gray-300 text-xs font-medium">Total Fees</span>
-                  <span className="text-gray-300 text-xs font-medium text-right min-w-0 truncate">
-                    {(platformFee + referralFee).toFixed(6)} {fromToken.symbol}
                   </span>
                 </div>
               </div>
@@ -827,7 +810,7 @@ export default function SwapForm() {
               <FaFire className="h-4 w-4 text-brand-purple" />
             </div>
             <p className="text-brand-purple text-xs sm:text-sm min-w-0 break-words">
-              Hold BNKY tokens for reduced fees and staking rewards
+              Hold BNKY tokens for reduced fees and exclusive utility benefits
             </p>
           </div>
 
@@ -851,7 +834,7 @@ export default function SwapForm() {
               !!error ||
               quoteLoading ||
               parseFloat(fromAmount) <= 0 ||
-              (balance !== null && (parseFloat(fromAmount) + platformFee + referralFee) > balance)
+              (balance !== null && (parseFloat(fromAmount) + platformFee) > balance)
             }
             isLoading={quoteLoading}
             onClick={handleSwap}
