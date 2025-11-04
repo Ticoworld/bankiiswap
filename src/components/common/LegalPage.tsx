@@ -12,6 +12,18 @@ export function LegalPage({ title, lastUpdated, children }: LegalPageProps) {
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">{title}</h1>
         <p className="text-gray-500">Last updated: {lastUpdated}</p>
+        <p className="mt-2 text-gray-400 text-sm">
+          Canonical legal policies live at{' '}
+          <a
+            href="https://bankii.finance/legal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-bankii-blue hover:underline"
+          >
+            bankii.finance/legal
+          </a>
+          .
+        </p>
       </div>
       
       <div className="mb-12">

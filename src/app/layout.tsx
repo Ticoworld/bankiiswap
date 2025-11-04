@@ -53,10 +53,10 @@ export const metadata: Metadata = {
     locale: 'en_US',
     images: [
       {
-        url: '/assets/logos/bankii-logo.jpg',
+        url: '/assets/landing/hero-visual-v2.jpg',
         width: 1200,
         height: 630,
-        alt: 'BankiiSwap Logo',
+        alt: 'BankiiSwap — Swap BNKY & Solana tokens',
       },
     ],
   },
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: "BankiiSwap | Swap $BNKY & Solana Tokens",
     description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
-    images: ['/assets/logos/bankii-logo.jpg'],
+    images: ['/assets/landing/hero-visual-v2.jpg'],
     creator: '@BankiiFinance',
     site: '@BankiiFinance',
   },
@@ -102,6 +102,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${inter.variable}`}>
       <head>
+        {/* Plausible Analytics (privacy-friendly) */}
+        <script defer data-domain="bankiiswap.com" src="https://plausible.io/js/script.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `

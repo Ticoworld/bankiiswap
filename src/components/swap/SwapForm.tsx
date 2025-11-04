@@ -19,6 +19,7 @@ import { QuoteLoader, BalanceSkeleton, SwapPreviewSkeleton, TokenSelectorSkeleto
 import NetworkStatus from '@/components/ui/NetworkStatus';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
 import { toast } from 'react-hot-toast';
+import { trackSwapError, trackSwapSuccess } from '@/lib/analytics-lite';
 
 export default function SwapForm() {
   const router = useRouter();
@@ -486,6 +487,8 @@ export default function SwapForm() {
 
       // Wait for swap to complete first
       const tx = await swapPromise;
+  // Analytics: swap success (no PII)
+  trackSwapSuccess(fromToken.symbol, toToken.symbol);
 
       // ⚡ SPEED OPTIMIZATION: Fire-and-forget analytics logging (don't block redirect)
       void (async () => {
@@ -531,6 +534,8 @@ export default function SwapForm() {
       router.push(`/swap/tx/${tx}?fromToken=${fromToken.symbol}&toToken=${toToken?.symbol}&fromAmount=${fromAmount}&toAmount=${toAmount}`);
     } catch (err: any) {
       setError(err.message || 'Swap execution failed');
+      // Analytics: swap error (no PII)
+      trackSwapError(err?.message);
     } finally {
       setIsConfirming(false);
     }

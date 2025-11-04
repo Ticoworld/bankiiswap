@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { HiMenu, HiX } from "react-icons/hi";
+import { trackVisitBankii } from "@/lib/analytics-lite";
 
 // Removed AnalyticsMenu and UserMenu in Bankii minimal surface
 const MobileDrawer = dynamic(() => import("@/components/navigation/MobileDrawer"), { ssr: false });
@@ -76,6 +77,7 @@ export function DappHeader() {
               target="_blank" 
               rel="noopener noreferrer"
               className="px-3 py-2 rounded-card text-body-md font-medium text-gray-400 hover:text-white transition-all duration-300"
+              onClick={() => trackVisitBankii()}
             >
               Visit Bankii.finance
             </a>

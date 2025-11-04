@@ -3,6 +3,7 @@
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { motion } from 'framer-motion';
+import { trackLaunchSwap } from '@/lib/analytics-lite';
 
 export default function SwapButton({
   disabled,
@@ -17,6 +18,8 @@ export default function SwapButton({
   const { setVisible } = useWalletModal();
 
   const handleClick = () => {
+    // Track CTA launch (no PII)
+    trackLaunchSwap(!!connected);
     if (!connected) {
       // If wallet not connected, trigger wallet modal
       setVisible(true);
