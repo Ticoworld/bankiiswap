@@ -107,12 +107,8 @@ export const SwapPreviewSkeleton = () => (
     </div>
     <PriceImpactSkeleton />
     <div className="flex justify-between">
-      <span className="text-gray-500 dark:text-gray-400">MEME Fee</span>
+      <span className="text-gray-500 dark:text-gray-400">Network Fee</span>
       <div className="bg-gray-300 dark:bg-gray-600 h-3 w-16 rounded" />
-    </div>
-    <div className="flex justify-between">
-      <span className="text-gray-500 dark:text-gray-400">Referral Fee</span>
-      <div className="bg-gray-300 dark:bg-gray-600 h-3 w-20 rounded" />
     </div>
   </div>
 );

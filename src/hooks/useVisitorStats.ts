@@ -2,7 +2,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getVisitorStats } from '@/lib/analytics';
 
 export function useVisitorStats(timeframe: '24h' | '7d' | '30d' | '365d' = '24h') {
   const [stats, setStats] = useState<any>(null);
@@ -10,17 +9,26 @@ export function useVisitorStats(timeframe: '24h' | '7d' | '30d' | '365d' = '24h'
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    let active = true;
     setLoading(true);
-    getVisitorStats(timeframe)
-      .then((data) => {
+    // Use the lightweight stats endpoint; timeframe is informational only for now
+    fetch('/api/stats')
+      .then((res) => res.json() as Promise<any>)
+      .then((data: any) => {
+        if (!active) return;
         setStats(data);
         setError(null);
       })
-      .catch((err) => {
+      .catch((_err: unknown) => {
+        if (!active) return;
         setError('Failed to fetch visitor stats');
         setStats(null);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (!active) return;
+        setLoading(false);
+      });
+    return () => { active = false; };
   }, [timeframe]);
 
   return { stats, loading, error };
