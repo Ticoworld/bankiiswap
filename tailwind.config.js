@@ -47,9 +47,10 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
-        heading: ['Poppins', 'sans-serif'],
-        body: ['Inter', 'sans-serif'],
+        // Use next/font CSS variables to avoid CLS and ensure consistent fallback
+        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        body: ['var(--font-inter)', 'Inter', 'sans-serif'],
       },
       fontWeight: {
         'heading-bold': '600', // Poppins SemiBold for H1-H2

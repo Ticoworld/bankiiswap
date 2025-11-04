@@ -117,7 +117,7 @@ export default function RootLayout({
         />
         <StructuredData />
       </head>
-      <body className={`${inter.className} bg-white text-neutral-900 dark:bg-gray-900 dark:text-white`}>
+      <body className={`${inter.className} bg-white text-neutral-900 dark:bg-black dark:text-white`}>
         <Providers>
           <GlobalLoader />
           <RouteLoader />

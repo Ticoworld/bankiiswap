@@ -2,7 +2,7 @@ export function DappFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8">
+    <footer className="bg-white dark:bg-black border-t border-gray-200 dark:border-gray-800 py-8">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="mb-4 md:mb-0 flex flex-col items-center md:items-start">

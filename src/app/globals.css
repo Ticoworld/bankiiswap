@@ -25,7 +25,8 @@
   }
   
   body {
-    @apply bg-neutral-dark text-white font-body;
+    /* Use pure black background in dark mode per preference; light mode handled below */
+    @apply bg-black text-white font-body;
   }
 
   /* Semantic heading hierarchy */
