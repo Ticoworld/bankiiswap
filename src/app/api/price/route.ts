@@ -13,10 +13,10 @@ export async function GET(request: NextRequest) {
   const tokenArray = tokenIds.split(',');
 
   try {
-    // Try Jupiter API first
+    // Try Jupiter API first (NEW ENDPOINT)
     try {
       const jupiterResponse = await fetch(
-        `https://price.jup.ag/v6/price?ids=${tokenIds}`,
+        `https://lite-api.jup.ag/price/v3?ids=${tokenIds}`,
         {
           headers: {
             'Accept': 'application/json',
