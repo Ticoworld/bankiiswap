@@ -12,6 +12,18 @@ export function LegalPage({ title, lastUpdated, children }: LegalPageProps) {
       <div className="text-center mb-12">
         <h1 className="text-3xl md:text-4xl font-bold mb-2">{title}</h1>
         <p className="text-gray-500">Last updated: {lastUpdated}</p>
+        <p className="mt-2 text-gray-400 text-sm">
+          Canonical legal policies live at{' '}
+          <a
+            href="https://bankii.finance/legal"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-bankii-blue hover:underline"
+          >
+            bankii.finance/legal
+          </a>
+          .
+        </p>
       </div>
       
       <div className="mb-12">
@@ -20,8 +32,8 @@ export function LegalPage({ title, lastUpdated, children }: LegalPageProps) {
       
       <div className="mt-16 pt-8 border-t border-gray-800">
         <div className="flex flex-col md:flex-row justify-between items-center">
-          <Link href="/" className="text-2xl font-bold text-brand-purple mb-4 md:mb-0">
-            FrenzySwap
+          <Link href="/" className="text-2xl font-bold text-bankii-blue mb-4 md:mb-0">
+            BankiiSwap
           </Link>
           
           <div className="flex space-x-6">

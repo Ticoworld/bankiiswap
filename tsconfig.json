@@ -31,6 +31,7 @@
   "compilerOptions": {
     "target": "es2017", // ✅ Fixes Set/Map iteration
     "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": ".",
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,

@@ -59,12 +59,12 @@ export default function TokenVerificationWarning({
             leaveFrom="opacity-100 scale-100"
             leaveTo="opacity-0 scale-95"
           >
-            <Dialog.Panel className="w-full max-w-md bg-[#0a0a0a] rounded-2xl shadow-2xl border-2 border-brand-purple/20">
+            <Dialog.Panel className="w-full max-w-md bg-[#0a0a0a] rounded-2xl shadow-2xl border-2 border-bankii-blue/20">
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-center space-x-3 mb-4">
                   <div className="flex-shrink-0">
-                    <ExclamationTriangleIcon className="h-8 w-8 text-brand-purple" />
+                    <ExclamationTriangleIcon className="h-8 w-8 text-bankii-blue" />
                   </div>
                   <div>
                     <Dialog.Title className="text-lg font-bold text-white">
@@ -94,11 +94,11 @@ export default function TokenVerificationWarning({
 
                 {/* Warning Content */}
                 <div className="space-y-4 mb-6">
-                  <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-4">
+                  <div className="bg-bankii-blue/10 border-2 border-bankii-blue/20 rounded-xl p-4">
                     <div className="flex items-start space-x-2">
-                      <ShieldExclamationIcon className="h-5 w-5 text-brand-purple mt-0.5 flex-shrink-0" />
+                      <ShieldExclamationIcon className="h-5 w-5 text-bankii-blue mt-0.5 flex-shrink-0" />
                       <div>
-                        <h4 className="font-semibold text-brand-purple mb-1">
+                        <h4 className="font-semibold text-bankii-blue mb-1">
                           This token is not verified
                         </h4>
                         <p className="text-sm text-gray-400">
@@ -123,7 +123,7 @@ export default function TokenVerificationWarning({
                     </ul>
                   </div>
 
-                  <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-3">
+                  <div className="bg-bankii-blue/10 border-2 border-bankii-blue/20 rounded-xl p-3">
                     <p className="text-sm text-gray-300">
                       💡 <strong>Tip:</strong> Always do your own research (DYOR) before trading unverified tokens. 
                       Check the token&apos;s website, social media, and community before investing.
@@ -138,7 +138,7 @@ export default function TokenVerificationWarning({
                       type="checkbox"
                       checked={understood}
                       onChange={(e) => setUnderstood(e.target.checked)}
-                      className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-brand-purple focus:ring-brand-purple focus:ring-offset-black"
+                      className="mt-1 h-4 w-4 rounded border-gray-600 bg-gray-900 text-bankii-blue focus:ring-bankii-blue focus:ring-offset-black"
                     />
                     <span className="text-sm text-gray-300">
                       I understand the risks and want to proceed with trading this unverified token.
@@ -159,7 +159,7 @@ export default function TokenVerificationWarning({
                     disabled={!understood}
                     className={`flex-1 px-4 py-2 rounded-xl transition-colors focus:outline-none focus:ring-2 border-2 ${
                       understood
-                        ? 'bg-brand-purple text-white hover:bg-brand-purple/90 focus:ring-brand-purple border-brand-purple'
+                        ? 'bg-bankii-blue text-white hover:bg-bankii-blue/90 focus:ring-bankii-blue border-bankii-blue'
                         : 'bg-gray-900 text-gray-500 cursor-not-allowed border-gray-800'
                     }`}
                   >

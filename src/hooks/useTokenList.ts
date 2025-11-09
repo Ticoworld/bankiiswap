@@ -1,9 +1,9 @@
 import { useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import fallbackTokens from '@/config/fallbackTokens.json';
-import { Token, MEME_TOKEN } from '@/config/tokens';
+import { Token, BNKY_TOKEN } from '@/config/tokens';
 import { debounce } from 'lodash';
 
-const CACHE_KEY = 'frenzySwapTokenCache';
+const CACHE_KEY = 'bankiiSwapTokenCache';
 const CACHE_DURATION = 12 * 60 * 60 * 1000; // 12 hours
 const CACHE_VERSION = '2.1'; // Increment to force cache refresh - v2.1 ensures full token list (287K+ tokens)
 
@@ -70,15 +70,15 @@ export function useTokenList() {
     if (cached && Array.isArray(cached.data)) {
       console.log(`[TokenList] 📦 Loading ${cached.data.length} tokens from cache (version: ${cached.version})`);
       setTokens([
-        MEME_TOKEN,
-        ...cached.data.filter((t) => t.address !== MEME_TOKEN.address),
+        BNKY_TOKEN,
+        ...cached.data.filter((t) => t.address !== BNKY_TOKEN.address),
       ]);
       setLoading(false);
     } else {
       console.log(`[TokenList] 🚫 No valid cache found, using ${fallbackTokens.length} fallback tokens`);
       setTokens([
-        MEME_TOKEN,
-        ...fallbackTokens.filter((t) => t.address !== MEME_TOKEN.address),
+        BNKY_TOKEN,
+        ...fallbackTokens.filter((t) => t.address !== BNKY_TOKEN.address),
       ]);
       setLoading(false);
     }
@@ -115,11 +115,11 @@ export function useTokenList() {
             }
             // Cross-check all tokens for verification
             const sorted = [
-              MEME_TOKEN,
+              BNKY_TOKEN,
               ...tokenList.map((t) => ({
                 ...t,
                 verified: t.verified || verifiedSetRef.current.has(t.address),
-              })).filter((t) => t.address !== MEME_TOKEN.address),
+              })).filter((t) => t.address !== BNKY_TOKEN.address),
             ];
             setTokens(sorted);
             saveToCache(sorted);
@@ -139,8 +139,8 @@ export function useTokenList() {
         if (!success) {
           const fallback = cached?.data || fallbackTokens;
           const sorted = [
-            MEME_TOKEN,
-            ...fallback.filter((t) => t.address !== MEME_TOKEN.address),
+            BNKY_TOKEN,
+            ...fallback.filter((t) => t.address !== BNKY_TOKEN.address),
           ];
           setTokens(sorted);
           setError(true);

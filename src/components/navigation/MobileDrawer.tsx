@@ -1,18 +1,36 @@
 "use client";
 
 import Link from 'next/link';
+import { useWallet } from '@solana/wallet-adapter-react';
+import { useWalletModal } from '@solana/wallet-adapter-react-ui';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { rewardsNav, analyticsNav, moreNav } from '@/config/nav';
+// Bankii minimal: remove external nav config dependencies
 import { motion, AnimatePresence } from 'framer-motion';
+import { PnlPortfolio } from '@/components/swap/TraderDashboardPanel';
+import { SwapHistoryEntry } from '@/hooks/useSwapHistory';
+import Settings from '@/components/swap/Settings';
 
-export default function MobileDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+export default function MobileDrawer({ 
+  open, 
+  onClose, 
+  history,
+  slippage,
+  setSlippage 
+}: { 
+  open: boolean; 
+  onClose: () => void; 
+  history: SwapHistoryEntry[];
+  slippage: number;
+  setSlippage: (value: number) => void;
+}) {
   const pathname = usePathname();
   const [isClient, setIsClient] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const asideRef = useRef<HTMLElement>(null);
   const firstLinkRef = useRef<HTMLAnchorElement>(null);
+  const { disconnect, connected } = useWallet();
 
   // Mount-only flag for portal usage
   useEffect(() => setIsClient(true), []);
@@ -64,6 +82,14 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
     }
   };
 
+  // Disconnect handler
+  const handleDisconnect = () => {
+    disconnect();
+    onClose();
+  };
+
+  if (!open || !isClient) return null;
+
   const drawer = (
     <AnimatePresence>
       <motion.div
@@ -79,114 +105,88 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
         key="drawer"
         role="dialog"
         aria-modal="true"
-        aria-label="Mobile navigation"
+        aria-label="Dashboard navigation"
         initial={{ x: '100%' }}
         animate={{ x: 0 }}
         exit={{ x: '100%' }}
         transition={{ type: 'tween', duration: 0.2 }}
-        className="fixed right-0 top-0 bottom-0 z-[101] w-80 max-w-[85vw] bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-2xl"
+        /* Stripe x DeFi: dark neutral surface with subtle liquid magma overlay */
+        className="fixed right-0 top-0 bottom-0 z-[101] w-80 max-w-[85vw] bg-neutral-darker border-l border-gray-800 shadow-2xl overflow-hidden flex flex-col"
         ref={asideRef}
         onKeyDown={onTrapFocus}
       >
-        <div className="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800">
-          <h3 className="text-sm font-medium text-gray-700 dark:text-gray-200">Navigation</h3>
-          <button onClick={onClose} aria-label="Close menu" className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white p-1">✕</button>
+        {/* Liquid magma background (whatamesh-style) */}
+        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-10">
+          <div className="absolute -top-20 -right-24 w-[420px] h-[420px] rounded-full bg-gradient-to-bl from-[#00A6FF] to-[#0049FF] blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-[420px] h-[420px] rounded-full bg-gradient-to-tr from-[#0049FF] to-[#00A6FF] blur-3xl" />
         </div>
-        <div ref={contentRef} className="h-[calc(100%-56px)] overflow-y-auto px-2 py-3 pb-24">
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Primary</h4>
+
+        {/* Top bar */}
+        <div className="flex items-center justify-between px-4 h-14 border-b border-gray-800 bg-neutral-darker/80 backdrop-blur flex-shrink-0">
+          <h3 className="text-sm font-medium text-white">Dashboard</h3>
+          <button onClick={onClose} aria-label="Close menu" className="text-gray-400 hover:text-white p-1">✕</button>
+        </div>
+
+        {/* Main content - scrollable area with P&L and Settings */}
+        <div ref={contentRef} className="flex-grow overflow-y-auto px-3 py-4 space-y-6">
+          {/* Top: P&L Portfolio (priority feature) */}
+          <section aria-label="Portfolio">
+            <PnlPortfolio history={history} />
+          </section>
+
+          {/* Middle: Settings with slippage controls */}
+          <section aria-label="Settings" className="bg-black/40 border border-gray-800 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-sm font-semibold text-white">Transaction Settings</h4>
+              <Settings slippage={slippage} setSlippage={setSlippage} />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-gray-400">Current Slippage</span>
+                <span className="text-white font-medium">{slippage}%</span>
+              </div>
+              <p className="text-xs text-gray-400">
+                Click the settings icon to adjust your slippage tolerance
+              </p>
+            </div>
+          </section>
+        </div>
+
+        {/* Footer - pinned to bottom with nav links and disconnect */}
+        <div className="flex-shrink-0 border-t border-gray-800/50 bg-neutral-darker/90 backdrop-blur">
+          {/* Navigation Links */}
+          <nav className="px-3 py-3 space-y-2">
             <Link
               ref={firstLinkRef}
-              href="/swap"
+              href="/home"
               onClick={onClose}
-              className={pathname === '/swap' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
+              className={pathname === '/home' ? 'block px-3 py-2 rounded-lg bg-white/5 text-white font-medium text-sm' : 'block px-3 py-2 rounded-lg text-gray-200 hover:bg-white/5 text-sm'}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Swap
+              Home
             </Link>
-          </section>
+            <a
+              href="https://bankii.finance"
+              target="_blank"
+              rel="noopener noreferrer"
+              className='block px-3 py-2 rounded-lg text-gray-200 hover:bg-white/5 text-sm'
+            >
+              Visit Bankii.finance
+            </a>
+          </nav>
 
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Rewards</h4>
-            {rewardsNav.map((i) => (
-              <Link
-                key={i.href}
-                href={i.href}
-                onClick={onClose}
-                className={pathname === i.href ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
+          {/* Disconnect Button */}
+          {connected && (
+            <div className="px-3 pb-3">
+              <button
+                onClick={handleDisconnect}
+                className="w-full px-4 py-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-medium transition-colors text-sm"
               >
-                {i.label}
-              </Link>
-            ))}
-          </section>
-
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Analytics</h4>
-            {analyticsNav.map((i) => (
-              <Link
-                key={i.href}
-                href={i.href}
-                onClick={onClose}
-                className={pathname === i.href ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-              >
-                {i.label}
-              </Link>
-            ))}
-          </section>
-
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">More</h4>
-            {moreNav.map((i) => (
-              <Link
-                key={i.href}
-                href={i.href}
-                onClick={onClose}
-                className={pathname === i.href ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-              >
-                {i.label}
-                {i.badge && (
-                  <span className="ml-2 text-xxs uppercase bg-brand-purple text-white rounded px-1.5 py-0.5">
-                    {i.badge}
-                  </span>
-                )}
-              </Link>
-            ))}
-          </section>
-
-          <section className="mb-4">
-            <h4 className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-500 mb-2 px-2">Account</h4>
-            <Link
-              href="/settings"
-              onClick={onClose}
-              className={pathname === '/settings' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-            >
-              Settings
-            </Link>
-            <Link
-              href="/profile"
-              onClick={onClose}
-              className={pathname === '/profile' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-            >
-              Profile
-            </Link>
-            <Link
-              href="/referrals"
-              onClick={onClose}
-              className={pathname === '/referrals' ? 'block px-3 py-2 rounded bg-gray-100 dark:bg-gray-800 text-brand-purple dark:text-brand-purple' : 'block px-3 py-2 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'}
-            >
-              Referrals
-            </Link>
-          </section>
-        </div>
-
-        {/* Pinned CTA distinct from navigation */}
-        <div className="absolute left-0 right-0 bottom-0 p-3 border-t border-gray-200 dark:border-gray-800 bg-white/95 dark:bg-gray-900/95 backdrop-blur">
-          <Link
-            href="/swap"
-            onClick={onClose}
-            className="block text-center bg-gradient-to-r from-brand-purple to-brand-purple/90 text-white font-medium py-2 rounded-lg shadow"
-          >
-            Start Swapping
-          </Link>
+                Disconnect Wallet
+              </button>
+            </div>
+          )}
         </div>
       </motion.aside>
     </AnimatePresence>
@@ -195,3 +195,5 @@ export default function MobileDrawer({ open, onClose }: { open: boolean; onClose
   // Render above any header stacking context to avoid clipping/overlap
   return createPortal(drawer, document.body);
 }
+
+// Wallet CTA removed in favor of header wallet button and premium drawer content

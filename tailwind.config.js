@@ -11,13 +11,38 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        // Show certain decorative hero elements only on very large screens
+        'xl1400': '1400px',
+      },
       colors: {
-        // Premium Brand Color - Purple only (simplified from multiple colors)
+        // Bankii Brand Colors (NEW)
+        'bankii-blue': '#0049FF',
+        'bankii-blue-light': '#00A6FF',
+        'bankii-dark': '#161D38',
+        'bankii-grey': '#B7B9BD',
+        
+        // Accent Gradient
+        'accent-start': '#0049FF',
+        'accent-end': '#00A6FF',
+        
+        // Backward-compatible aliases (prevents breaking existing components)
+        'brand-purple': '#0049FF',      // OLD → maps to bankii-blue
+        'brand-blue': '#00A6FF',        // OLD → maps to bankii-blue-light
+        
+        // Premium Brand Color - DEPRECATED (use bankii-blue instead)
         brand: {
-          purple: '#8b5cf6',         // violet-500 - PRIMARY brand color
-          'purple-dark': '#7c3aed',  // violet-600 - Hover/active state
+          purple: '#0049FF',            // Maps to bankii-blue
+          'purple-dark': '#0038CC',     // Darker shade of bankii-blue
         },
-        // Background System - Professional black/gray palette
+        
+        // Neutrals (keep dark theme support)
+        'neutral-dark': '#0f172a',
+        'neutral-darker': '#020617',
+        'neutral-card': '#1e293b',
+        'neutral-light': '#f8fafc',
+        
+        // Background System - Professional black/gray palette (LEGACY)
         surface: {
           dark: '#0f172a',         // slate-900
           darker: '#020617',       // slate-950
@@ -26,7 +51,13 @@ module.exports = {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Use next/font CSS variables to avoid CLS and ensure consistent fallback
+        sans: ['var(--font-inter)', 'Inter', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-poppins)', 'Poppins', 'sans-serif'],
+        body: ['var(--font-inter)', 'Inter', 'sans-serif'],
+      },
+      fontWeight: {
+        'heading-bold': '600', // Poppins SemiBold for H1-H2
       },
       fontSize: {
         // Professional typography scale
@@ -46,13 +77,15 @@ module.exports = {
         'card': '0.75rem',
       },
       boxShadow: {
+        'bankii': '0 4px 20px rgba(0, 73, 255, 0.15)',
+        'bankii-lg': '0 10px 40px rgba(0, 73, 255, 0.25)',
         'premium': '0 20px 60px -15px rgba(0, 0, 0, 0.3)',
         'card': '0 4px 20px -2px rgba(0, 0, 0, 0.2)',
-        'glow-purple': '0 0 40px rgba(139, 92, 246, 0.3)',
+        'glow-purple': '0 0 40px rgba(0, 73, 255, 0.3)', // Updated to bankii-blue
       },
       animation: {
-        'fade-in': 'fadeIn 0.6s ease-out',
-        'slide-up': 'slideUp 0.6s ease-out',
+        'fade-in': 'fadeIn 0.3s ease-in',
+        'slide-up': 'slideUp 0.4s ease-out',
         'shimmer': 'shimmer 2s infinite',
       },
       keyframes: {

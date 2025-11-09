@@ -14,7 +14,7 @@ const LOCAL_TOKEN_ICONS: Record<string, string> = {
   SOL: '/assets/tokens/sol.png',
   USDC: '/assets/tokens/usdc.png',
   USDT: '/assets/tokens/tether-usdt-seeklogo.png',
-  MEME: '/assets/tokens/meme.png',
+  BNKY: '/assets/tokens/bnky.png',
 };
 
 // Jupiter-style multi-tier image source strategy for maximum reliability

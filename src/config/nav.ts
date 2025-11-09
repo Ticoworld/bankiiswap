@@ -9,20 +9,14 @@ export type NavItem = {
   badge?: string;
 };
 
-export const rewardsNav: NavItem[] = [
-  { label: 'Leaderboards', href: '/leaderboard', description: 'Top traders, points and streaks' },
-  { label: 'Badges', href: '/profile#badges', description: 'Collect badges for your milestones' },
-  { label: 'Referrals', href: '/referrals', description: 'Invite friends and earn' },
-];
+// Removed rewards nav (leaderboards, badges, referrals)
 
 export const analyticsNav: NavItem[] = [
   { label: 'Swaps', href: '/swaps', description: 'Your swap history' },
-  { label: 'P&L', href: '/profile#pnl', description: 'Your realized performance' },
-  { label: 'Wallet Stats', href: '/profile', description: 'Overview of points, streaks and more' },
+  { label: 'Portfolio', href: '/profile', description: 'Your wallet overview' },
 ];
 
 export const moreNav: NavItem[] = [
-  { label: 'NFTs', href: '/nfts' },
-  { label: 'Staking', href: '/staking', badge: 'soon' },
-  { label: 'DAO', href: '/dao' },
+  { label: 'Home', href: '/home' },
+  { label: 'Help', href: '/help' },
 ];

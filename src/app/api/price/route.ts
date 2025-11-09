@@ -16,11 +16,11 @@ export async function GET(request: NextRequest) {
     // Try Jupiter API first (NEW ENDPOINT)
     try {
       const jupiterResponse = await fetch(
-        `https://lite-api.jup.ag/price/v3?ids=${tokenIds}`,
+        `https://api.jup.ag/price/v2?ids=${tokenIds}`,
         {
           headers: {
             'Accept': 'application/json',
-            'User-Agent': 'FrenzySwap/1.0',
+            'User-Agent': 'BankiiSwap/1.0',
           },
           signal: AbortSignal.timeout(8000),
         }
@@ -29,7 +29,16 @@ export async function GET(request: NextRequest) {
       if (jupiterResponse.ok) {
         const data = await jupiterResponse.json();
         console.log(`[Price API] ✅ Jupiter success:`, data);
-        return NextResponse.json(data);
+        
+        // Check if we got valid prices
+        const hasValidPrices = data.data && Object.keys(data.data).length > 0;
+        if (hasValidPrices) {
+          return NextResponse.json(data);
+        } else {
+          console.warn(`[Price API] ⚠️ Jupiter returned empty data, trying fallbacks`);
+        }
+      } else {
+        console.warn(`[Price API] ⚠️ Jupiter API status:`, jupiterResponse.status);
       }
     } catch (jupiterError) {
       console.warn(`[Price API] ⚠️ Jupiter failed:`, jupiterError);

@@ -72,8 +72,18 @@ export const TokenListSkeleton = () => (
 export const QuoteLoader = () => (
   <div className="flex flex-col items-center justify-center py-4">
     {/* Spin animation for visual loading feedback */}
-    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-brand-purple mb-2" />
-    <p className="text-brand-purple text-sm">Finding best price...</p>
+    <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-bankii-blue mb-2" />
+    <p className="text-bankii-blue text-sm">Finding best price...</p>
+  </div>
+);
+
+// Inline shimmer skeleton for amount input fields
+export const AmountSkeletonLoader = () => (
+  <div className="relative w-full min-h-[2rem] sm:min-h-[2.5rem] bg-gray-800/40 rounded-lg overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-700/30 to-transparent animate-shimmer" />
+    <div className="flex items-center h-full px-2 py-1">
+      <div className="h-6 sm:h-7 bg-gray-700/50 rounded w-32 sm:w-40 animate-pulse" />
+    </div>
   </div>
 );
 
@@ -107,12 +117,8 @@ export const SwapPreviewSkeleton = () => (
     </div>
     <PriceImpactSkeleton />
     <div className="flex justify-between">
-      <span className="text-gray-500 dark:text-gray-400">MEME Fee</span>
+      <span className="text-gray-500 dark:text-gray-400">Network Fee</span>
       <div className="bg-gray-300 dark:bg-gray-600 h-3 w-16 rounded" />
-    </div>
-    <div className="flex justify-between">
-      <span className="text-gray-500 dark:text-gray-400">Referral Fee</span>
-      <div className="bg-gray-300 dark:bg-gray-600 h-3 w-20 rounded" />
     </div>
   </div>
 );

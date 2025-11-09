@@ -33,9 +33,9 @@ export const PARTNERS: Partner[] = [
     aliases: ['SRM']
   },
   {
-    id: 'meme',
-    name: 'MemeFrenzy',
-    logo: '/assets/tokens/meme.png',
-    aliases: ['MEME']
+    id: 'bnky',
+    name: 'Bankii Token',
+    logo: '/assets/tokens/bnky.png',
+    aliases: ['BNKY']
   },
 ];

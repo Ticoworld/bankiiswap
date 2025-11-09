@@ -3,8 +3,18 @@
 @tailwind utilities;
 
 /* ============================================
-   PREMIUM DESIGN SYSTEM - FRENZYSWAP
+   BANKII DESIGN SYSTEM - BANKIISWAP
    ============================================ */
+
+/* CSS Variables for Bankii Brand */
+:root {
+  --color-bankii-blue: #0049FF;
+  --color-bankii-blue-light: #00A6FF;
+  --color-bankii-dark: #161D38;
+  --color-bankii-grey: #B7B9BD;
+  --font-heading: var(--font-poppins), 'Poppins', sans-serif;
+  --font-body: var(--font-inter), 'Inter', sans-serif;
+}
 
 /* Typography - Professional font rendering */
 @layer base {
@@ -15,17 +25,21 @@
   }
   
   body {
-    @apply bg-black text-white;
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    /* Use pure black background in dark mode per preference; light mode handled below */
+    @apply bg-black text-white font-body overflow-x-hidden;
   }
 
   /* Semantic heading hierarchy */
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+  
   h1 {
-    @apply text-display-md md:text-display-lg;
+    @apply text-display-md md:text-display-lg font-heading-bold;
   }
   
   h2 {
-    @apply text-display-sm md:text-display-md;
+    @apply text-display-sm md:text-display-md font-heading-bold;
   }
   
   h3 {
@@ -45,37 +59,55 @@
   }
 }
 
-/* Light theme (premium design prefers dark, light is secondary) */
+/* Light theme */
 html:not(.dark) body {
-  @apply bg-surface-light text-gray-900;
+  @apply bg-neutral-light text-gray-900;
 }
 
 /* ============================================
-   SCROLLBAR STYLING
+   SCROLLBAR STYLING — Premium, dark, slim
    ============================================ */
 
-/* Webkit browsers (Chrome, Safari, Edge) */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+/* WebKit (Chrome, Safari, Edge) — apply globally */
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
 }
 
-.custom-scrollbar::-webkit-scrollbar-track {
-  @apply bg-surface-card rounded-full;
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: #111; /* dark neutral track */
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  @apply bg-brand-purple rounded-full;
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  /* premium grey/blue thumb */
+  background: linear-gradient(180deg, #2f3b52 0%, #394b6b 100%);
+  border-radius: 9999px;
+  border: 2px solid #0b0b0b; /* tight inset for dark track separation */
 }
 
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  @apply bg-brand-purple-dark;
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #374563 0%, #425784 100%);
 }
 
 /* Firefox */
+html {
+  scrollbar-width: thin;
+  /* thumb track */
+  scrollbar-color: #374563 #111;
+}
+
+/* Still keep utility class for opt-in containers if needed */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #8b5cf6 #1e293b;
+  scrollbar-color: #3a3a3a #111;
 }
 
 /* ============================================
@@ -83,7 +115,7 @@ html:not(.dark) body {
    ============================================ */
    
 .wallet-adapter-button {
-  @apply !bg-brand-purple hover:!bg-brand-purple/90 !text-white !font-semibold !rounded-xl !my-1 !transition-colors !border-2 !border-brand-purple;
+  @apply !bg-bankii-blue hover:!bg-bankii-blue/90 !text-white !font-semibold !rounded-xl !my-1 !transition-colors !border-2 !border-bankii-blue;
   box-shadow: 0 4px 14px 0 rgba(139, 92, 246, 0.3);
 }
 
@@ -136,6 +168,22 @@ html:not(.dark) .wallet-adapter-modal-list-more {
   }
 }
 
+/* ============================================
+   ACCESSIBILITY - REDUCED MOTION
+   ============================================ */
+
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.6s ease-out;
 }
@@ -151,17 +199,18 @@ html:not(.dark) .wallet-adapter-modal-list-more {
 
 /* Premium button base */
 .btn-premium {
-  @apply px-6 py-3 rounded-xl font-semibold transition-colors border-2;
+  /* Harmonize with hero CTA: larger padding, pill shape, strong weight */
+  @apply inline-flex items-center justify-center px-8 py-4 rounded-full font-semibold transition-all duration-200;
 }
 
-/* Primary CTA button - Purple only, no gradients */
+/* Primary CTA button - Bankii blue solid */
 .btn-primary {
-  @apply btn-premium bg-brand-purple hover:bg-brand-purple/90 text-white border-brand-purple;
+  @apply btn-premium bg-bankii-blue text-white shadow-lg hover:bg-bankii-blue/90;
 }
 
-/* Secondary button - Outlined purple */
+/* Secondary button - Bankii outline */
 .btn-secondary {
-  @apply btn-premium bg-transparent border-brand-purple text-brand-purple hover:bg-brand-purple/10;
+  @apply btn-premium bg-transparent border-2 border-bankii-blue text-bankii-blue hover:bg-bankii-blue/10;
 }
 
 /* ============================================
@@ -186,4 +235,34 @@ html:not(.dark) .text-gray-400 {
 html:not(.dark) .border-gray-700,
 html:not(.dark) .border-gray-800 {
   @apply !border-gray-200;
+}
+
+/* ============================================
+   DAPP PREMIUM STATIC BACKGROUND
+   ============================================ */
+
+/*
+  A minimalist, dark premium gradient-mesh background for application pages.
+  Replace the SVG path with your exported 8K JPG/PNG when ready:
+  /assets/backgrounds/premium-gradient.jpg
+*/
+.app-background {
+  /* Simplified pure-black app surface. Removed gradient asset causing bottom banding. */
+  background: #000; /* Core surface */
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Optional subtle radial vignette (non-intrusive) */
+.app-background::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(25,25,35,0.55), transparent 60%),
+    radial-gradient(circle at 15% 75%, rgba(20,20,30,0.4), transparent 55%),
+    radial-gradient(circle at 85% 80%, rgba(25,25,40,0.35), transparent 55%);
+  mix-blend-mode: normal;
+  opacity: .55;
 }

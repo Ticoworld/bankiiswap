@@ -14,7 +14,7 @@ const IMAGE_PROVIDERS = {
     SOL: '/assets/tokens/sol.webp',
     USDC: '/assets/tokens/usdc.webp', 
     USDT: '/assets/tokens/usdt.webp',
-    MEME: '/assets/tokens/meme.webp',
+  BNKY: '/assets/tokens/bnky.png',
     BTC: '/assets/tokens/btc.webp',
     ETH: '/assets/tokens/eth.webp',
   } as Record<string, string>,
@@ -86,7 +86,7 @@ export function getOptimizedTokenImage(config: TokenImageConfig): string[] {
 
 // Preload critical token images for instant display
 export function preloadCriticalTokens() {
-  const criticalTokens = ['SOL', 'USDC', 'USDT', 'MEME'];
+  const criticalTokens = ['SOL', 'USDC', 'USDT', 'BNKY'];
   
   criticalTokens.forEach(symbol => {
     if (IMAGE_PROVIDERS.local[symbol]) {

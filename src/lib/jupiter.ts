@@ -423,8 +423,8 @@ export const executeSwap = async (
   // Map inputMint to env variable
   if (quote.inputMint === 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v') { // USDC
     feeAccount = process.env.NEXT_PUBLIC_FEE_USDC;
-  } else if (quote.inputMint === '94fzsMkuHAuFP4J8iMZS43euWr2CLtuvwLgyjPHyqcnY') { // MEME
-    feeAccount = process.env.NEXT_PUBLIC_FEE_MEME;
+  } else if (quote.inputMint === process.env.NEXT_PUBLIC_BNKY_TOKEN_ADDRESS) { // BNKY
+    feeAccount = process.env.NEXT_PUBLIC_FEE_BNKY;
   } else if (quote.inputMint === 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB') { // USDT
     feeAccount = process.env.NEXT_PUBLIC_FEE_USDT;
   } else if (quote.inputMint === 'EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm') { // WIF

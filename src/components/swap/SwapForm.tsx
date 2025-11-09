@@ -5,7 +5,7 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import TokenSelector from './TokenSelector';
 import Settings from './Settings';
 import SwapButton from './SwapButton';
-import { Token, MEME_TOKEN } from '@/config/tokens';
+import { Token, BNKY_TOKEN, DEFAULT_INPUT_TOKEN, DEFAULT_OUTPUT_TOKEN } from '@/config/tokens';
 import { useWallet } from '@solana/wallet-adapter-react';
 import { useTokenList } from '@/hooks/useTokenList';
 import { useSwap } from '@/hooks/useSwap';
@@ -13,12 +13,21 @@ import { getQuote, isValidQuote } from '@/lib/jupiter';
 import { toSmallestUnit, fromSmallestUnit } from '@/lib/utils';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaExchangeAlt, FaFire, FaInfoCircle, FaShare } from 'react-icons/fa';
-import { motion } from 'framer-motion';
-import { QuoteLoader, BalanceSkeleton, SwapPreviewSkeleton, TokenSelectorSkeleton } from '@/components/ui/SkeletonLoader';
+import { FaExchangeAlt, FaFire, FaInfoCircle, FaShare, FaChartBar } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { QuoteLoader, BalanceSkeleton, SwapPreviewSkeleton, TokenSelectorSkeleton, AmountSkeletonLoader } from '@/components/ui/SkeletonLoader';
 import NetworkStatus from '@/components/ui/NetworkStatus';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
 import { toast } from 'react-hot-toast';
+import { trackSwapError, trackSwapSuccess } from '@/lib/analytics-lite';
+import ConfirmSwapModal from '@/components/swap/ConfirmSwapModal';
+import PendingSwapModal from '@/components/swap/PendingSwapModal';
+// Success modal will be replaced by a premium toast notification
+// import SuccessSwapModal from '@/components/swap/SuccessSwapModal';
+import SuccessToast from '@/components/ui/SuccessToast';
+import ErrorToast from '@/components/ui/ErrorToast';
+import TraderDashboardPanel from '@/components/swap/TraderDashboardPanel';
+import { useSwapHistory } from '@/hooks/useSwapHistory';
 
 export default function SwapForm() {
   const router = useRouter();
@@ -26,6 +35,7 @@ export default function SwapForm() {
   const { publicKey, connected } = useWallet();
   const { tokens, loading: tokensLoading } = useTokenList();
   const { performSwap, swapError } = useSwap(); // ✅ include swapError
+  const { history, addSwapToHistory } = useSwapHistory();
 
   const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com';
   const connection = useMemo(() => new Connection(RPC_URL), [RPC_URL]);
@@ -40,8 +50,7 @@ export default function SwapForm() {
   const [slippage, setSlippage] = useState(0.5);
   const [quote, setQuote] = useState<any>(null);
   const [priceImpact, setPriceImpact] = useState<number | null>(null);
-  const [memeFee, setMemeFee] = useState(0);
-  const [referralFee, setReferralFee] = useState(0);
+  const [platformFee, setPlatformFee] = useState(0);
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isConfirming, setIsConfirming] = useState(false);
@@ -50,6 +59,23 @@ export default function SwapForm() {
   const [toBalance, setToBalance] = useState<number | null>(null);
   const [toBalanceLoading, setToBalanceLoading] = useState(false);
   const [showSwapPreview, setShowSwapPreview] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showPendingModal, setShowPendingModal] = useState(false);
+  const [pendingTxHash, setPendingTxHash] = useState<string | null>(null);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  // Success modal is removed in favor of toasts
+  // const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Detect mobile viewport width (tailwind md breakpoint at 768px)
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Generate shareable URL for current swap configuration
   const generateShareURL = useCallback(() => {
@@ -79,8 +105,8 @@ export default function SwapForm() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: `Swap ${fromToken?.symbol} for ${toToken?.symbol} on FrenzySwap`,
-          text: `Check out this swap on FrenzySwap!`,
+          title: `Swap ${fromToken?.symbol} for ${toToken?.symbol} on BankiiSwap`,
+          text: `Check out this swap on BankiiSwap!`,
           url: shareURL
         });
       } else {
@@ -106,12 +132,12 @@ export default function SwapForm() {
                          searchParams.get('from') || searchParams.get('to');
     
     if (tokens.length > 0 && !fromToken && !hasUrlParams) {
-      // Only set defaults if no URL params exist
-      const usdc = tokens.find(t => t.symbol === 'USDC');
-      if (usdc) setFromToken(usdc);
+      // Set default input token (BNKY)
+      setFromToken(DEFAULT_INPUT_TOKEN);
     }
-    if (tokens.length > 0 && !toToken && MEME_TOKEN && !hasUrlParams) {
-      setToToken(MEME_TOKEN);
+    if (tokens.length > 0 && !toToken && DEFAULT_OUTPUT_TOKEN && !hasUrlParams) {
+      // Set default output token (USDC)
+      setToToken(DEFAULT_OUTPUT_TOKEN);
     }
   }, [tokens, fromToken, toToken, searchParams]);
 
@@ -347,8 +373,7 @@ export default function SwapForm() {
       setToAmount('');
       setQuote(null);
       setPriceImpact(null);
-      setMemeFee(0);
-      setReferralFee(0);
+      setPlatformFee(0);
       setError(null);
       return;
     }
@@ -368,8 +393,7 @@ export default function SwapForm() {
           setToAmount('');
           setQuote(null);
           setPriceImpact(null);
-          setMemeFee(0);
-          setReferralFee(0);
+          setPlatformFee(0);
           return;
         }
       }
@@ -381,14 +405,19 @@ export default function SwapForm() {
     }
 
     try {
+      // ✅ Set loading state FIRST to trigger skeleton loader immediately
       setQuoteLoading(true);
+      setToAmount(''); // ✅ Clear previous amount to prevent stale data
+      setQuote(null); // ✅ Clear previous quote
+      setError(null); // ✅ Clear previous errors
+      
       const amount = toSmallestUnit(parseFloat(fromAmount), fromToken.decimals).toString();
       
       // ⚡ SPEED OPTIMIZATION: Cache key for quote requests
       const cacheKey = `${fromToken.address}-${toToken.address}-${amount}-${slippage}`;
       
       // ⚡ SPEED OPTIMIZATION: Parallel processing for quote and price data
-      const quotePromise = getQuote(fromToken.address, toToken.address, amount, slippage, referralAccount);
+      const quotePromise = getQuote(fromToken.address, toToken.address, amount, slippage, referralAccount || '');
       
       let quote;
       try {
@@ -434,15 +463,13 @@ export default function SwapForm() {
 
       // ⚡ SPEED OPTIMIZATION: Pre-calculate fees
       const platformFeeAmount = parseFloat(fromAmount) * 0.003;
-      setMemeFee(platformFeeAmount * 0.67);
-      setReferralFee(platformFeeAmount * 0.33);
+      setPlatformFee(platformFeeAmount);
     } catch (err: any) {
       setError(err.message || 'Failed to fetch quote');
       setQuote(null);
       setToAmount('');
       setPriceImpact(null);
-      setMemeFee(0);
-      setReferralFee(0);
+      setPlatformFee(0);
     } finally {
       setQuoteLoading(false);
     }
@@ -464,7 +491,7 @@ export default function SwapForm() {
   }, [swapError]);
 
   const handleSwap = async () => {
-    if (!quote || !fromToken || !toToken || !publicKey || !referralAccount) return;
+    if (!quote || !fromToken || !toToken || !publicKey) return;
 
     const fromAmountNum = parseFloat(fromAmount);
     if (balance === null || fromAmountNum > balance) {
@@ -482,7 +509,7 @@ export default function SwapForm() {
 
     try {
       // ⚡ SPEED OPTIMIZATION: Start swap execution and logging in parallel
-      const swapPromise = performSwap(quote, publicKey.toString(), referralAccount, connection);
+      const swapPromise = performSwap(quote, publicKey.toString(), referralAccount || '', connection);
       
       // ⚡ SPEED OPTIMIZATION: Pre-calculate USD values and start price fetch early
       const pricePromise = import('@/lib/fetchTokenPrices').then(({ fetchTokenPrices }) => 
@@ -491,6 +518,8 @@ export default function SwapForm() {
 
       // Wait for swap to complete first
       const tx = await swapPromise;
+  // Analytics: swap success (no PII)
+  trackSwapSuccess(fromToken.symbol, toToken.symbol);
 
       // ⚡ SPEED OPTIMIZATION: Fire-and-forget analytics logging (don't block redirect)
       void (async () => {
@@ -501,7 +530,7 @@ export default function SwapForm() {
 
           const fromUsdValue = fromAmountNum * fromTokenPrice;
           const toUsdValue = parseFloat(toAmount) * toTokenPrice;
-          const feesUsdValue = memeFee * fromTokenPrice;
+          const feesUsdValue = platformFee * fromTokenPrice;
 
           await fetch('/api/log-swap', {
             method: 'POST',
@@ -514,13 +543,12 @@ export default function SwapForm() {
               toAmount: parseFloat(toAmount),
               fromUsdValue,
               toUsdValue,
-              feesPaid: memeFee,
+              feesPaid: platformFee,
               feesUsdValue,
               signature: tx,
               blockTime: Math.floor(Date.now() / 1000),
-              jupiterFee: referralFee,
-              platformFee: memeFee,
-              memeBurned: memeFee, // MEME tokens burned as fees
+              jupiterFee: 0,
+              platformFee: platformFee,
               slippage: slippage / 100,
               routePlan: JSON.stringify(quote?.routePlan || {}),
               fee_token_symbol: fromToken.symbol,
@@ -536,11 +564,149 @@ export default function SwapForm() {
       // ⚡ SPEED OPTIMIZATION: Immediate redirect without waiting for analytics
       router.push(`/swap/tx/${tx}?fromToken=${fromToken.symbol}&toToken=${toToken?.symbol}&fromAmount=${fromAmount}&toAmount=${toAmount}`);
     } catch (err: any) {
+      console.error('Swap execution error:', err);
+      
+      // Extract transaction ID if available (sometimes failed txs still have a signature)
+      const txId = err?.signature || err?.txId || null;
+      
       setError(err.message || 'Swap execution failed');
+      
+      // Show error toast with optional Solscan link
+      toast.error(
+        <ErrorToast
+          txId={txId}
+          message={err.message || 'Swap execution failed. Please try again.'}
+        />,
+        {
+          duration: 8000,
+        }
+      );
+      
+      // Analytics: swap error (no PII)
+      trackSwapError(err?.message);
     } finally {
       setIsConfirming(false);
     }
   };
+
+  // New flow: Confirm -> Wallet -> Pending -> Success
+  const beginConfirmedSwap = async () => {
+    if (!quote || !fromToken || !toToken || !publicKey) return;
+
+    setShowConfirmModal(false);
+    setShowPendingModal(true);
+    setPendingTxHash(null);
+
+    try {
+      const fromAmountNum = parseFloat(fromAmount);
+      const pricePromise = import('@/lib/fetchTokenPrices').then(({ fetchTokenPrices }) =>
+        fetchTokenPrices([fromToken.address, toToken.address])
+      );
+
+      const tx = await performSwap(quote, publicKey.toString(), referralAccount || '', connection);
+      setPendingTxHash(tx);
+
+      // Wait for on-chain confirmation (confirmed)
+      try {
+        await connection.confirmTransaction(tx, 'confirmed');
+      } catch (confirmErr) {
+        // If confirm fails/times out, keep pending modal but still allow viewing on explorer
+        console.warn('Confirmation wait error:', confirmErr);
+      }
+
+      // Fire-and-forget analytics + logging
+      trackSwapSuccess(fromToken.symbol, toToken.symbol);
+      void (async () => {
+        try {
+          const prices = await pricePromise;
+          const fromTokenPrice = prices.find(p => p.mint === fromToken.address)?.price || 0;
+          const toTokenPrice = prices.find(p => p.mint === toToken.address)?.price || 0;
+
+          const fromUsdValue = fromAmountNum * fromTokenPrice;
+          const toUsdValue = parseFloat(toAmount) * toTokenPrice;
+          const feesUsdValue = platformFee * fromTokenPrice;
+
+          await fetch('/api/log-swap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              walletAddress: publicKey.toString(),
+              fromToken: fromToken.symbol,
+              toToken: toToken.symbol,
+              fromAmount: fromAmountNum,
+              toAmount: parseFloat(toAmount),
+              fromUsdValue,
+              toUsdValue,
+              feesPaid: platformFee,
+              feesUsdValue,
+              signature: tx,
+              blockTime: Math.floor(Date.now() / 1000),
+              jupiterFee: 0,
+              platformFee: platformFee,
+              slippage: slippage / 100,
+              routePlan: JSON.stringify(quote?.routePlan || {}),
+              fee_token_symbol: fromToken.symbol,
+              fee_token_mint: fromToken.address
+            })
+          });
+        } catch (logError) {
+          console.error('Failed to log swap:', logError);
+        }
+      })();
+
+      // New behavior: auto-dismiss Pending modal and show non-blocking toast
+      setShowPendingModal(false);
+      
+      // Add swap to local history
+      addSwapToHistory({
+        txId: tx,
+        fromTokenSymbol: fromToken.symbol,
+        fromAmount: fromAmountNum,
+        toTokenSymbol: toToken.symbol,
+        toAmount: parseFloat(toAmount),
+      });
+      
+      toast.success(
+        <SuccessToast
+          txHash={tx}
+          fromAmount={fromAmount}
+          fromSymbol={fromToken.symbol}
+          toAmount={toAmount}
+          toSymbol={toToken.symbol}
+        />,
+        {
+          duration: 6000,
+        }
+      );
+    } catch (err: any) {
+      console.error('Confirmed swap execution error:', err);
+      
+      // Close pending modal first
+      setShowPendingModal(false);
+      
+      // Extract transaction ID if available (sometimes failed txs still have a signature)
+      const txId = err?.signature || err?.txId || pendingTxHash || null;
+      
+      setError(err.message || 'Swap execution failed');
+      
+      // Show error toast with optional Solscan link
+      toast.error(
+        <ErrorToast
+          txId={txId}
+          message={err.message || 'Your swap could not be confirmed. Please check the transaction on-chain.'}
+        />,
+        {
+          duration: 8000,
+        }
+      );
+      
+      // Analytics: swap error (no PII)
+      trackSwapError(err?.message);
+    }
+  };
+
+  // Reset form after successful swap
+  // Old success modal reset flow removed. We keep the form state to enable quick follow-up trades.
 
   const handleMaxClick = (percentage: number) => {
     if (balance === null || !connected) return;
@@ -574,12 +740,14 @@ export default function SwapForm() {
   };
 
   return (
-    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-3 sm:p-6 shadow-2xl shadow-brand-purple/5 w-full max-w-[calc(100vw-2rem)] sm:max-w-md border-2 border-brand-purple/10 hover:border-brand-purple/20 transition-all duration-300 mx-auto min-h-fit overflow-hidden">
+    <>
+    <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-bankii-blue/5 w-full max-w-[calc(100vw-2rem)] sm:max-w-md border-2 border-bankii-blue/10 hover:border-bankii-blue/20 transition-all duration-300 mx-auto overflow-hidden">
       {/* Header with Network Status */}
-      <div className="flex justify-between items-center mb-3 sm:mb-4">
-        <div className="flex items-center space-x-2 sm:space-x-3">
-          <h1 className="text-base sm:text-lg lg:text-xl font-bold text-brand-purple">
-            FRENZYSWAP
+      
+      <div className="flex justify-between items-center mb-3">
+        <div className="flex items-center space-x-2">
+          <h1 className="text-sm sm:text-base font-bold text-bankii-blue">
+            Swap
           </h1>
           <NetworkStatus showLabel={false} className="hidden sm:flex" />
         </div>
@@ -590,8 +758,8 @@ export default function SwapForm() {
       </div>
 
       {isConfirming ? (
-        <div className="flex flex-col items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-purple mb-4"></div>
+        <div className="flex flex-col items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-bankii-blue mb-4"></div>
           <h3 className="text-lg font-medium mb-1">Confirming Swap</h3>
           <p className="text-gray-400 text-sm">Approve the transaction in your wallet</p>
         </div>
@@ -599,15 +767,15 @@ export default function SwapForm() {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="space-y-3 sm:space-y-4"
+          className="space-y-2 sm:space-y-3"
         >
           {/* FROM */}
-          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 sm:p-4 border-2 border-gray-800/50 hover:border-brand-purple/30 transition-colors">
+          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 border-2 border-gray-800/50 hover:border-bankii-blue/30 transition-colors">
             <div className="flex justify-between items-center mb-2">
               <label className="text-gray-400 text-sm font-medium">From</label>
               <div className="flex space-x-1 sm:space-x-2">
                 <button
-                  className="text-xs bg-black/60 border border-gray-800 hover:border-brand-purple hover:bg-brand-purple/10 text-gray-300 px-1.5 sm:px-2 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple min-w-0 flex-shrink-0"
+                  className="text-xs bg-black/60 border border-gray-800 hover:border-bankii-blue hover:bg-bankii-blue/10 text-gray-300 px-1.5 sm:px-2 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue min-w-0 flex-shrink-0"
                   onClick={() => handleMaxClick(0.25)}
                   disabled={!balance || !connected}
                   aria-label="Use 25% of balance"
@@ -615,7 +783,7 @@ export default function SwapForm() {
                   25%
                 </button>
                 <button
-                  className="text-xs bg-black/60 border border-gray-800 hover:border-brand-purple hover:bg-brand-purple/10 text-gray-300 px-1.5 sm:px-2 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple min-w-0 flex-shrink-0"
+                  className="text-xs bg-black/60 border border-gray-800 hover:border-bankii-blue hover:bg-bankii-blue/10 text-gray-300 px-1.5 sm:px-2 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue min-w-0 flex-shrink-0"
                   onClick={() => handleMaxClick(0.5)}
                   disabled={!balance || !connected}
                   aria-label="Use 50% of balance"
@@ -623,7 +791,7 @@ export default function SwapForm() {
                   50%
                 </button>
                 <button
-                  className="text-xs bg-black/60 border border-gray-800 hover:border-brand-purple hover:bg-brand-purple/10 text-gray-300 px-1.5 sm:px-2 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple min-w-0 flex-shrink-0"
+                  className="text-xs bg-black/60 border border-gray-800 hover:border-bankii-blue hover:bg-bankii-blue/10 text-gray-300 px-1.5 sm:px-2 py-1 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue min-w-0 flex-shrink-0"
                   onClick={() => handleMaxClick(0.75)}
                   disabled={!balance || !connected}
                   aria-label="Use 75% of balance"
@@ -631,7 +799,7 @@ export default function SwapForm() {
                   75%
                 </button>
                 <button
-                  className="text-xs bg-brand-purple hover:bg-brand-purple/90 text-white px-1.5 sm:px-2 py-1 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple border-2 border-brand-purple min-w-0 flex-shrink-0"
+                  className="text-xs bg-bankii-blue hover:bg-bankii-blue/90 text-white px-1.5 sm:px-2 py-1 rounded-lg font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue border-2 border-bankii-blue min-w-0 flex-shrink-0"
                   onClick={() => handleMaxClick(1)}
                   disabled={!balance || !connected}
                   aria-label="Use maximum balance"
@@ -678,7 +846,7 @@ export default function SwapForm() {
                   {balance > 0 && (
                     <button 
                       onClick={() => handleMaxClick(1)}
-                      className="text-brand-purple hover:text-brand-purple/80 text-xs underline focus:outline-none focus:ring-2 focus:ring-brand-purple rounded flex-shrink-0 ml-2"
+                      className="text-bankii-blue hover:text-bankii-blue/80 text-xs underline focus:outline-none focus:ring-2 focus:ring-bankii-blue rounded flex-shrink-0 ml-2"
                       aria-label={`Use maximum ${fromToken?.symbol} balance`}
                     >
                       Use Max
@@ -700,7 +868,7 @@ export default function SwapForm() {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleShare}
-              className="bg-black/60 border-2 border-gray-800 p-2 rounded-full text-brand-purple hover:bg-brand-purple/10 hover:border-brand-purple transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-brand-purple focus:ring-offset-2 focus:ring-offset-black"
+              className="bg-black/60 border-2 border-gray-800 p-2 rounded-full text-bankii-blue hover:bg-bankii-blue/10 hover:border-bankii-blue transition-all shadow-lg focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-offset-2 focus:ring-offset-black"
               aria-label="Share swap link"
               disabled={!fromToken || !toToken}
             >
@@ -712,7 +880,7 @@ export default function SwapForm() {
               whileHover={{ scale: 1.05, rotate: 180 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleSwapTokens}
-              className="bg-black/60 border-2 border-brand-purple p-2 rounded-full text-brand-purple hover:bg-brand-purple/10 hover:border-brand-purple transition-all shadow-lg hover:shadow-brand-purple/20 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:ring-offset-2 focus:ring-offset-black"
+              className="bg-black/60 border-2 border-bankii-blue p-2 rounded-full text-bankii-blue hover:bg-bankii-blue/10 hover:border-bankii-blue transition-all shadow-lg hover:shadow-bankii-blue/20 focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-offset-2 focus:ring-offset-black"
               aria-label="Swap token positions"
               disabled={!fromToken || !toToken}
             >
@@ -721,23 +889,23 @@ export default function SwapForm() {
           </div>
 
           {/* TO */}
-          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 sm:p-4 border-2 border-gray-800/50 hover:border-brand-purple/30 transition-colors">
+          <div className="bg-black/40 backdrop-blur-md rounded-xl p-3 border-2 border-gray-800/50 hover:border-bankii-blue/30 transition-colors">
             <div className="mb-2 text-gray-400 text-sm font-medium">To</div>
             <div className="flex items-center space-x-1 overflow-hidden">
               <div className="flex-1 min-w-0">
-                {quoteLoading ? (
-                  <QuoteLoader />
-                ) : (
-                  <input
-                    type="text"
-                    value={toAmount}
-                    readOnly
-                    className="bg-transparent text-xl sm:text-2xl w-full outline-none text-gray-300 cursor-not-allowed min-w-0"
-                    placeholder="0.0"
-                    aria-label={`Amount to receive in ${toToken?.symbol || 'selected token'}`}
-                    tabIndex={-1}
-                  />
-                )}
+                  {quoteLoading ? (
+                    <AmountSkeletonLoader />
+                  ) : (
+                    <input
+                      type="text"
+                      value={toAmount}
+                      readOnly
+                      className="bg-transparent text-xl sm:text-2xl w-full outline-none text-gray-300 cursor-not-allowed min-w-0"
+                      placeholder="0.0"
+                      aria-label={`Amount to receive in ${toToken?.symbol || 'selected token'}`}
+                      tabIndex={-1}
+                    />
+                  )}
               </div>
               <div className="flex-shrink-0 min-w-0">
                 {toTokenLoading ? (
@@ -770,7 +938,7 @@ export default function SwapForm() {
           {quoteLoading && fromAmount && toAmount ? (
             <SwapPreviewSkeleton />
           ) : quote && fromToken && toToken ? (
-            <div className="bg-gray-800 rounded-xl p-4 border border-gray-700 text-sm space-y-3 overflow-hidden">
+            <div className="bg-gray-800 rounded-xl p-3 border border-gray-700 text-sm space-y-2 overflow-hidden">
               <div className="flex justify-between items-center">
                 <span className="text-gray-400">Rate</span>
                 <span className="font-medium text-right min-w-0 truncate">
@@ -789,7 +957,7 @@ export default function SwapForm() {
                     <span className="text-gray-400">Price Impact</span>
                     {priceImpact > 2 && (
                       <FaInfoCircle 
-                        className="h-3 w-3 text-brand-purple flex-shrink-0" 
+                        className="h-3 w-3 text-bankii-blue flex-shrink-0" 
                         title="High price impact warning"
                       />
                     )}
@@ -801,34 +969,22 @@ export default function SwapForm() {
               )}
               <div className="border-t border-gray-800 pt-3 space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-xs">MEME Fee (0.2%)</span>
-                  <span className="text-brand-purple text-xs font-medium text-right min-w-0 truncate">
-                    {memeFee.toFixed(6)} {fromToken.symbol}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-400 text-xs">Referral Fee (0.1%)</span>
-                  <span className="text-brand-purple text-xs font-medium opacity-70 text-right min-w-0 truncate">
-                    {referralFee.toFixed(6)} {fromToken.symbol}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center pt-1 border-t border-gray-800">
-                  <span className="text-gray-300 text-xs font-medium">Total Fees</span>
-                  <span className="text-gray-300 text-xs font-medium text-right min-w-0 truncate">
-                    {(memeFee + referralFee).toFixed(6)} {fromToken.symbol}
+                  <span className="text-gray-400 text-xs">Network Fee</span>
+                  <span className="text-bankii-blue text-xs font-medium text-right min-w-0 truncate">
+                    {platformFee.toFixed(6)} {fromToken.symbol}
                   </span>
                 </div>
               </div>
             </div>
           ) : null}
 
-          {/* BURN NOTICE */}
-          <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-3 flex items-start backdrop-blur-sm overflow-hidden">
-            <div className="bg-brand-purple/20 p-1 rounded mr-2 mt-0.5 flex-shrink-0">
-              <FaFire className="h-4 w-4 text-brand-purple" />
+          {/* BNKY UTILITY NOTICE */}
+          <div className="bg-bankii-blue/10 border-l-4 border-bankii-blue rounded-r-xl p-3 flex items-start backdrop-blur-sm overflow-hidden">
+            <div className="p-1 mr-2 mt-0.5 flex-shrink-0">
+              <FaFire className="h-4 w-4 text-bankii-blue" />
             </div>
-            <p className="text-brand-purple text-xs sm:text-sm min-w-0 break-words">
-              {memeFee.toFixed(6)} {fromToken?.symbol} will be used to buyback and burn MEME tokens
+            <p className="text-bankii-blue-light text-xs sm:text-sm min-w-0 break-words">
+              Hold BNKY tokens for reduced fees and exclusive utility benefits
             </p>
           </div>
 
@@ -852,13 +1008,61 @@ export default function SwapForm() {
               !!error ||
               quoteLoading ||
               parseFloat(fromAmount) <= 0 ||
-              (balance !== null && (parseFloat(fromAmount) + memeFee + referralFee) > balance)
+              (balance !== null && (parseFloat(fromAmount) + platformFee) > balance)
             }
             isLoading={quoteLoading}
-            onClick={handleSwap}
+            onClick={() => setShowConfirmModal(true)}
           />
         </motion.div>
       )}
-    </div>
+  </div>
+
+  {/* Trader Dashboard Toggle Button */}
+  <div className="mt-4 w-full max-w-[calc(100vw-2rem)] sm:max-w-md mx-auto">
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={() => setIsHistoryVisible(!isHistoryVisible)}
+      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gray-900/60 hover:bg-gray-900/80 border border-gray-800 hover:border-bankii-blue/50 text-gray-300 hover:text-white transition-all backdrop-blur-md"
+    >
+      <FaChartBar className={`h-4 w-4 transition-transform ${isHistoryVisible ? 'rotate-180' : ''}`} />
+      <span className="text-sm font-medium">
+        {isHistoryVisible ? 'Hide' : 'Show'} History & Analytics
+      </span>
+    </motion.button>
+  </div>
+
+  {/* Animated Trader Dashboard Panel */}
+  <AnimatePresence>
+    {isHistoryVisible && (
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: 'auto' }}
+        exit={{ opacity: 0, height: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="mt-4 w-full max-w-[calc(100vw-2rem)] sm:max-w-md mx-auto overflow-hidden"
+      >
+        <TraderDashboardPanel history={history} isMobile={isMobile} />
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+  {/* Modals */}
+      <ConfirmSwapModal
+        open={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={beginConfirmedSwap}
+        fromAmount={fromAmount}
+        fromSymbol={fromToken?.symbol}
+        toAmount={toAmount}
+        toSymbol={toToken?.symbol}
+        rateText={fromAmount && toAmount ? `1 ${fromToken?.symbol} = ${(parseFloat(toAmount) / parseFloat(fromAmount)).toFixed(6)} ${toToken?.symbol}` : '-'}
+        slippage={slippage}
+        priceImpact={priceImpact}
+        networkFeeText={`${platformFee.toFixed(6)} ${fromToken?.symbol || ''}`}
+        warning={priceImpact !== null && priceImpact > 1.5}
+      />
+  <PendingSwapModal open={showPendingModal} txHash={pendingTxHash} />
+    </>
   );
 }

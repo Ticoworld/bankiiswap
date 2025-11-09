@@ -92,7 +92,7 @@ export default function TransactionPage({
             {sanitizedParams.fromToken && sanitizedParams.toToken && (
               <div className="bg-gray-900 rounded-xl p-4 border border-gray-600 mb-6">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-gray-400">From</span>
+                  <span className="text-gray-400">You Paid</span>
                   <div className="text-right">
                     <div className="font-medium">{sanitizedParams.fromAmount} {sanitizedParams.fromToken}</div>
                   </div>
@@ -103,7 +103,7 @@ export default function TransactionPage({
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">To</span>
+                  <span className="text-gray-400">You Received</span>
                   <div className="text-right">
                     <div className="font-medium">{sanitizedParams.toAmount} {sanitizedParams.toToken}</div>
                   </div>

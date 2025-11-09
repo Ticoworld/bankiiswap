@@ -48,7 +48,7 @@ export default function ActivityLogCard({ wallet }: { wallet?: string | null }) 
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url; a.download = `frenzyswap-export-${wallet}.json`; a.click(); URL.revokeObjectURL(url);
+  a.href = url; a.download = `bankiiswap-export-${wallet}.json`; a.click(); URL.revokeObjectURL(url);
     } catch (e: any) { toast.error(e?.message || 'Export failed'); }
   }
 

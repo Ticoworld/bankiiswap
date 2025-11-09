@@ -9,7 +9,7 @@ import {
   trackWalletConnection, 
   trackTimeSpent,
   getSessionId 
-} from '@/lib/analytics';
+} from '@/lib/analytics-lite';
 
 export function useAnalytics() {
   const pathname = usePathname();

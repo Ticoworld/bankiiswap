@@ -221,7 +221,7 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('frenzy_pref_lang_full') as Lang | null;
+      const saved = localStorage.getItem('bankii_pref_lang_full') as Lang | null;
       if (saved) setLang(saved);
     } catch {}
   }, []);
@@ -243,8 +243,9 @@ export function I18nProvider({ children }: { children: React.ReactNode }) {
     return () => { stop = true; };
   }, []);
 
+  // Save lang to localStorage whenever it changes
   useEffect(() => {
-    try { localStorage.setItem('frenzy_pref_lang_full', lang); } catch {}
+    try { localStorage.setItem('bankii_pref_lang_full', lang); } catch {}
     if (typeof document !== 'undefined') document.documentElement.lang = resolvedLang;
   }, [lang, resolvedLang]);
 

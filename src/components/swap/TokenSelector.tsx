@@ -72,8 +72,8 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
         key={token.address}
         style={style}
         onClick={() => !disabled && handleSelect(token)}
-        className={`flex items-center w-full p-3 transition focus:outline-none focus:ring-2 focus:ring-brand-purple focus:ring-inset rounded-xl ${
-          disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-900 hover:border hover:border-brand-purple/20'
+        className={`flex items-center w-full p-3 transition focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-inset rounded-xl ${
+          disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-900 hover:border hover:border-bankii-blue/20'
         }`}
         disabled={disabled}
         aria-label={`Select ${token.symbol} (${token.name})${disabled ? ' - disabled' : ''}`}
@@ -95,7 +95,7 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
     <div className="token-selector-wrapper">
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full bg-[#0a0a0a] border-2 border-gray-800 hover:border-brand-purple/50 p-3 rounded-xl text-white flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-brand-purple focus:ring-offset-2 focus:ring-offset-black"
+        className="w-full bg-[#0a0a0a] border-2 border-gray-800 hover:border-bankii-blue/50 p-3 rounded-xl text-white flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-offset-2 focus:ring-offset-black"
         aria-label={selectedToken ? `Selected token: ${selectedToken.symbol}. Click to change.` : 'Select a token'}
         aria-haspopup="dialog"
         type="button"
@@ -115,7 +115,7 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
           viewBox="0 0 24 24"
           strokeWidth={2}
           stroke="currentColor"
-          className="w-5 h-5 ml-2 text-brand-purple"
+          className="w-5 h-5 ml-2 text-bankii-blue"
           aria-hidden="true"
         >
           <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
@@ -146,7 +146,7 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                       setIsOpen(false);
                     }
                   }}
-                  className="w-full p-3 mb-4 bg-black border-2 border-gray-800 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-brand-purple transition-colors"
+                  className="w-full p-3 mb-4 bg-black border-2 border-gray-800 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:border-bankii-blue transition-colors"
                   autoFocus
                   aria-label="Search for tokens"
                 />
@@ -196,7 +196,7 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                     <div className="flex flex-col items-center justify-center h-full p-6 text-center">
                       {searchFeedback.isSearching ? (
                         <>
-                          <div className="animate-spin w-8 h-8 border-2 border-brand-purple border-t-transparent rounded-full mb-4"></div>
+                          <div className="animate-spin w-8 h-8 border-2 border-bankii-blue border-t-transparent rounded-full mb-4"></div>
                           <p className="text-gray-300 font-medium mb-2">
                             {searchFeedback.message || 'Searching...'}
                           </p>
@@ -220,7 +220,7 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                               setSearchValue('');
                               originalSetSearchQuery('');
                             }}
-                            className="mt-4 text-brand-purple hover:text-brand-purple/80 text-sm underline"
+                            className="mt-4 text-bankii-blue hover:text-bankii-blue/80 text-sm underline"
                           >
                             Clear search
                           </button>

@@ -1,64 +1,71 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
-import GlobalLoader from "@/components/ui/Loader";
-import RouteLoader from "@/components/ui/RouteLoader";
+import { Inter, Poppins } from "next/font/google";
+// Removed full-page GlobalLoader and RouteLoader for instant paint UX
 import Providers from "./providers";
 import StructuredData from "@/components/common/StructuredData";
-import MobileQuickNav from "@/components/navigation/MobileQuickNav";
+import PageTransition from "@/components/layout/PageTransition";
 
-const inter = Inter({ subsets: ["latin"] });
+// Font setup - Poppins for headings, Inter for body
+const poppins = Poppins({ 
+  subsets: ["latin"],
+  weight: ['400', '600'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
+const inter = Inter({ 
+  subsets: ["latin"],
+  variable: '--font-inter',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
-  title: "FrenzySwap | Premier Solana DEX Aggregator for Meme Tokens",
-  description: "Leading Solana DEX aggregator for meme tokens. Best swap rates powered by Jupiter. $MEME tokenomics with buyback & burn.",
+  title: "BankiiSwap | Swap $BNKY & Solana Tokens",
+  description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
   keywords: [
-    "FrenzySwap",
+    "BankiiSwap",
+    "BNKY token",
     "Solana DEX",
-    "meme tokens",
-    "DEX aggregator", 
-    "Jupiter",
-    "MEME token",
+    "Jupiter aggregator",
+    "crypto banking",
+    "Bankii Finance",
     "Solana trading",
-    "DeFi",
-    "cryptocurrency",
+    "DeFi swap",
+    "decentralized exchange",
     "token swap",
-    "Solana ecosystem",
-    "decentralized exchange"
+    "Solana ecosystem"
   ],
-  authors: [{ name: "FrenzySwap Team" }],
-  creator: "FrenzySwap",
-  publisher: "FrenzySwap",
-  metadataBase: new URL('https://www.frenzyswap.com'),
+  authors: [{ name: "Bankii Finance Team" }],
+  creator: "Bankii Finance",
+  publisher: "Bankii Finance",
+  metadataBase: new URL('https://bankiiswap.com'),
   alternates: {
-    canonical: 'https://www.frenzyswap.com',
+    canonical: 'https://bankiiswap.com',
   },
   openGraph: {
-    title: "FrenzySwap | Premier Solana DEX Aggregator",
-    description: "Trade meme tokens on Solana with the best rates. Powered by Jupiter aggregation with $MEME tokenomics.",
-    url: 'https://www.frenzyswap.com',
-    siteName: 'FrenzySwap',
+    title: "BankiiSwap | Swap $BNKY & Solana Tokens",
+    description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
+    url: 'https://bankiiswap.com',
+    siteName: 'BankiiSwap',
     type: 'website',
     locale: 'en_US',
     images: [
       {
-        // Prefer JPG for Telegram previews
-        url: '/assets/logos/frenzy-logo.jpg',
+        url: '/assets/landing/hero-visual-v2.jpg',
         width: 1200,
         height: 630,
-        alt: 'FrenzySwap Logo',
+        alt: 'BankiiSwap — Swap BNKY & Solana tokens',
       },
-      // Fallback SVG mark if a client supports it
-      { url: '/frenzyswap_logomark.svg', alt: 'FrenzySwap Logomark' },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "FrenzySwap | Premier Solana DEX Aggregator",
-    description: "Trade meme tokens on Solana with the best rates. Powered by Jupiter aggregation.",
-    images: ['/assets/logos/frenzy-logo.jpg'],
-    creator: '@FrenzySwap',
-    site: '@FrenzySwap',
+    title: "BankiiSwap | Swap $BNKY & Solana Tokens",
+    description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
+    images: ['/assets/landing/hero-visual-v2.jpg'],
+    creator: '@BankiiFinance',
+    site: '@BankiiFinance',
   },
   robots: {
     index: true,
@@ -92,14 +99,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${inter.variable}`}>
       <head>
+        {/* Plausible Analytics (privacy-friendly) */}
+        <script defer data-domain="bankiiswap.com" src="https://plausible.io/js/script.js"></script>
         <script
           dangerouslySetInnerHTML={{
             __html: `
             (function(){
               try{
-                var d=document.documentElement;var m=localStorage.getItem('frenzy_pref_theme')||'system';
+                var d=document.documentElement;var m=localStorage.getItem('bankii_pref_theme')||'system';
                 if(m==='dark'){d.classList.add('dark');}
                 else if(m==='light'){d.classList.remove('dark');}
                 else{var prefersDark=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;d.classList.toggle('dark',!!prefersDark);} 
@@ -109,12 +118,13 @@ export default function RootLayout({
         />
         <StructuredData />
       </head>
-      <body className={`${inter.className} bg-white text-neutral-900 dark:bg-gray-900 dark:text-white`}>
+      <body className={`${inter.className} bg-white text-neutral-900 dark:bg-black dark:text-white overflow-x-hidden`}>
         <Providers>
-          <GlobalLoader />
-          <RouteLoader />
-          {children}
-          <MobileQuickNav />
+          {/* PageTransition adds premium fade between routes */}
+          <PageTransition>
+            {/* Full-page loaders removed: relying on component-level skeletons */}
+            {children}
+          </PageTransition>
         </Providers>
       </body>
     </html>

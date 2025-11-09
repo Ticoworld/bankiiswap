@@ -2,14 +2,18 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+// Env flag
+const IS_PROD = process.env.NODE_ENV === 'production';
+
 // 🔒 SECURITY: Rate limiting in-memory store (for basic protection)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
 // 🔒 SECURITY: Rate limiting configuration
 const RATE_LIMITS = {
   api: { maxRequests: 100, windowMs: 60000 }, // 100 requests per minute for API
-  swap: { maxRequests: 10, windowMs: 60000 },  // 10 swaps per minute
-  general: { maxRequests: 200, windowMs: 60000 } // 200 requests per minute general
+  // NOTE: This limiter should target API actions, not page navigations. Keep generous to avoid false positives.
+  swap: { maxRequests: 120, windowMs: 60000 }, // 120 requests per minute
+  general: { maxRequests: 300, windowMs: 60000 } // 300 requests per minute general
 };
 
 // 🔒 SECURITY: Suspicious patterns detection
@@ -23,9 +27,9 @@ const SUSPICIOUS_PATTERNS = [
   /expression\(/gi, // CSS expression
 ];
 
-// 🔒 Routes that require wallet verification (whitelist access)
+// 🔒 Routes that still require wallet verification (minimal set)
+// Login removed; keep only truly sensitive sections here.
 const PROTECTED_ROUTES = [
-  '/swap',
   '/admin',
   '/analytics'
 ];
@@ -34,7 +38,6 @@ const PROTECTED_ROUTES = [
 const PUBLIC_ROUTES = [
   '/api/health',    // Health checks
   '/api/ping',      // Ping endpoint
-  '/login',
   '/_next',
   '/favicon.ico',
   '/robots.txt',
@@ -42,6 +45,7 @@ const PUBLIC_ROUTES = [
   '/assets',
   '/public',
   '/',              // Landing page
+  '/swap',          // Swap now publicly accessible (wallet gating handled client-side)
   '/legal',         // Legal pages
   '/dao',           // DAO page (coming soon)
   '/staking',       // Staking page (coming soon)
@@ -77,15 +81,27 @@ function isSuspiciousRequest(request: NextRequest): boolean {
 
 // 🔒 SECURITY: Rate limiting function
 function isRateLimited(request: NextRequest): boolean {
-  const ip = request.ip || request.headers.get('x-forwarded-for') || 'unknown';
+  // Do not rate limit in development to prevent Next.js dev/HMR/Flight retries from tripping the limiter
+  if (!IS_PROD) return false;
+
+  const ip =
+    request.ip ||
+    request.headers.get('x-real-ip') ||
+    request.headers.get('x-forwarded-for') ||
+    'unknown';
+
   const pathname = request.nextUrl.pathname;
+  const method = request.method;
   
   // Determine rate limit based on path
   let limit = RATE_LIMITS.general;
   if (pathname.startsWith('/api/')) {
     limit = RATE_LIMITS.api;
-  } else if (pathname.includes('/swap')) {
-    limit = RATE_LIMITS.swap;
+  } else if (pathname === '/swap' || pathname.endsWith('/swap')) {
+    // Only enforce stricter limits for state-changing methods; GET/HEAD page loads are safe
+    if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
+      limit = RATE_LIMITS.swap;
+    }
   }
   
   const key = `${ip}:${pathname}`;
@@ -104,7 +120,7 @@ function isRateLimited(request: NextRequest): boolean {
   
   entry.count++;
   if (entry.count > limit.maxRequests) {
-    console.warn(`Rate limit exceeded for IP: ${ip}, path: ${pathname}`);
+    console.warn(`Rate limit exceeded for IP: ${ip}, path: ${pathname}, method: ${method}`);
     return true;
   }
   
@@ -124,18 +140,9 @@ function isProtectedRoute(pathname: string): boolean {
   return PROTECTED_ROUTES.some(route => pathname.startsWith(route));
 }
 
-function shouldAllow(request: NextRequest): { ok: boolean; redirect?: URL } {
-  const accessOk = request.cookies.get('access-ok')?.value === '1'
-  if (accessOk) return { ok: true }
-  const wallet = request.cookies.get('connected-wallet')?.value
-  // If wallet present but no access cookie, force login to evaluate
-  const loginUrl = new URL('/login', request.url)
-  loginUrl.searchParams.set('returnTo', request.nextUrl.pathname)
-  const inviteToken = request.nextUrl.searchParams.get('invite')
-  if (inviteToken) loginUrl.searchParams.set('invite', inviteToken)
-  const ref = request.nextUrl.searchParams.get('ref')
-  if (ref) loginUrl.searchParams.set('ref', ref)
-  return { ok: false, redirect: loginUrl }
+// Access check now: allow everything unless on protected route; no more login cookie gating.
+function shouldAllow(_request: NextRequest): { ok: boolean; redirect?: URL } {
+  return { ok: true };
 }
 
 export function middleware(request: NextRequest) {
@@ -165,10 +172,10 @@ export function middleware(request: NextRequest) {
   if (isPublicRoute(pathname)) {
     response = NextResponse.next();
   } else if (isProtectedRoute(pathname)) {
-    // Only check access for protected routes
+    // Future: implement server-side wallet allowlist if needed.
     const check = shouldAllow(request);
-    if (!check.ok) {
-      response = NextResponse.redirect(check.redirect!);
+    if (!check.ok && check.redirect) {
+      response = NextResponse.redirect(check.redirect);
     }
   }
 

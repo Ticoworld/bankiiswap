@@ -38,34 +38,34 @@ export default function GlobalLoader() {
             {/* Triple ring loader */}
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
-                className="w-16 h-16 border-4 border-brand-purple border-t-transparent rounded-full"
+                className="w-16 h-16 border-4 border-bankii-blue border-t-transparent rounded-full"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
-                className="w-12 h-12 border-4 border-brand-purple/70 border-b-transparent rounded-full opacity-70"
+                className="w-12 h-12 border-4 border-bankii-blue/70 border-b-transparent rounded-full opacity-70"
                 animate={{ rotate: -360 }}
                 transition={{ duration: 1.2, repeat: Infinity, ease: "linear" }}
               />
             </div>
             <div className="absolute inset-0 flex items-center justify-center">
               <motion.div
-                className="w-8 h-8 border-4 border-brand-purple/50 border-l-transparent rounded-full opacity-50"
+                className="w-8 h-8 border-4 border-bankii-blue/50 border-l-transparent rounded-full opacity-50"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
               />
             </div>
           </div>
           
-          <div className="text-brand-purple text-xl font-bold mb-4">
-            {progress < 100 ? 'Loading FrenzySwap' : 'Almost Ready!'}
+          <div className="text-bankii-blue text-xl font-bold mb-4">
+            {progress < 100 ? 'Loading BankiiSwap' : 'Almost Ready!'}
           </div>
           
           <div className="w-64 h-2 bg-gray-900/50 backdrop-blur-sm rounded-full overflow-hidden border border-gray-800/50">
             <motion.div 
-              className="h-full bg-gradient-to-r from-brand-purple to-brand-blue"
+              className="h-full bg-gradient-to-r from-bankii-blue to-brand-blue"
               initial={{ width: "0%" }}
               animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}

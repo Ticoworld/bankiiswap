@@ -1,4 +1,4 @@
-export const MEME_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_MEME_TOKEN_ADDRESS || '94fzsMkuHAuFP4J8iMZS43euWr2CLtuvwLgyjPHyqcnY';
+export const BNKY_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_BNKY_TOKEN_ADDRESS || 'C1MAQ3hbSVR6d5isBRRcBAJKnPrbVwfajDhiNLhJNrff';
 
 export type Token = {
   address: string;
@@ -13,13 +13,35 @@ export type Token = {
   isJupiterFallback?: boolean; // Flag for tokens found via Jupiter fallback but not in verified lists
 }; 
 
-export const MEME_TOKEN: Token = {
-  address: MEME_TOKEN_ADDRESS,
-  name: 'MemeFrenzy',
-  symbol: 'MEME',
-  logoURI: '/assets/tokens/meme.png',
-  decimals: 6,  // MEME token has 6 decimals, not 9
+export const BNKY_TOKEN: Token = {
+  address: BNKY_TOKEN_ADDRESS,
+  name: 'Bankii Token',
+  symbol: 'BNKY',
+  logoURI: '/assets/tokens/bnky.png',
+  decimals: 9,  // Update to correct decimals for BNKY
   verified: true,
-  tags: ['verified', 'community']
+  tags: ['utility', 'verified']
 };
+
+export const SOL_TOKEN: Token = {
+  address: 'So11111111111111111111111111111111111111112',
+  name: 'Solana',
+  symbol: 'SOL',
+  logoURI: '/assets/tokens/sol.png',
+  decimals: 9,
+  verified: true,
+};
+
+export const USDC_TOKEN: Token = {
+  address: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
+  name: 'USD Coin',
+  symbol: 'USDC',
+  logoURI: '/assets/tokens/usdc.png',
+  decimals: 6,
+  verified: true,
+};
+
+// Default swap pair: USDC → BNKY
+export const DEFAULT_INPUT_TOKEN = USDC_TOKEN;
+export const DEFAULT_OUTPUT_TOKEN = BNKY_TOKEN;
 

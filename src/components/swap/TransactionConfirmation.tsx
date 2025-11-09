@@ -12,7 +12,7 @@ interface SwapConfirmationProps {
   toToken: Token | null;
   fromAmount: string;
   toAmount: string;
-  memeFee?: number;
+  platformFee?: number;
   onContinue: () => void;
 }
 
@@ -22,7 +22,7 @@ export default function SwapConfirmation({
   toToken,
   fromAmount,
   toAmount,
-  memeFee,
+  platformFee,
   onContinue,
 }: SwapConfirmationProps) {
   const explorerUrl = `https://solscan.io/tx/${txHash}?cluster=mainnet-beta`;
@@ -92,7 +92,7 @@ export default function SwapConfirmation({
             href={explorerUrl} 
             target="_blank" 
             rel="noopener noreferrer"
-            className="text-brand-purple hover:text-brand-purple/80 text-sm flex items-center"
+            className="text-bankii-blue hover:text-bankii-blue/80 text-sm flex items-center"
           >
             View on Solscan <FaExternalLinkAlt className="ml-1 text-xs" />
           </a>
@@ -102,15 +102,15 @@ export default function SwapConfirmation({
         </div>
       </div>
 
-      <div className="bg-brand-purple/10 border-2 border-brand-purple/20 rounded-xl p-3 text-center text-brand-purple text-sm mb-6">
-        🔥 {memeFee !== undefined
-          ? `${memeFee.toFixed(6)} ${fromToken?.symbol || ''} was used to buyback and burn FRENZY tokens`
-          : 'A portion of fees has been used to buyback and burn FRENZY tokens'}
+      <div className="bg-bankii-blue/10 border-2 border-bankii-blue/20 rounded-xl p-3 text-center text-bankii-blue text-sm mb-6">
+        🎉 {platformFee !== undefined
+          ? `${platformFee.toFixed(6)} ${fromToken?.symbol || ''} supports the Bankii ecosystem and BNKY utility`
+          : 'A portion of fees supports the Bankii ecosystem and BNKY utility'}
       </div>
 
       <button
         onClick={onContinue}
-        className="w-full py-3 px-4 bg-brand-purple hover:bg-brand-purple/90 text-white font-medium rounded-xl transition-colors"
+        className="w-full py-3 px-4 bg-bankii-blue hover:bg-bankii-blue/90 text-white font-medium rounded-xl transition-colors"
       >
         Make Another Swap
       </button>

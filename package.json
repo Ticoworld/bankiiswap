@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.18",
@@ -23,6 +24,7 @@
     "@types/react-virtualized-auto-sizer": "^1.0.4",
     "@types/redis": "^4.0.10",
     "@vercel/og": "^0.8.5",
+    "aos": "^2.3.4",
     "axios": "^1.10.0",
     "axios-retry": "^4.5.0",
     "big.js": "^7.0.1",
@@ -44,9 +46,11 @@
     "qrcode": "^1.5.3",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-fast-marquee": "^1.6.5",
     "react-hot-toast": "^2.5.2",
     "react-icons": "^5.5.0",
     "react-intersection-observer": "^9.16.0",
+    "react-tooltip": "^5.30.0",
     "react-virtualized-auto-sizer": "^1.0.26",
     "react-window": "^1.8.11",
     "recharts": "^2.12.7",

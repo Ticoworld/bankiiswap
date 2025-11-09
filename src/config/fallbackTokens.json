@@ -21,10 +21,10 @@
     "logoURI": "/assets/tokens/usdt.png"
   },
   {
-    "address": "94fzsMkuHAuFP4J8iMZS43euWr2CLtuvwLgyjPHyqcnY",
-    "name": "MemeFrenzy",
-    "symbol": "MEME",
+    "address": "C1MAQ3hbSVR6d5isBRRcBAJKnPrbVwfajDhiNLhJNrff",
+    "name": "Bankii Utility Token",
+    "symbol": "BNKY",
     "decimals": 9,
-    "logoURI": "/assets/tokens/meme.png"
+    "logoURI": "/assets/tokens/bnky.png"
   }
 ]

@@ -6,7 +6,7 @@ export const runtime = 'edge'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
-  const title = searchParams.get('title') || 'FrenzySwap'
+  const title = searchParams.get('title') || 'BankiiSwap'
   const subtitle = searchParams.get('subtitle') || 'Trade smarter on Solana'
   const stat = searchParams.get('stat') || ''
   return new ImageResponse(

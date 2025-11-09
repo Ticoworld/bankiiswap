@@ -3,6 +3,8 @@ import { WalletProvider } from '@/lib/wallet/adapter';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast'; // ✅ Import toast system
 import { I18nProvider } from '@/lib/i18n';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 
@@ -18,12 +20,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           root.classList.toggle('dark', !!prefersDark);
         }
       };
-      const saved = localStorage.getItem('frenzy_pref_theme') || 'system';
+      const saved = localStorage.getItem('bankii_pref_theme') || 'system';
       applyTheme(saved);
       // respond to system changes when in system mode
       const mql = window.matchMedia('(prefers-color-scheme: dark)');
       const listener = () => {
-        const mode = localStorage.getItem('frenzy_pref_theme') || 'system';
+        const mode = localStorage.getItem('bankii_pref_theme') || 'system';
         if (mode === 'system') applyTheme('system');
       };
       mql.addEventListener?.('change', listener);
@@ -32,10 +34,20 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Initialize AOS (Animate On Scroll)
+    try {
+      AOS.init({
+        duration: 800, // Animation duration
+        once: true,    // Only animate once
+        offset: 100,   // Trigger animation before element is in view
+        easing: 'ease-out-cubic'
+      });
+    } catch {}
+
     const preloadAssets = [
       '/assets/tokens/sol.png',
-      '/assets/tokens/meme.png',
-      '/assets/logos/frenzyswap_logomark.svg'
+      '/assets/tokens/bnky.png',
+      '/assets/logos/bankii-logo.jpg'
     ];
     preloadAssets.forEach(src => {
       const img = new Image();
@@ -61,13 +73,13 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <I18nProvider>
         {children}
         <Toaster 
-          position="top-right"
+          position="bottom-right"
           toastOptions={{
             duration: 5000,
             style: {
               background: '#1a1a1a',
               color: '#fff',
-              border: '1px solid #8b5cf6', // brand-purple
+              border: '1px solid #0049FF', // bankii-blue
               padding: '12px 16px',
               fontSize: '0.875rem',
               fontWeight: '500'
@@ -95,7 +107,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
               }
             },
             iconTheme: {
-              primary: '#8b5cf6', // brand-purple
+              primary: '#0049FF', // bankii-blue
               secondary: '#1a1a1a'
             }
           }}

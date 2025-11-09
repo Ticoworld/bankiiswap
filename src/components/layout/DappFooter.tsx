@@ -1,106 +1,140 @@
+import Image from 'next/image';
+
 export function DappFooter() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 py-8">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0 flex flex-col items-center md:items-start">
-            <div className="flex items-center mb-2">
-              {/* Large screen logo */}
-              <img
-                src="/assets/logos/Frenzyswap.svg"
-                alt="FrenzySwap Logo"
-                className="h-10 w-auto hidden md:block"
-              />
-              {/* Small screen logo */}
-              <img
-                src="/assets/logos/frenzyswap_logomark.svg"
-                alt="FrenzySwap Logo"
-                className="h-10 w-auto md:hidden"
-              />
+    <footer className="bg-neutral-darker border-t border-gray-800">
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 py-20">
+        <div className="flex flex-col space-y-16">
+          
+          {/* Block 1: Links & Powered By */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+            {/* Brand + Tagline */}
+            <div className="md:col-span-1">
+              <div className="flex items-center gap-3 mb-4">
+                <Image 
+                  src="/assets/logos/bankii-logo.jpg" 
+                  alt="BankiiSwap Logo" 
+                  width={40} 
+                  height={40} 
+                  className="rounded-lg" 
+                />
+                <span className="text-xl font-heading font-bold text-white">BankiiSwap</span>
+              </div>
+              <p className="text-sm text-neutral-400 leading-relaxed">
+                Powered by{' '}
+                <a 
+                  href="https://jup.ag" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-bankii-blue-light hover:underline"
+                >
+                  Jupiter
+                </a>
+              </p>
             </div>
-            <p className="text-gray-600 dark:text-gray-500 text-sm">
-              Part of the MemeFrenzy ecosystem
+
+            {/* Legal */}
+            <div>
+              <h4 className="text-white/90 font-semibold mb-4">Legal</h4>
+              <ul className="space-y-3">
+                <li>
+                  <a href="/legal/terms" className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors">
+                    Terms of Service
+                  </a>
+                </li>
+                <li>
+                  <a href="/legal/privacy" className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors">
+                    Privacy Policy
+                  </a>
+                </li>
+                <li>
+                  <a href="/legal/disclaimer" className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors">
+                    Disclaimer
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Community */}
+            <div>
+              <h4 className="text-white/90 font-semibold mb-4">Community</h4>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="https://t.me/bankiiswap" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors"
+                  >
+                    Telegram
+                  </a>
+                </li>
+                <li>
+                  <a 
+                    href="https://x.com/bankiiswap" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors"
+                  >
+                    X (Twitter)
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Ecosystem */}
+            <div>
+              <h4 className="text-white/90 font-semibold mb-4">Ecosystem</h4>
+              <ul className="space-y-3">
+                <li>
+                  <a 
+                    href="https://bankii.finance" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors"
+                  >
+                    Bankii Finance
+                  </a>
+                </li>
+                <li>
+                  <a href="/swap" className="text-neutral-400 hover:text-bankii-blue-light text-sm transition-colors">
+                    Swap
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* Block 2: Disclaimer */}
+          <div className="max-w-3xl mx-auto text-center">
+            <p className="text-sm text-neutral-400 leading-relaxed">
+              Trading cryptocurrencies involves significant risk. Values can be volatile and you may lose all capital. 
+              Nothing on BankiiSwap constitutes financial advice. Always do your own research.
             </p>
           </div>
 
-          <div className="flex flex-wrap justify-center gap-6">
-            <div className="text-center">
-              <h4 className="text-gray-700 dark:text-gray-400 mb-2">Legal</h4>
-              <div className="flex flex-col space-y-1">
-                <a
-                  href="/legal/terms"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
-                >
-                  Terms
-                </a>
-                <a
-                  href="/legal/privacy"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
-                >
-                  Privacy
-                </a>
-                <a
-                  href="/legal/disclaimer"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
-                >
-                  Disclaimer
-                </a>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <h4 className="text-gray-700 dark:text-gray-400 mb-2">Ecosystem</h4>
-              <div className="flex flex-col space-y-1">
-                <a
-                  href="/nfts"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
-                >
-                  NFTs
-                </a>
-                <a
-                  href="/staking"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
-                >
-                  Staking
-                </a>
-                <a
-                  href="/dao"
-                  className="text-gray-600 dark:text-gray-500 hover:text-brand-purple dark:hover:text-brand-purple text-sm"
-                >
-                  DAO
-                </a>
-              </div>
-            </div>
-
-            <div className="text-center">
-              <h4 className="text-gray-700 dark:text-gray-400 mb-2">Community</h4>
-              <div className="flex flex-col space-y-1">
-                <a
-                  href="https://t.me/frenzyswap_dex"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
-                >
-                  Telegram
-                </a>
-                <a
-                  href="https://x.com/frenzyswapdefi"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-gray-600 dark:text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 text-sm"
-                >
-                  X (Twitter)
-                </a>
-              </div>
-            </div>
+          {/* Block 3: The Stroked Brandmark (The "Aha" Moment) */}
+          <div className="text-center">
+            <h2 
+              className="text-6xl md:text-8xl font-heading font-extrabold select-none [-webkit-text-stroke:1px_#00A6FF] [text-stroke:1px_#00A6FF] text-transparent"
+              aria-label="BankiiSwap"
+            >
+              BankiiSwap
+            </h2>
           </div>
-        </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-200 dark:border-gray-800 text-center text-gray-600 dark:text-gray-500 text-sm">
-          <p>© {currentYear} FrenzySwap. All rights reserved.</p>
-          <p className="mt-1">Built by Ticoworld</p>
+          {/* Block 4: Copyright & Credits */}
+          <div className="text-center">
+            <p className="text-xs text-neutral-500">
+              © {currentYear} BankiiSwap. All rights reserved.
+            </p>
+            <p className="text-xs text-neutral-500 mt-2">
+              Built by <span className="text-neutral-400">Ticoworld</span>
+            </p>
+          </div>
+
         </div>
       </div>
     </footer>
