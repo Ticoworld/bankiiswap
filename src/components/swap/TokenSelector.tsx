@@ -151,45 +151,58 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                   aria-label="Search for tokens"
                 />
 
-              {loading ? (
-                <div className="space-y-2">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <div key={i} className="flex items-center p-3">
-                      <div className="w-8 h-8 mr-3 bg-gray-900 border-2 border-gray-800 rounded-full animate-pulse" />
-                      <div className="flex-1 space-y-1">
-                        <div className="w-1/4 h-4 bg-gray-900 border border-gray-800 rounded animate-pulse" />
-                        <div className="w-1/2 h-3 bg-gray-900 border border-gray-800 rounded animate-pulse" />
-                      </div>
+              {/* Show skeletons ONLY if main list is loading AND user is NOT searching */}
+              {(() => {
+                const hasSearchQuery = (searchFeedback?.searchTerm?.length ?? 0) > 0;
+                const showSkeletons = loading && !hasSearchQuery;
+                
+                if (showSkeletons) {
+                  return (
+                    <div className="space-y-2">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <div key={i} className="flex items-center p-3">
+                          <div className="w-8 h-8 mr-3 bg-gray-900 border-2 border-gray-800 rounded-full animate-pulse" />
+                          <div className="flex-1 space-y-1">
+                            <div className="w-1/4 h-4 bg-gray-900 border border-gray-800 rounded animate-pulse" />
+                            <div className="w-1/2 h-3 bg-gray-900 border border-gray-800 rounded animate-pulse" />
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              ) : error ? (
-                <div className="text-center text-red-500 dark:text-red-400" role="alert">
-                  {rateLimitError ? (
-                    <>
-                      {rateLimitError}
-                      <button 
-                        onClick={retry} 
-                        className="mt-2 underline hover:no-underline focus:outline-none focus:ring-1 focus:ring-red-400 rounded"
-                        aria-label="Retry loading tokens"
-                      >
-                        Retry
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      Failed to load tokens.
-                      <button 
-                        onClick={retry} 
-                        className="mt-2 underline hover:no-underline focus:outline-none focus:ring-1 focus:ring-red-400 rounded"
-                        aria-label="Retry loading tokens"
-                      >
-                        Retry
-                      </button>
-                    </>
-                  )}
-                </div>
-              ) : (
+                  );
+                }
+                
+                if (error) {
+                  return (
+                    <div className="text-center text-red-500 dark:text-red-400" role="alert">
+                      {rateLimitError ? (
+                        <>
+                          {rateLimitError}
+                          <button 
+                            onClick={retry} 
+                            className="mt-2 underline hover:no-underline focus:outline-none focus:ring-1 focus:ring-red-400 rounded"
+                            aria-label="Retry loading tokens"
+                          >
+                            Retry
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          Failed to load tokens.
+                          <button 
+                            onClick={retry} 
+                            className="mt-2 underline hover:no-underline focus:outline-none focus:ring-1 focus:ring-red-400 rounded"
+                            aria-label="Retry loading tokens"
+                          >
+                            Retry
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  );
+                }
+                
+                return (
                 <div className="h-[400px] custom-scrollbar">
                   {/* Show search feedback when there are no results */}
                   {searchFeedback && !searchFeedback.hasResults && searchFeedback.searchTerm && (
@@ -261,7 +274,8 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                     </div>
                   )}
                 </div>
-              )}
+                );
+              })()}
               </div>
             </Dialog.Panel>
           </div>

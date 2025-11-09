@@ -8,16 +8,18 @@ interface SuccessToastProps {
   fromSymbol?: string;
   toAmount: string;
   toSymbol?: string;
+  message?: string; // Optional custom header message
 }
 
-export default function SuccessToast({ txHash, fromAmount, fromSymbol, toAmount, toSymbol }: SuccessToastProps) {
+export default function SuccessToast({ txHash, fromAmount, fromSymbol, toAmount, toSymbol, message }: SuccessToastProps) {
   const explorerUrl = `https://solscan.io/tx/${txHash}?cluster=mainnet-beta`;
+  const header = message || 'Swap Confirmed';
 
   return (
     <div className="flex items-start gap-3">
       {/* Removed internal check icon container to avoid duplicate icons (toast system already provides one). */}
       <div className="min-w-0">
-        <div className="text-sm font-semibold text-white">Swap Confirmed</div>
+  <div className="text-sm font-semibold text-white">{header}</div>
         <div
           className="text-xs text-gray-300 mt-0.5 whitespace-normal break-words leading-relaxed max-w-[280px]"
           title={`You swapped ${fromAmount} ${fromSymbol} for ${toAmount} ${toSymbol}`}

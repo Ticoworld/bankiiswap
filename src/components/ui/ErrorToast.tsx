@@ -1,6 +1,6 @@
 'use client';
 
-import { FaExternalLinkAlt, FaExclamationTriangle } from 'react-icons/fa';
+import { FaExternalLinkAlt } from 'react-icons/fa';
 
 interface ErrorToastProps {
   txId?: string;
@@ -14,11 +14,6 @@ export default function ErrorToast({ txId, message, title = 'Swap Failed' }: Err
 
   return (
     <div className="flex items-start gap-3">
-      <div className="shrink-0 mt-0.5">
-        <div className="w-8 h-8 rounded-full bg-red-500/15 border border-red-500/30 flex items-center justify-center">
-          <FaExclamationTriangle className="w-4 h-4 text-red-400" aria-hidden="true" />
-        </div>
-      </div>
       <div className="min-w-0">
         <div className="text-sm font-semibold text-white">{title}</div>
         <div className="text-xs text-gray-300 mt-0.5">

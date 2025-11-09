@@ -116,10 +116,14 @@ class SmartTokenCache {
 // Singleton instance
 export const smartTokenCache = new SmartTokenCache();
 
+// ⚠️ DISABLED: Preloading moved to TokenListProvider to prevent "thundering herd"
+// This was causing 5 simultaneous API calls on page load, competing with useTokenList
+// Now all token fetching is centralized in the TokenListProvider context
+//
 // Initialize preloading when the module loads
-if (typeof window !== 'undefined') {
-  // Delay preloading to not block initial page load
-  setTimeout(() => {
-    smartTokenCache.preloadPopularTokens();
-  }, 2000);
-}
+// if (typeof window !== 'undefined') {
+//   // Delay preloading to not block initial page load
+//   setTimeout(() => {
+//     smartTokenCache.preloadPopularTokens();
+//   }, 2000);
+// }

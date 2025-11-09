@@ -38,7 +38,15 @@ export default function SwapForm() {
   const { history, addSwapToHistory } = useSwapHistory();
 
   const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com';
-  const connection = useMemo(() => new Connection(RPC_URL), [RPC_URL]);
+  // Extended confirmation timeout to reduce false negatives on background confirmations
+  const connection = useMemo(
+    () =>
+      new Connection(RPC_URL, {
+        commitment: 'confirmed',
+        confirmTransactionInitialTimeout: 90000, // 90 seconds
+      }),
+    [RPC_URL]
+  );
   const referralAccount = process.env.NEXT_PUBLIC_REFERRAL_ACCOUNT;
 
   const [fromToken, setFromToken] = useState<Token | null>(null);
@@ -597,31 +605,69 @@ export default function SwapForm() {
     setShowPendingModal(true);
     setPendingTxHash(null);
 
-    try {
-      const fromAmountNum = parseFloat(fromAmount);
-      const pricePromise = import('@/lib/fetchTokenPrices').then(({ fetchTokenPrices }) =>
-        fetchTokenPrices([fromToken.address, toToken.address])
-      );
+    // --- MODIFICATION: Moved price promise up ---
+    // Start fetching prices now, so we have them by the time we log
+    const pricePromise = import('@/lib/fetchTokenPrices').then(({ fetchTokenPrices }) =>
+      fetchTokenPrices([fromToken.address, toToken.address])
+    );
+    const fromAmountNum = parseFloat(fromAmount);
 
+    try {
+      // --- STEP 1: Send the transaction ---
       const tx = await performSwap(quote, publicKey.toString(), referralAccount || '', connection);
       setPendingTxHash(tx);
 
-      // Wait for on-chain confirmation (confirmed)
-      try {
-        await connection.confirmTransaction(tx, 'confirmed');
-      } catch (confirmErr) {
-        // If confirm fails/times out, keep pending modal but still allow viewing on explorer
-        console.warn('Confirmation wait error:', confirmErr);
-      }
+      // --- STEP 2: OPTIMISTIC UI UPDATE (This is the "instant" part) ---
+      setShowPendingModal(false); // Close the blocking modal IMMEDIATELY
+      
+      // Add swap to local history (ideally with a 'pending' status)
+      addSwapToHistory({
+        txId: tx,
+        fromTokenSymbol: fromToken.symbol,
+        fromAmount: fromAmountNum,
+        toTokenSymbol: toToken.symbol,
+        toAmount: parseFloat(toAmount),
+        // status: 'pending', // Suggest adding a status to your history object
+      });
+      
+      // Show an *instant* "Submitted" toast
+      toast.success(
+        <SuccessToast
+          txHash={tx}
+          fromAmount={fromAmount}
+          fromSymbol={fromToken.symbol}
+          toAmount={toAmount}
+          toSymbol={toToken.symbol}
+          message="Swap Submitted!"
+        />,
+        {
+          duration: 6000,
+        }
+      );
 
-      // Fire-and-forget analytics + logging
+      // Track the *submission* success
       trackSwapSuccess(fromToken.symbol, toToken.symbol);
+
+      // --- STEP 3: BACKGROUND CONFIRMATION & LOGGING (Fire-and-forget) ---
+      // We create a new async task that runs in the background
+      // This no longer blocks the main function.
       void (async () => {
         try {
+          // A. Wait for on-chain confirmation in the background
+          await connection.confirmTransaction(tx, 'confirmed');
+
+          // B. (Optional) Update history status to 'confirmed'
+          // e.g., updateSwapInHistory(tx, { status: 'confirmed' });
+
+          // C. Show a *new* toast to notify completion
+          toast.success(`Swap Confirmed: ${fromToken.symbol} → ${toToken.symbol}`, {
+            duration: 4000,
+          });
+
+          // D. Now log the *confirmed* swap to your backend
           const prices = await pricePromise;
           const fromTokenPrice = prices.find(p => p.mint === fromToken.address)?.price || 0;
           const toTokenPrice = prices.find(p => p.mint === toToken.address)?.price || 0;
-
           const fromUsdValue = fromAmountNum * fromTokenPrice;
           const toUsdValue = parseFloat(toAmount) * toTokenPrice;
           const feesUsdValue = platformFee * fromTokenPrice;
@@ -649,58 +695,50 @@ export default function SwapForm() {
               fee_token_mint: fromToken.address
             })
           });
-        } catch (logError) {
-          console.error('Failed to log swap:', logError);
+        } catch (confirmErr) {
+          // The background confirmation failed
+          console.error('Background confirmation or logging failed:', confirmErr);
+          
+          // (Optional) Update history status to 'failed'
+          // e.g., updateSwapInHistory(tx, { status: 'failed' });
+
+          // Show a non-blocking error toast
+          toast.error(
+            <ErrorToast
+              txId={tx}
+              message="Swap failed to confirm. Check Solscan for details."
+            />,
+            { duration: 8000 }
+          );
         }
       })();
 
-      // New behavior: auto-dismiss Pending modal and show non-blocking toast
-      setShowPendingModal(false);
-      
-      // Add swap to local history
-      addSwapToHistory({
-        txId: tx,
-        fromTokenSymbol: fromToken.symbol,
-        fromAmount: fromAmountNum,
-        toTokenSymbol: toToken.symbol,
-        toAmount: parseFloat(toAmount),
-      });
-      
-      toast.success(
-        <SuccessToast
-          txHash={tx}
-          fromAmount={fromAmount}
-          fromSymbol={fromToken.symbol}
-          toAmount={toAmount}
-          toSymbol={toToken.symbol}
-        />,
-        {
-          duration: 6000,
-        }
-      );
+      // --- End of main 'try' block ---
+      // Notice all the blocking logic is gone!
+
     } catch (err: any) {
-      console.error('Confirmed swap execution error:', err);
+      // --- This block now only catches errors from performSwap (sending) ---
+      console.error('Swap send error:', err);
       
-      // Close pending modal first
+      // Close pending modal
       setShowPendingModal(false);
       
-      // Extract transaction ID if available (sometimes failed txs still have a signature)
       const txId = err?.signature || err?.txId || pendingTxHash || null;
       
-      setError(err.message || 'Swap execution failed');
+      setError(err.message || 'Swap failed to send');
       
-      // Show error toast with optional Solscan link
+      // Show error toast
       toast.error(
         <ErrorToast
           txId={txId}
-          message={err.message || 'Your swap could not be confirmed. Please check the transaction on-chain.'}
+          message={err.message || 'Transaction failed to send. Please try again.'}
         />,
         {
           duration: 8000,
         }
       );
       
-      // Analytics: swap error (no PII)
+      // Analytics: swap error
       trackSwapError(err?.message);
     }
   };
