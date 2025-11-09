@@ -8,11 +8,12 @@ const IS_PROD = process.env.NODE_ENV === 'production';
 // 🔒 SECURITY: Rate limiting in-memory store (for basic protection)
 const rateLimitStore = new Map<string, { count: number; resetTime: number }>();
 
-// 🔒 SECURITY: Rate limiting configuration (API-only)
-// NOTE: To prevent interfering with Next.js RSC/Flight requests and page loads,
-// we only rate-limit explicit API routes. Page navigations (GET /swap, etc.) are excluded.
+// 🔒 SECURITY: Rate limiting configuration
 const RATE_LIMITS = {
   api: { maxRequests: 100, windowMs: 60000 }, // 100 requests per minute for API
+  // NOTE: This limiter should target API actions, not page navigations. Keep generous to avoid false positives.
+  swap: { maxRequests: 120, windowMs: 60000 }, // 120 requests per minute
+  general: { maxRequests: 300, windowMs: 60000 } // 300 requests per minute general
 };
 
 // 🔒 SECURITY: Suspicious patterns detection
@@ -80,16 +81,8 @@ function isSuspiciousRequest(request: NextRequest): boolean {
 
 // 🔒 SECURITY: Rate limiting function
 function isRateLimited(request: NextRequest): boolean {
-  // Do not rate limit in development
+  // Do not rate limit in development to prevent Next.js dev/HMR/Flight retries from tripping the limiter
   if (!IS_PROD) return false;
-
-  const pathname = request.nextUrl.pathname;
-  const method = request.method;
-
-  // Exclude all non-API routes and any GET/HEAD requests from rate limiting
-  if (!pathname.startsWith('/api/') || method === 'GET' || method === 'HEAD') {
-    return false;
-  }
 
   const ip =
     request.ip ||
@@ -97,27 +90,40 @@ function isRateLimited(request: NextRequest): boolean {
     request.headers.get('x-forwarded-for') ||
     'unknown';
 
-  const limit = RATE_LIMITS.api;
+  const pathname = request.nextUrl.pathname;
+  const method = request.method;
+  
+  // Determine rate limit based on path
+  let limit = RATE_LIMITS.general;
+  if (pathname.startsWith('/api/')) {
+    limit = RATE_LIMITS.api;
+  } else if (pathname === '/swap' || pathname.endsWith('/swap')) {
+    // Only enforce stricter limits for state-changing methods; GET/HEAD page loads are safe
+    if (method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE') {
+      limit = RATE_LIMITS.swap;
+    }
+  }
+  
   const key = `${ip}:${pathname}`;
   const now = Date.now();
   const entry = rateLimitStore.get(key);
-
+  
   if (!entry) {
     rateLimitStore.set(key, { count: 1, resetTime: now + limit.windowMs });
     return false;
   }
-
+  
   if (now > entry.resetTime) {
     rateLimitStore.set(key, { count: 1, resetTime: now + limit.windowMs });
     return false;
   }
-
+  
   entry.count++;
   if (entry.count > limit.maxRequests) {
     console.warn(`Rate limit exceeded for IP: ${ip}, path: ${pathname}, method: ${method}`);
     return true;
   }
-
+  
   return false;
 }
 
@@ -174,7 +180,6 @@ export function middleware(request: NextRequest) {
   }
 
   // 🔒 SECURITY: Enhanced security headers for all responses
-  // IMPORTANT: Do NOT set Content-Security-Policy here. Keep a single CSP in next.config.js
   const securityHeaders = {
     // XSS Protection
     'X-XSS-Protection': '1; mode=block',
@@ -185,8 +190,22 @@ export function middleware(request: NextRequest) {
     // HSTS (HTTP Strict Transport Security)
     'Strict-Transport-Security': 'max-age=31536000; includeSubDomains; preload',
     
-    // Content Security Policy is added via next.config.js headers()
-
+    // Content Security Policy (Enhanced)
+    'Content-Security-Policy': [
+      "default-src 'self'",
+      "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://vercel.live https://www.googletagmanager.com https://www.google-analytics.com",
+      "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+      "font-src 'self' https://fonts.gstatic.com",
+      "img-src 'self' data: https: blob:",
+      "connect-src 'self' https: wss: blob:",
+      "media-src 'self' https: data:",
+      "object-src 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+      "frame-ancestors 'none'",
+      "upgrade-insecure-requests"
+    ].join('; '),
+    
     // Permissions Policy
     'Permissions-Policy': [
       'camera=()',
