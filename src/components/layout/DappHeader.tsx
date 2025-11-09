@@ -71,8 +71,10 @@ export function DappHeader() {
 
           {/* Right side: Single unified PremiumWalletButton for all screens */}
           <div className="flex items-center gap-2">
-            {isClient && (
+            {isClient ? (
               <PremiumWalletButton onOpenDrawer={() => setIsDrawerOpen(true)} />
+            ) : (
+              <div className="px-4 py-2 rounded-lg bg-bankii-blue/20 animate-pulse h-10 w-36" />
             )}
           </div>
         </div>

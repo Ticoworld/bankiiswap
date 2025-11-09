@@ -13,7 +13,7 @@ interface TokenImageProps {
 const LOCAL_TOKEN_ICONS: Record<string, string> = {
   SOL: '/assets/tokens/sol.png',
   USDC: '/assets/tokens/usdc.png',
-  USDT: '/assets/tokens/tether-usdt-seeklogo.png',
+  USDT: '/assets/tokens/usdt.png',
   BNKY: '/assets/tokens/bnky.png',
 };
 

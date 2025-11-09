@@ -58,6 +58,22 @@ function isSuspiciousRequest(request: NextRequest): boolean {
   const url = request.url.toLowerCase();
   const userAgent = request.headers.get('user-agent')?.toLowerCase() || '';
   
+  // Skip security checks for static assets and common browser requests
+  const pathname = request.nextUrl.pathname;
+  if (
+    pathname.startsWith('/favicon') ||
+    pathname.startsWith('/assets/') ||
+    pathname.startsWith('/public/') ||
+    pathname.endsWith('.png') ||
+    pathname.endsWith('.jpg') ||
+    pathname.endsWith('.svg') ||
+    pathname.endsWith('.ico') ||
+    pathname.endsWith('.woff') ||
+    pathname.endsWith('.woff2')
+  ) {
+    return false;
+  }
+  
   // Check for suspicious patterns in URL
   for (const pattern of SUSPICIOUS_PATTERNS) {
     if (pattern.test(url)) {
@@ -66,14 +82,22 @@ function isSuspiciousRequest(request: NextRequest): boolean {
     }
   }
   
-  // Check for missing or suspicious user agent
-  if (!userAgent || userAgent.includes('bot') || userAgent.length < 10) {
-    // Allow legitimate bots but log
-    if (userAgent.includes('googlebot') || userAgent.includes('bingbot')) {
+  // Only check user agent for API routes and sensitive paths, not all requests
+  if (pathname.startsWith('/api/') || pathname.startsWith('/admin/')) {
+    // Allow missing user agent for legitimate headless requests
+    if (!userAgent) {
       return false;
     }
-    console.warn(`Suspicious user agent: ${userAgent}`);
-    return true;
+    
+    // Allow legitimate bots
+    if (
+      userAgent.includes('googlebot') ||
+      userAgent.includes('bingbot') ||
+      userAgent.includes('vercel') ||
+      userAgent.includes('chrome-lighthouse')
+    ) {
+      return false;
+    }
   }
   
   return false;
@@ -148,7 +172,17 @@ function shouldAllow(_request: NextRequest): { ok: boolean; redirect?: URL } {
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // 🔒 SECURITY: Check for suspicious requests first
+  // � CRITICAL: Skip all middleware logic for Next.js internal routes to prevent interference
+  if (
+    pathname.startsWith('/_next/') ||
+    pathname.startsWith('/__next') ||
+    pathname.includes('/_next/data/') ||
+    pathname.includes('/_next/static/')
+  ) {
+    return NextResponse.next();
+  }
+
+  // �🔒 SECURITY: Check for suspicious requests first
   if (isSuspiciousRequest(request)) {
     console.error(`Blocking suspicious request: ${request.url}`);
     return new Response('Forbidden', { status: 403 });
