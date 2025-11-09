@@ -1,19 +1,6 @@
 /** @type {import('next').NextConfig} */
 const securityHeaders = [
-  {
-    key: 'Content-Security-Policy',
-    value: [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline' https://plausible.io",
-      "style-src 'self' 'unsafe-inline'",
-      "img-src 'self' data: https:",
-      "font-src 'self' https: data:",
-      "connect-src 'self' https: wss:",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ].join('; '),
-  },
+  // Content-Security-Policy header removed; now set in middleware only
   { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
   { key: 'X-Frame-Options', value: 'DENY' },
   { key: 'X-Content-Type-Options', value: 'nosniff' },
@@ -71,6 +58,11 @@ const nextConfig = {
   // 301 Redirects for deprecated routes
   async redirects() {
     return [
+      {
+        source: '/',
+        destination: '/swap',
+        permanent: false,
+      },
       {
         source: '/login',
         destination: '/swap',
