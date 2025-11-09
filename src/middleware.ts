@@ -57,22 +57,7 @@ const PUBLIC_ROUTES = [
 function isSuspiciousRequest(request: NextRequest): boolean {
   const url = request.url.toLowerCase();
   const userAgent = request.headers.get('user-agent')?.toLowerCase() || '';
-  
-  // Skip security checks for static assets and common browser requests
   const pathname = request.nextUrl.pathname;
-  if (
-    pathname.startsWith('/favicon') ||
-    pathname.startsWith('/assets/') ||
-    pathname.startsWith('/public/') ||
-    pathname.endsWith('.png') ||
-    pathname.endsWith('.jpg') ||
-    pathname.endsWith('.svg') ||
-    pathname.endsWith('.ico') ||
-    pathname.endsWith('.woff') ||
-    pathname.endsWith('.woff2')
-  ) {
-    return false;
-  }
   
   // Check for suspicious patterns in URL
   for (const pattern of SUSPICIOUS_PATTERNS) {
@@ -82,21 +67,16 @@ function isSuspiciousRequest(request: NextRequest): boolean {
     }
   }
   
-  // Only check user agent for API routes and sensitive paths, not all requests
+  // Only check user agent for API routes and sensitive paths
   if (pathname.startsWith('/api/') || pathname.startsWith('/admin/')) {
-    // Allow missing user agent for legitimate headless requests
-    if (!userAgent) {
-      return false;
-    }
-    
-    // Allow legitimate bots
+    if (!userAgent) return false; // Allow missing user agent
     if (
       userAgent.includes('googlebot') ||
       userAgent.includes('bingbot') ||
       userAgent.includes('vercel') ||
       userAgent.includes('chrome-lighthouse')
     ) {
-      return false;
+      return false; // Allow legitimate bots
     }
   }
   
@@ -270,10 +250,19 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
+  /*
+   * Match all request paths except for the ones starting with:
+   * - api (API routes)
+   * - _next/static (static files)
+   * - _next/image (image optimization files)
+   * - assets (our static images/logos)
+   * - landing (our static images/videos)
+   * - public (our static files)
+   * - any file with an extension (e.g., .png, .jpg, .svg, .ico, .txt, .xml)
+   *
+   * This is a "best-practice" matcher that runs on PAGES but ignores ASSETS.
+   */
   matcher: [
-    /*
-     * Match all request paths except API routes and static assets
-     */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    '/((?!api|_next/static|_next/image|assets|landing|public|.*\\..*).*)',
   ],
 };
