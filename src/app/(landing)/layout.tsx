@@ -10,8 +10,8 @@ export default function LandingLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <AnalyticsProvider />
-      <DappHeader />
-      <main className="flex-grow">{children}</main>
+  <DappHeader />
+  <main className="flex-grow">{children}</main>
       <DappFooter />
     </div>
   );

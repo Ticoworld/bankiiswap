@@ -6,99 +6,88 @@ import Image from "next/image";
 import dynamic from "next/dynamic";
 import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { motion } from "framer-motion";
-import { HiMenu, HiX } from "react-icons/hi";
+import { motion, AnimatePresence } from "framer-motion";
 import { trackVisitBankii } from "@/lib/analytics-lite";
+import { useSwapHistory } from '@/hooks/useSwapHistory';
 
 // Removed AnalyticsMenu and UserMenu in Bankii minimal surface
 const MobileDrawer = dynamic(() => import("@/components/navigation/MobileDrawer"), { ssr: false });
-import WalletButton from "@/components/ui/WalletButton";
+import PremiumWalletButton from "@/components/ui/PremiumWalletButton";
 
 export function DappHeader() {
   const pathname = usePathname();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isClient, setIsClient] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [slippage, setSlippage] = useState(0.5); // Global slippage state for drawer
+  
   useEffect(() => setIsClient(true), []);
 
+  // Track scroll position to add backdrop blur only when scrolled
   useEffect(() => {
-    if (!mobileOpen) return;
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 10);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    if (!isDrawerOpen) return;
     const onResize = () => {
-      if (window.innerWidth >= 768) setMobileOpen(false);
+      if (window.innerWidth >= 768) setIsDrawerOpen(false);
     };
     window.addEventListener('resize', onResize);
     return () => window.removeEventListener('resize', onResize);
-  }, [mobileOpen]);
+  }, [isDrawerOpen]);
 
   const isSwap = pathname === "/" || pathname.startsWith("/swap");
+  // Provide history to MobileDrawer for portfolio rendering
+  const { history } = useSwapHistory();
 
   return (
-    <header className="bg-black border-b-2 border-bankii-blue/10 sticky top-0 z-50">
+    <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      scrolled ? 'bg-black/20 backdrop-blur-md' : 'bg-transparent'
+    }`}>
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
+          {/* Mobile: condensed status bar with logo icon only */}
           <Link href="/swap" className="flex items-center gap-2 group">
             <Image
               src="/assets/logos/bankii-logo.jpg"
-              alt="BankiiSwap"
+              alt="Bankii"
               width={32}
               height={32}
               className="rounded-lg transition-opacity group-hover:opacity-80"
               priority
             />
-            <span className="text-xl font-heading font-heading-bold text-white group-hover:text-accent-start transition-colors">
+            {/* Hide text on mobile, keep on desktop for branding */}
+            <span className="hidden md:inline text-xl font-heading font-heading-bold text-white group-hover:text-accent-start transition-colors">
               BankiiSwap
             </span>
           </Link>
 
-          {/* Desktop navigation */}
-          <nav className="hidden md:flex items-center gap-1">
-            <Link
-              href="/swap"
-              className={`relative px-3 py-2 rounded-card text-body-md font-medium transition-all duration-300 ${
-                isSwap ? "text-bankii-blue" : "text-gray-400 hover:text-white"
-              }`}
-            >
-              Swap
-              {isSwap && (
-                <motion.span 
-                  layoutId="nav-underline" 
-                  className="absolute left-0 right-0 -bottom-px h-0.5 bg-gradient-to-r from-bankii-blue to-brand-blue rounded-full" 
-                />
-              )}
-            </Link>
-            <Link 
-              href="/about" 
-              className="px-3 py-2 rounded-card text-body-md font-medium text-gray-400 hover:text-white transition-all duration-300"
-            >
-              About
-            </Link>
-            <a 
-              href="https://bankii.finance" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="px-3 py-2 rounded-card text-body-md font-medium text-gray-400 hover:text-white transition-all duration-300"
-              onClick={() => trackVisitBankii()}
-            >
-              Visit Bankii.finance
-            </a>
-          </nav>
+            {/* Desktop navigation removed for minimal surface */}
 
-          {/* Right side: wallet + user + mobile toggle */}
+          {/* Right side: Single unified PremiumWalletButton for all screens */}
           <div className="flex items-center gap-2">
             {isClient && (
-              <WalletButton className="px-4 py-2" />
+              <PremiumWalletButton onOpenDrawer={() => setIsDrawerOpen(true)} />
             )}
-            <button
-              onClick={() => setMobileOpen((v) => !v)}
-              className="md:hidden text-gray-400 hover:text-white p-2 transition-colors"
-              aria-label="Open menu"
-            >
-              {isClient ? (mobileOpen ? <HiX className="h-6 w-6" /> : <HiMenu className="h-6 w-6" />) : <span />}
-            </button>
           </div>
         </div>
       </div>
-      <MobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
+      <AnimatePresence>
+        {isDrawerOpen && (
+          <MobileDrawer 
+            open={isDrawerOpen} 
+            onClose={() => setIsDrawerOpen(false)} 
+            history={history}
+            slippage={slippage}
+            setSlippage={setSlippage}
+          />
+        )}
+      </AnimatePresence>
     </header>
   );
 }

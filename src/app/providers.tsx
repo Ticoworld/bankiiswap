@@ -3,6 +3,8 @@ import { WalletProvider } from '@/lib/wallet/adapter';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast'; // ✅ Import toast system
 import { I18nProvider } from '@/lib/i18n';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
 
@@ -32,6 +34,16 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
+    // Initialize AOS (Animate On Scroll)
+    try {
+      AOS.init({
+        duration: 800, // Animation duration
+        once: true,    // Only animate once
+        offset: 100,   // Trigger animation before element is in view
+        easing: 'ease-out-cubic'
+      });
+    } catch {}
+
     const preloadAssets = [
       '/assets/tokens/sol.png',
       '/assets/tokens/bnky.png',
@@ -61,7 +73,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
       <I18nProvider>
         {children}
         <Toaster 
-          position="top-right"
+          position="bottom-right"
           toastOptions={{
             duration: 5000,
             style: {

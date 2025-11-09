@@ -11,6 +11,10 @@ module.exports = {
   ],
   theme: {
     extend: {
+      screens: {
+        // Show certain decorative hero elements only on very large screens
+        'xl1400': '1400px',
+      },
       colors: {
         // Bankii Brand Colors (NEW)
         'bankii-blue': '#0049FF',

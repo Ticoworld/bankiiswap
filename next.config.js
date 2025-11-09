@@ -72,6 +72,11 @@ const nextConfig = {
   async redirects() {
     return [
       {
+        source: '/login',
+        destination: '/swap',
+        permanent: true,
+      },
+      {
         source: '/nfts',
         destination: '/swap',
         permanent: true,

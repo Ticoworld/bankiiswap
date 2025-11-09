@@ -1,11 +1,10 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
-import GlobalLoader from "@/components/ui/Loader";
-import RouteLoader from "@/components/ui/RouteLoader";
+// Removed full-page GlobalLoader and RouteLoader for instant paint UX
 import Providers from "./providers";
 import StructuredData from "@/components/common/StructuredData";
-import MobileQuickNav from "@/components/navigation/MobileQuickNav";
+import PageTransition from "@/components/layout/PageTransition";
 
 // Font setup - Poppins for headings, Inter for body
 const poppins = Poppins({ 
@@ -119,12 +118,13 @@ export default function RootLayout({
         />
         <StructuredData />
       </head>
-      <body className={`${inter.className} bg-white text-neutral-900 dark:bg-black dark:text-white`}>
+      <body className={`${inter.className} bg-white text-neutral-900 dark:bg-black dark:text-white overflow-x-hidden`}>
         <Providers>
-          <GlobalLoader />
-          <RouteLoader />
-          {children}
-          <MobileQuickNav />
+          {/* PageTransition adds premium fade between routes */}
+          <PageTransition>
+            {/* Full-page loaders removed: relying on component-level skeletons */}
+            {children}
+          </PageTransition>
         </Providers>
       </body>
     </html>

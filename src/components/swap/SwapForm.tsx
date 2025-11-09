@@ -13,13 +13,21 @@ import { getQuote, isValidQuote } from '@/lib/jupiter';
 import { toSmallestUnit, fromSmallestUnit } from '@/lib/utils';
 import { Connection, PublicKey } from '@solana/web3.js';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { FaExchangeAlt, FaFire, FaInfoCircle, FaShare } from 'react-icons/fa';
-import { motion } from 'framer-motion';
-import { QuoteLoader, BalanceSkeleton, SwapPreviewSkeleton, TokenSelectorSkeleton } from '@/components/ui/SkeletonLoader';
+import { FaExchangeAlt, FaFire, FaInfoCircle, FaShare, FaChartBar } from 'react-icons/fa';
+import { motion, AnimatePresence } from 'framer-motion';
+import { QuoteLoader, BalanceSkeleton, SwapPreviewSkeleton, TokenSelectorSkeleton, AmountSkeletonLoader } from '@/components/ui/SkeletonLoader';
 import NetworkStatus from '@/components/ui/NetworkStatus';
 import ErrorDisplay from '@/components/ui/ErrorDisplay';
 import { toast } from 'react-hot-toast';
 import { trackSwapError, trackSwapSuccess } from '@/lib/analytics-lite';
+import ConfirmSwapModal from '@/components/swap/ConfirmSwapModal';
+import PendingSwapModal from '@/components/swap/PendingSwapModal';
+// Success modal will be replaced by a premium toast notification
+// import SuccessSwapModal from '@/components/swap/SuccessSwapModal';
+import SuccessToast from '@/components/ui/SuccessToast';
+import ErrorToast from '@/components/ui/ErrorToast';
+import TraderDashboardPanel from '@/components/swap/TraderDashboardPanel';
+import { useSwapHistory } from '@/hooks/useSwapHistory';
 
 export default function SwapForm() {
   const router = useRouter();
@@ -27,6 +35,7 @@ export default function SwapForm() {
   const { publicKey, connected } = useWallet();
   const { tokens, loading: tokensLoading } = useTokenList();
   const { performSwap, swapError } = useSwap(); // ✅ include swapError
+  const { history, addSwapToHistory } = useSwapHistory();
 
   const RPC_URL = process.env.NEXT_PUBLIC_RPC_URL || 'https://api.mainnet-beta.solana.com';
   const connection = useMemo(() => new Connection(RPC_URL), [RPC_URL]);
@@ -50,6 +59,23 @@ export default function SwapForm() {
   const [toBalance, setToBalance] = useState<number | null>(null);
   const [toBalanceLoading, setToBalanceLoading] = useState(false);
   const [showSwapPreview, setShowSwapPreview] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showPendingModal, setShowPendingModal] = useState(false);
+  const [pendingTxHash, setPendingTxHash] = useState<string | null>(null);
+  const [isHistoryVisible, setIsHistoryVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  // Success modal is removed in favor of toasts
+  // const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // Detect mobile viewport width (tailwind md breakpoint at 768px)
+  useEffect(() => {
+    const check = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
 
   // Generate shareable URL for current swap configuration
   const generateShareURL = useCallback(() => {
@@ -379,7 +405,12 @@ export default function SwapForm() {
     }
 
     try {
+      // ✅ Set loading state FIRST to trigger skeleton loader immediately
       setQuoteLoading(true);
+      setToAmount(''); // ✅ Clear previous amount to prevent stale data
+      setQuote(null); // ✅ Clear previous quote
+      setError(null); // ✅ Clear previous errors
+      
       const amount = toSmallestUnit(parseFloat(fromAmount), fromToken.decimals).toString();
       
       // ⚡ SPEED OPTIMIZATION: Cache key for quote requests
@@ -533,13 +564,149 @@ export default function SwapForm() {
       // ⚡ SPEED OPTIMIZATION: Immediate redirect without waiting for analytics
       router.push(`/swap/tx/${tx}?fromToken=${fromToken.symbol}&toToken=${toToken?.symbol}&fromAmount=${fromAmount}&toAmount=${toAmount}`);
     } catch (err: any) {
+      console.error('Swap execution error:', err);
+      
+      // Extract transaction ID if available (sometimes failed txs still have a signature)
+      const txId = err?.signature || err?.txId || null;
+      
       setError(err.message || 'Swap execution failed');
+      
+      // Show error toast with optional Solscan link
+      toast.error(
+        <ErrorToast
+          txId={txId}
+          message={err.message || 'Swap execution failed. Please try again.'}
+        />,
+        {
+          duration: 8000,
+        }
+      );
+      
       // Analytics: swap error (no PII)
       trackSwapError(err?.message);
     } finally {
       setIsConfirming(false);
     }
   };
+
+  // New flow: Confirm -> Wallet -> Pending -> Success
+  const beginConfirmedSwap = async () => {
+    if (!quote || !fromToken || !toToken || !publicKey) return;
+
+    setShowConfirmModal(false);
+    setShowPendingModal(true);
+    setPendingTxHash(null);
+
+    try {
+      const fromAmountNum = parseFloat(fromAmount);
+      const pricePromise = import('@/lib/fetchTokenPrices').then(({ fetchTokenPrices }) =>
+        fetchTokenPrices([fromToken.address, toToken.address])
+      );
+
+      const tx = await performSwap(quote, publicKey.toString(), referralAccount || '', connection);
+      setPendingTxHash(tx);
+
+      // Wait for on-chain confirmation (confirmed)
+      try {
+        await connection.confirmTransaction(tx, 'confirmed');
+      } catch (confirmErr) {
+        // If confirm fails/times out, keep pending modal but still allow viewing on explorer
+        console.warn('Confirmation wait error:', confirmErr);
+      }
+
+      // Fire-and-forget analytics + logging
+      trackSwapSuccess(fromToken.symbol, toToken.symbol);
+      void (async () => {
+        try {
+          const prices = await pricePromise;
+          const fromTokenPrice = prices.find(p => p.mint === fromToken.address)?.price || 0;
+          const toTokenPrice = prices.find(p => p.mint === toToken.address)?.price || 0;
+
+          const fromUsdValue = fromAmountNum * fromTokenPrice;
+          const toUsdValue = parseFloat(toAmount) * toTokenPrice;
+          const feesUsdValue = platformFee * fromTokenPrice;
+
+          await fetch('/api/log-swap', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              walletAddress: publicKey.toString(),
+              fromToken: fromToken.symbol,
+              toToken: toToken.symbol,
+              fromAmount: fromAmountNum,
+              toAmount: parseFloat(toAmount),
+              fromUsdValue,
+              toUsdValue,
+              feesPaid: platformFee,
+              feesUsdValue,
+              signature: tx,
+              blockTime: Math.floor(Date.now() / 1000),
+              jupiterFee: 0,
+              platformFee: platformFee,
+              slippage: slippage / 100,
+              routePlan: JSON.stringify(quote?.routePlan || {}),
+              fee_token_symbol: fromToken.symbol,
+              fee_token_mint: fromToken.address
+            })
+          });
+        } catch (logError) {
+          console.error('Failed to log swap:', logError);
+        }
+      })();
+
+      // New behavior: auto-dismiss Pending modal and show non-blocking toast
+      setShowPendingModal(false);
+      
+      // Add swap to local history
+      addSwapToHistory({
+        txId: tx,
+        fromTokenSymbol: fromToken.symbol,
+        fromAmount: fromAmountNum,
+        toTokenSymbol: toToken.symbol,
+        toAmount: parseFloat(toAmount),
+      });
+      
+      toast.success(
+        <SuccessToast
+          txHash={tx}
+          fromAmount={fromAmount}
+          fromSymbol={fromToken.symbol}
+          toAmount={toAmount}
+          toSymbol={toToken.symbol}
+        />,
+        {
+          duration: 6000,
+        }
+      );
+    } catch (err: any) {
+      console.error('Confirmed swap execution error:', err);
+      
+      // Close pending modal first
+      setShowPendingModal(false);
+      
+      // Extract transaction ID if available (sometimes failed txs still have a signature)
+      const txId = err?.signature || err?.txId || pendingTxHash || null;
+      
+      setError(err.message || 'Swap execution failed');
+      
+      // Show error toast with optional Solscan link
+      toast.error(
+        <ErrorToast
+          txId={txId}
+          message={err.message || 'Your swap could not be confirmed. Please check the transaction on-chain.'}
+        />,
+        {
+          duration: 8000,
+        }
+      );
+      
+      // Analytics: swap error (no PII)
+      trackSwapError(err?.message);
+    }
+  };
+
+  // Reset form after successful swap
+  // Old success modal reset flow removed. We keep the form state to enable quick follow-up trades.
 
   const handleMaxClick = (percentage: number) => {
     if (balance === null || !connected) return;
@@ -573,12 +740,14 @@ export default function SwapForm() {
   };
 
   return (
+    <>
     <div className="bg-black/60 backdrop-blur-xl rounded-2xl p-3 sm:p-4 shadow-2xl shadow-bankii-blue/5 w-full max-w-[calc(100vw-2rem)] sm:max-w-md border-2 border-bankii-blue/10 hover:border-bankii-blue/20 transition-all duration-300 mx-auto overflow-hidden">
       {/* Header with Network Status */}
+      
       <div className="flex justify-between items-center mb-3">
         <div className="flex items-center space-x-2">
           <h1 className="text-sm sm:text-base font-bold text-bankii-blue">
-            BANKIISWAP
+            Swap
           </h1>
           <NetworkStatus showLabel={false} className="hidden sm:flex" />
         </div>
@@ -724,19 +893,19 @@ export default function SwapForm() {
             <div className="mb-2 text-gray-400 text-sm font-medium">To</div>
             <div className="flex items-center space-x-1 overflow-hidden">
               <div className="flex-1 min-w-0">
-                {quoteLoading ? (
-                  <QuoteLoader />
-                ) : (
-                  <input
-                    type="text"
-                    value={toAmount}
-                    readOnly
-                    className="bg-transparent text-xl sm:text-2xl w-full outline-none text-gray-300 cursor-not-allowed min-w-0"
-                    placeholder="0.0"
-                    aria-label={`Amount to receive in ${toToken?.symbol || 'selected token'}`}
-                    tabIndex={-1}
-                  />
-                )}
+                  {quoteLoading ? (
+                    <AmountSkeletonLoader />
+                  ) : (
+                    <input
+                      type="text"
+                      value={toAmount}
+                      readOnly
+                      className="bg-transparent text-xl sm:text-2xl w-full outline-none text-gray-300 cursor-not-allowed min-w-0"
+                      placeholder="0.0"
+                      aria-label={`Amount to receive in ${toToken?.symbol || 'selected token'}`}
+                      tabIndex={-1}
+                    />
+                  )}
               </div>
               <div className="flex-shrink-0 min-w-0">
                 {toTokenLoading ? (
@@ -810,11 +979,11 @@ export default function SwapForm() {
           ) : null}
 
           {/* BNKY UTILITY NOTICE */}
-          <div className="bg-bankii-blue/10 border-2 border-bankii-blue/20 rounded-xl p-3 flex items-start backdrop-blur-sm overflow-hidden">
-            <div className="bg-bankii-blue/20 p-1 rounded mr-2 mt-0.5 flex-shrink-0">
+          <div className="bg-bankii-blue/10 border-l-4 border-bankii-blue rounded-r-xl p-3 flex items-start backdrop-blur-sm overflow-hidden">
+            <div className="p-1 mr-2 mt-0.5 flex-shrink-0">
               <FaFire className="h-4 w-4 text-bankii-blue" />
             </div>
-            <p className="text-bankii-blue text-xs sm:text-sm min-w-0 break-words">
+            <p className="text-bankii-blue-light text-xs sm:text-sm min-w-0 break-words">
               Hold BNKY tokens for reduced fees and exclusive utility benefits
             </p>
           </div>
@@ -842,10 +1011,58 @@ export default function SwapForm() {
               (balance !== null && (parseFloat(fromAmount) + platformFee) > balance)
             }
             isLoading={quoteLoading}
-            onClick={handleSwap}
+            onClick={() => setShowConfirmModal(true)}
           />
         </motion.div>
       )}
-    </div>
+  </div>
+
+  {/* Trader Dashboard Toggle Button */}
+  <div className="mt-4 w-full max-w-[calc(100vw-2rem)] sm:max-w-md mx-auto">
+    <motion.button
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
+      onClick={() => setIsHistoryVisible(!isHistoryVisible)}
+      className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-gray-900/60 hover:bg-gray-900/80 border border-gray-800 hover:border-bankii-blue/50 text-gray-300 hover:text-white transition-all backdrop-blur-md"
+    >
+      <FaChartBar className={`h-4 w-4 transition-transform ${isHistoryVisible ? 'rotate-180' : ''}`} />
+      <span className="text-sm font-medium">
+        {isHistoryVisible ? 'Hide' : 'Show'} History & Analytics
+      </span>
+    </motion.button>
+  </div>
+
+  {/* Animated Trader Dashboard Panel */}
+  <AnimatePresence>
+    {isHistoryVisible && (
+      <motion.div
+        initial={{ opacity: 0, height: 0 }}
+        animate={{ opacity: 1, height: 'auto' }}
+        exit={{ opacity: 0, height: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        className="mt-4 w-full max-w-[calc(100vw-2rem)] sm:max-w-md mx-auto overflow-hidden"
+      >
+        <TraderDashboardPanel history={history} isMobile={isMobile} />
+      </motion.div>
+    )}
+  </AnimatePresence>
+
+  {/* Modals */}
+      <ConfirmSwapModal
+        open={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={beginConfirmedSwap}
+        fromAmount={fromAmount}
+        fromSymbol={fromToken?.symbol}
+        toAmount={toAmount}
+        toSymbol={toToken?.symbol}
+        rateText={fromAmount && toAmount ? `1 ${fromToken?.symbol} = ${(parseFloat(toAmount) / parseFloat(fromAmount)).toFixed(6)} ${toToken?.symbol}` : '-'}
+        slippage={slippage}
+        priceImpact={priceImpact}
+        networkFeeText={`${platformFee.toFixed(6)} ${fromToken?.symbol || ''}`}
+        warning={priceImpact !== null && priceImpact > 1.5}
+      />
+  <PendingSwapModal open={showPendingModal} txHash={pendingTxHash} />
+    </>
   );
 }

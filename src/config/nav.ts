@@ -17,6 +17,6 @@ export const analyticsNav: NavItem[] = [
 ];
 
 export const moreNav: NavItem[] = [
-  { label: 'About', href: '/about' },
+  { label: 'Home', href: '/home' },
   { label: 'Help', href: '/help' },
 ];

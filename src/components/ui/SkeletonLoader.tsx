@@ -77,6 +77,16 @@ export const QuoteLoader = () => (
   </div>
 );
 
+// Inline shimmer skeleton for amount input fields
+export const AmountSkeletonLoader = () => (
+  <div className="relative w-full min-h-[2rem] sm:min-h-[2.5rem] bg-gray-800/40 rounded-lg overflow-hidden">
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-gray-700/30 to-transparent animate-shimmer" />
+    <div className="flex items-center h-full px-2 py-1">
+      <div className="h-6 sm:h-7 bg-gray-700/50 rounded w-32 sm:w-40 animate-pulse" />
+    </div>
+  </div>
+);
+
 export const BalanceSkeleton = () => (
   <div className="animate-pulse flex items-center space-x-1">
     <span className="text-gray-500 dark:text-gray-400 text-sm">Balance:</span>

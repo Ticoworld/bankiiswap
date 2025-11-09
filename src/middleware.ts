@@ -27,9 +27,9 @@ const SUSPICIOUS_PATTERNS = [
   /expression\(/gi, // CSS expression
 ];
 
-// 🔒 Routes that require wallet verification (whitelist access)
+// 🔒 Routes that still require wallet verification (minimal set)
+// Login removed; keep only truly sensitive sections here.
 const PROTECTED_ROUTES = [
-  '/swap',
   '/admin',
   '/analytics'
 ];
@@ -38,7 +38,6 @@ const PROTECTED_ROUTES = [
 const PUBLIC_ROUTES = [
   '/api/health',    // Health checks
   '/api/ping',      // Ping endpoint
-  '/login',
   '/_next',
   '/favicon.ico',
   '/robots.txt',
@@ -46,6 +45,7 @@ const PUBLIC_ROUTES = [
   '/assets',
   '/public',
   '/',              // Landing page
+  '/swap',          // Swap now publicly accessible (wallet gating handled client-side)
   '/legal',         // Legal pages
   '/dao',           // DAO page (coming soon)
   '/staking',       // Staking page (coming soon)
@@ -140,18 +140,9 @@ function isProtectedRoute(pathname: string): boolean {
   return PROTECTED_ROUTES.some(route => pathname.startsWith(route));
 }
 
-function shouldAllow(request: NextRequest): { ok: boolean; redirect?: URL } {
-  const accessOk = request.cookies.get('access-ok')?.value === '1'
-  if (accessOk) return { ok: true }
-  const wallet = request.cookies.get('connected-wallet')?.value
-  // If wallet present but no access cookie, force login to evaluate
-  const loginUrl = new URL('/login', request.url)
-  loginUrl.searchParams.set('returnTo', request.nextUrl.pathname)
-  const inviteToken = request.nextUrl.searchParams.get('invite')
-  if (inviteToken) loginUrl.searchParams.set('invite', inviteToken)
-  const ref = request.nextUrl.searchParams.get('ref')
-  if (ref) loginUrl.searchParams.set('ref', ref)
-  return { ok: false, redirect: loginUrl }
+// Access check now: allow everything unless on protected route; no more login cookie gating.
+function shouldAllow(_request: NextRequest): { ok: boolean; redirect?: URL } {
+  return { ok: true };
 }
 
 export function middleware(request: NextRequest) {
@@ -181,10 +172,10 @@ export function middleware(request: NextRequest) {
   if (isPublicRoute(pathname)) {
     response = NextResponse.next();
   } else if (isProtectedRoute(pathname)) {
-    // Only check access for protected routes
+    // Future: implement server-side wallet allowlist if needed.
     const check = shouldAllow(request);
-    if (!check.ok) {
-      response = NextResponse.redirect(check.redirect!);
+    if (!check.ok && check.redirect) {
+      response = NextResponse.redirect(check.redirect);
     }
   }
 

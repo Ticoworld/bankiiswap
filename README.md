@@ -35,6 +35,7 @@ Premier Solana DEX Aggregator for meme tokens, powered by Jupiter routing. Inclu
 ### 🔐 Privacy & Security
 - Wallet/RLS-gated analytics; user profile privacy toggle respected in leaderboards.
 - 2FA (TOTP) enrollment, verify, and disable flows.
+- Login gate removed (Nov 2025): core swap interface `/swap` is now publicly reachable; sensitive admin/analytics sections remain protected server-side.
 
 ### 🎨 UX
 - Responsive Tailwind UI, skeletons, animations, and mobile quick nav.
