@@ -48,8 +48,6 @@ export function useSwapHistory() {
 
       // Update state
       setHistory(updatedHistory);
-
-      console.log('[useSwapHistory] Added swap to history:', newEntry);
     } catch (error) {
       console.error('[useSwapHistory] Failed to save swap to history:', error);
     }

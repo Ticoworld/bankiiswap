@@ -90,14 +90,12 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const cached = loadFromCache();
     if (cached && Array.isArray(cached.data)) {
-      console.log(`[TokenList] 📦 Loading ${cached.data.length} tokens from cache (version: ${cached.version})`);
       setTokens([
         BNKY_TOKEN,
         ...cached.data.filter((t) => t.address !== BNKY_TOKEN.address),
       ]);
       setLoading(false);
     } else {
-      console.log(`[TokenList] 🚫 No valid cache found, using ${fallbackTokens.length} fallback tokens`);
       setTokens([
         BNKY_TOKEN,
         ...fallbackTokens.filter((t) => t.address !== BNKY_TOKEN.address),
@@ -114,7 +112,6 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
     const shouldRefresh = isStale || retryCount > 0 || cached?.version !== CACHE_VERSION || !hasFullTokenList;
 
     if (shouldRefresh) {
-      console.log('[TokenList] 🔄 Fetching tokens from API (single provider fetch)');
       (async () => {
         setLoading(true);
         setError(false);
@@ -147,7 +144,6 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
             setTokens(sorted);
             saveToCache(sorted);
             success = true;
-            console.log(`[TokenList] ✅ Successfully fetched ${sorted.length} tokens`);
           } catch (err) {
             attempt++;
             const errorObj = err as any;
@@ -179,7 +175,6 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
   const retry = useCallback(() => setRetryCount((c) => c + 1), []);
   
   const invalidateCache = useCallback(() => {
-    console.log('[TokenList] 🗑️ Manually invalidating cache and forcing refresh');
     localStorage.removeItem(CACHE_KEY);
     setRetryCount((c) => c + 1);
   }, []);
@@ -189,7 +184,6 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
     if (!query || query.length < 32) return [];
     
     try {
-      console.log(`[DexScreener] 🔍 Searching via API for: ${query}`);
       
       const response = await fetch(`/api/tokens/search?q=${encodeURIComponent(query)}`, {
         cache: 'no-store',
@@ -197,14 +191,10 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
       });
 
       if (!response.ok) {
-        console.log(`[DexScreener] ❌ API error: ${response.status}`);
         return [];
       }
 
       const token = await response.json();
-      
-      console.log(`[DexScreener] ✅ Found token via API: ${token.symbol} (${token.name})`);
-      console.log(`[DexScreener] 🖼️ Logo URL: ${token.logoURI}`);
       
       return [token];
     } catch (error) {
@@ -254,7 +244,6 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
     const isContractAddress = /^[A-Za-z0-9]{32,}$/.test(searchQuery.trim());
     
     if (isContractAddress) {
-      console.log(`[TokenList] 🔄 No Jupiter results for ${searchQuery}, trying DexScreener...`);
       setSearchingDexScreener(true);
       setSearchFeedback({
         isSearching: true,

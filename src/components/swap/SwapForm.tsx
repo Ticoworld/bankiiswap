@@ -165,20 +165,17 @@ export default function SwapForm() {
           setToTokenLoading(true);
         }
 
-        console.log(`[SwapForm] 🔍 Unknown token ${address}, searching DexScreener...`);
         const response = await fetch(`/api/tokens/search?q=${address}`);
         if (response.ok) {
           const token = await response.json();
-          console.log(`[SwapForm] ✅ Found token via DexScreener: ${token.symbol}`);
           
           // Add to global token list for future use (avoid repeated API calls)
           const updatedTokens = [...tokens, token];
-          console.log(`[SwapForm] 📦 Added ${token.symbol} to local token cache`);
           
           return token;
         }
       } catch (error) {
-        console.log(`[SwapForm] ❌ DexScreener lookup failed for ${address}`);
+        // Token lookup failed
       } finally {
         // Clear loading state
         if (isFromToken) {
@@ -203,21 +200,16 @@ export default function SwapForm() {
       const toSymbol = searchParams.get('to');
       const amount = searchParams.get('amount');
 
-      console.log(`[SwapForm] 🔗 Processing URL params: inputMint=${inputMint}, outputMint=${outputMint}`);
-
       // Handle inputMint parameter with smart lookup (highest priority)
       if (inputMint && !fromToken) {
         const token = await findOrFetchToken(inputMint, true);
         if (token) {
-          console.log(`[SwapForm] ✅ Set FROM token via inputMint: ${token.symbol}`);
           setFromToken(token);
         } else {
-          console.log(`[SwapForm] ⚠️ Could not find or fetch token: ${inputMint}`);
           // Fallback to symbol if mint address fails
           if (fromSymbol) {
             const symbolToken = tokens.find(t => t.symbol.toLowerCase() === fromSymbol.toLowerCase());
             if (symbolToken) {
-              console.log(`[SwapForm] 📝 Fallback to FROM symbol: ${symbolToken.symbol}`);
               setFromToken(symbolToken);
             }
           }
@@ -226,7 +218,6 @@ export default function SwapForm() {
         // Handle from parameter (symbol-based) only if no inputMint
         const token = tokens.find(t => t.symbol.toLowerCase() === fromSymbol.toLowerCase());
         if (token) {
-          console.log(`[SwapForm] 📝 Set FROM token via symbol: ${token.symbol}`);
           setFromToken(token);
         }
       }
@@ -235,15 +226,12 @@ export default function SwapForm() {
       if (outputMint && !toToken) {
         const token = await findOrFetchToken(outputMint, false);
         if (token) {
-          console.log(`[SwapForm] ✅ Set TO token via outputMint: ${token.symbol}`);
           setToToken(token);
         } else {
-          console.log(`[SwapForm] ⚠️ Could not find or fetch token: ${outputMint}`);
           // Fallback to symbol if mint address fails
           if (toSymbol) {
             const symbolToken = tokens.find(t => t.symbol.toLowerCase() === toSymbol.toLowerCase());
             if (symbolToken) {
-              console.log(`[SwapForm] 📝 Fallback to TO symbol: ${symbolToken.symbol}`);
               setToToken(symbolToken);
             }
           }
@@ -252,14 +240,12 @@ export default function SwapForm() {
         // Handle to parameter (symbol-based) only if no outputMint
         const token = tokens.find(t => t.symbol.toLowerCase() === toSymbol.toLowerCase());
         if (token) {
-          console.log(`[SwapForm] 📝 Set TO token via symbol: ${token.symbol}`);
           setToToken(token);
         }
       }
 
       // Handle amount parameter
       if (amount && !fromAmount) {
-        console.log(`[SwapForm] 💰 Set amount from URL: ${amount}`);
         setFromAmount(amount);
       }
     };
@@ -376,13 +362,33 @@ export default function SwapForm() {
     }
   }, [fromToken, toToken]);
 
+  // Helper to parse common Jupiter errors into friendly messages
+  const parseQuoteError = (errorMessage: string, fromToken: Token | null): string => {
+    const msg = errorMessage.toLowerCase();
+    
+    if (msg.includes('not found in jupiter ecosystem')) {
+      return `Token not found. The token ${fromToken?.symbol || 'you selected'} is not supported by our liquidity routes.`;
+    }
+    if (msg.includes('no valid route found') || msg.includes('no trading route')) {
+      return 'No trading route available for this token pair. Tokens may lack sufficient liquidity or be restricted.';
+    }
+    if (msg.includes('network error') || msg.includes('econnrefused') || msg.includes('timeout')) {
+      return 'Network error. Please check your connection and try again.';
+    }
+    
+    // Default fallback for unknown errors
+    return 'Failed to fetch quote. Please try again.';
+  };
+
   const fetchQuote = useCallback(async () => {
+    // --- FIX: Clear error at the VERY beginning ---
+    setError(null);
+
     if (!fromToken || !toToken || !fromAmount || parseFloat(fromAmount) <= 0) {
       setToAmount('');
       setQuote(null);
       setPriceImpact(null);
       setPlatformFee(0);
-      setError(null);
       return;
     }
 
@@ -405,11 +411,6 @@ export default function SwapForm() {
           return;
         }
       }
-      
-      // Clear error if we had one but now balance is sufficient
-      if (error && error.includes('Insufficient')) {
-        setError(null);
-      }
     }
 
     try {
@@ -417,7 +418,6 @@ export default function SwapForm() {
       setQuoteLoading(true);
       setToAmount(''); // ✅ Clear previous amount to prevent stale data
       setQuote(null); // ✅ Clear previous quote
-      setError(null); // ✅ Clear previous errors
       
       const amount = toSmallestUnit(parseFloat(fromAmount), fromToken.decimals).toString();
       
@@ -450,18 +450,6 @@ export default function SwapForm() {
 
       const output = fromSmallestUnit(BigInt(quote.outAmount), toToken.decimals);
 
-      if (process.env.NODE_ENV === 'development') {
-        console.log('Jupiter Quote Debug:', {
-          inputMint: quote.inputMint,
-          outputMint: quote.outputMint,
-          inAmount: quote.inAmount,
-          outAmount: quote.outAmount,
-          calculatedOutput: output,
-          rawQuote: quote,
-          cacheKey
-        });
-      }
-
       setToAmount(output.toFixed(6));
       setQuote(quote);
 
@@ -473,7 +461,11 @@ export default function SwapForm() {
       const platformFeeAmount = parseFloat(fromAmount) * 0.003;
       setPlatformFee(platformFeeAmount);
     } catch (err: any) {
-      setError(err.message || 'Failed to fetch quote');
+      // Use our new helper to create a friendly message
+      const friendlyError = parseQuoteError(err.message || '', fromToken);
+      setError(friendlyError);
+      
+      // Reset the rest of the state
       setQuote(null);
       setToAmount('');
       setPriceImpact(null);
@@ -481,22 +473,12 @@ export default function SwapForm() {
     } finally {
       setQuoteLoading(false);
     }
-  }, [fromToken, toToken, fromAmount, slippage, referralAccount, balance, error]);
+  }, [fromToken, toToken, fromAmount, slippage, referralAccount, balance]);
 
   useEffect(() => {
     const timeout = setTimeout(fetchQuote, 200); // ⚡ SPEED: Reduced from 300ms to 200ms for faster response
     return () => clearTimeout(timeout);
   }, [fetchQuote]);
-
-  // ✅ Toast when Jupiter swap fails
-  useEffect(() => {
-    if (swapError) {
-      toast.error(swapError, {
-        duration: 5000,
-        position: 'top-right',
-      });
-    }
-  }, [swapError]);
 
   const handleSwap = async () => {
     if (!quote || !fromToken || !toToken || !publicKey) return;
@@ -648,23 +630,10 @@ export default function SwapForm() {
       // Track the *submission* success
       trackSwapSuccess(fromToken.symbol, toToken.symbol);
 
-      // --- STEP 3: BACKGROUND CONFIRMATION & LOGGING (Fire-and-forget) ---
-      // We create a new async task that runs in the background
-      // This no longer blocks the main function.
+      // --- STEP 3: FIRE-AND-FORGET LOGGING (No confirmation) ---
+      // Log the swap optimistically without waiting for on-chain confirmation
       void (async () => {
         try {
-          // A. Wait for on-chain confirmation in the background
-          await connection.confirmTransaction(tx, 'confirmed');
-
-          // B. (Optional) Update history status to 'confirmed'
-          // e.g., updateSwapInHistory(tx, { status: 'confirmed' });
-
-          // C. Show a *new* toast to notify completion
-          toast.success(`Swap Confirmed: ${fromToken.symbol} → ${toToken.symbol}`, {
-            duration: 4000,
-          });
-
-          // D. Now log the *confirmed* swap to your backend
           const prices = await pricePromise;
           const fromTokenPrice = prices.find(p => p.mint === fromToken.address)?.price || 0;
           const toTokenPrice = prices.find(p => p.mint === toToken.address)?.price || 0;
@@ -695,21 +664,9 @@ export default function SwapForm() {
               fee_token_mint: fromToken.address
             })
           });
-        } catch (confirmErr) {
-          // The background confirmation failed
-          console.error('Background confirmation or logging failed:', confirmErr);
-          
-          // (Optional) Update history status to 'failed'
-          // e.g., updateSwapInHistory(tx, { status: 'failed' });
-
-          // Show a non-blocking error toast
-          toast.error(
-            <ErrorToast
-              txId={tx}
-              message="Swap failed to confirm. Check Solscan for details."
-            />,
-            { duration: 8000 }
-          );
+        } catch (logError) {
+          // Don't bother the user, just log this to console
+          console.error('Background swap logging failed:', logError);
         }
       })();
 
