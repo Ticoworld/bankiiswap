@@ -1,4 +1,4 @@
-export const BNKY_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_BNKY_TOKEN_ADDRESS || 'C1MAQ3hbSVR6d5isBRRcBAJKnPrbVwfajDhiNLhJNrff';
+export const BKP_TOKEN_ADDRESS = process.env.NEXT_PUBLIC_BKP_TOKEN_ADDRESS || 'C1MAQ3hbSVR6d5isBRRcBAJKnPrbVwfajDhiNLhJNrff';
 
 export type Token = {
   address: string;
@@ -13,12 +13,12 @@ export type Token = {
   isJupiterFallback?: boolean; // Flag for tokens found via Jupiter fallback but not in verified lists
 }; 
 
-export const BNKY_TOKEN: Token = {
-  address: BNKY_TOKEN_ADDRESS,
+export const BKP_TOKEN: Token = {
+  address: BKP_TOKEN_ADDRESS,
   name: 'Bankii Token',
-  symbol: 'BNKY',
-  logoURI: '/assets/tokens/bnky.png',
-  decimals: 9,  // Update to correct decimals for BNKY
+  symbol: 'BKP',
+  logoURI: '/assets/tokens/bkp.png',
+  decimals: 9,  // Update to correct decimals for BKP
   verified: true,
   tags: ['utility', 'verified']
 };
@@ -41,7 +41,7 @@ export const USDC_TOKEN: Token = {
   verified: true,
 };
 
-// Default swap pair: USDC → BNKY
+// Default swap pair: USDC → BKP
 export const DEFAULT_INPUT_TOKEN = USDC_TOKEN;
-export const DEFAULT_OUTPUT_TOKEN = BNKY_TOKEN;
+export const DEFAULT_OUTPUT_TOKEN = BKP_TOKEN;
 

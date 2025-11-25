@@ -111,7 +111,7 @@ export default function MobileDrawer({
         exit={{ x: '100%' }}
         transition={{ type: 'tween', duration: 0.2 }}
         /* Stripe x DeFi: dark neutral surface with subtle liquid magma overlay */
-        className="fixed right-0 top-0 bottom-0 z-[101] w-80 max-w-[85vw] bg-neutral-darker border-l border-gray-800 shadow-2xl overflow-hidden flex flex-col"
+        className="fixed right-0 top-0 bottom-0 z-[101] w-80 max-w-[85vw] bg-white dark:bg-neutral-darker border-l border-gray-200 dark:border-gray-800 shadow-2xl overflow-hidden flex flex-col text-gray-900 dark:text-white"
         ref={asideRef}
         onKeyDown={onTrapFocus}
       >
@@ -122,9 +122,9 @@ export default function MobileDrawer({
         </div>
 
         {/* Top bar */}
-        <div className="flex items-center justify-between px-4 h-14 border-b border-gray-800 bg-neutral-darker/80 backdrop-blur flex-shrink-0">
-          <h3 className="text-sm font-medium text-white">Dashboard</h3>
-          <button onClick={onClose} aria-label="Close menu" className="text-gray-400 hover:text-white p-1">✕</button>
+        <div className="flex items-center justify-between px-4 h-14 border-b border-gray-200 dark:border-gray-800 bg-white/80 dark:bg-neutral-darker/80 backdrop-blur flex-shrink-0">
+          <h3 className="text-sm font-medium text-gray-900 dark:text-white">Dashboard</h3>
+          <button onClick={onClose} aria-label="Close menu" className="text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white p-1">✕</button>
         </div>
 
         {/* Main content - scrollable area with P&L and Settings */}
@@ -135,17 +135,17 @@ export default function MobileDrawer({
           </section>
 
           {/* Middle: Settings with slippage controls */}
-          <section aria-label="Settings" className="bg-black/40 border border-gray-800 rounded-xl p-4">
+          <section aria-label="Settings" className="rounded-xl p-4 border bg-gray-50 border-gray-200 dark:bg-black/40 dark:border-gray-800">
             <div className="flex items-center justify-between mb-3">
-              <h4 className="text-sm font-semibold text-white">Transaction Settings</h4>
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Transaction Settings</h4>
               <Settings slippage={slippage} setSlippage={setSlippage} />
             </div>
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
-                <span className="text-gray-400">Current Slippage</span>
-                <span className="text-white font-medium">{slippage}%</span>
+                <span className="text-gray-700 dark:text-gray-400">Current Slippage</span>
+                <span className="text-gray-900 dark:text-white font-medium">{slippage}%</span>
               </div>
-              <p className="text-xs text-gray-400">
+              <p className="text-xs text-gray-600 dark:text-gray-400">
                 Click the settings icon to adjust your slippage tolerance
               </p>
             </div>
@@ -153,14 +153,14 @@ export default function MobileDrawer({
         </div>
 
         {/* Footer - pinned to bottom with nav links and disconnect */}
-        <div className="flex-shrink-0 border-t border-gray-800/50 bg-neutral-darker/90 backdrop-blur">
+        <div className="flex-shrink-0 border-t border-gray-200 dark:border-gray-800/50 bg-white/90 dark:bg-neutral-darker/90 backdrop-blur">
           {/* Navigation Links */}
           <nav className="px-3 py-3 space-y-2">
             <Link
               ref={firstLinkRef}
               href="/home"
               onClick={onClose}
-              className={pathname === '/home' ? 'block px-3 py-2 rounded-lg bg-white/5 text-white font-medium text-sm' : 'block px-3 py-2 rounded-lg text-gray-200 hover:bg-white/5 text-sm'}
+              className={pathname === '/home' ? 'block px-3 py-2 rounded-lg bg-gray-100 text-gray-900 font-medium text-sm dark:bg-white/5 dark:text-white' : 'block px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 text-sm dark:text-gray-200 dark:hover:bg-white/5'}
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -170,7 +170,7 @@ export default function MobileDrawer({
               href="https://bankii.finance"
               target="_blank"
               rel="noopener noreferrer"
-              className='block px-3 py-2 rounded-lg text-gray-200 hover:bg-white/5 text-sm'
+              className='block px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 text-sm dark:text-gray-200 dark:hover:bg-white/5'
             >
               Visit Bankii.finance
             </a>
@@ -181,7 +181,7 @@ export default function MobileDrawer({
             <div className="px-3 pb-3">
               <button
                 onClick={handleDisconnect}
-                className="w-full px-4 py-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-400 font-medium transition-colors text-sm"
+                className="w-full px-4 py-3 rounded-lg bg-red-500/10 hover:bg-red-500/20 border border-red-500/30 text-red-600 dark:text-red-400 font-medium transition-colors text-sm"
               >
                 Disconnect Wallet
               </button>

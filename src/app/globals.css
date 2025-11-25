@@ -253,8 +253,13 @@ html:not(.dark) .border-gray-800 {
   position: relative;
 }
 
-/* Optional subtle radial vignette (non-intrusive) */
-.app-background::before {
+/* Light mode: clean white background */
+html:not(.dark) .app-background {
+  background: #fff;
+}
+
+/* Optional subtle radial vignette (non-intrusive) - DARK MODE ONLY */
+.dark .app-background::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -265,4 +270,50 @@ html:not(.dark) .border-gray-800 {
     radial-gradient(circle at 85% 80%, rgba(25,25,40,0.35), transparent 55%);
   mix-blend-mode: normal;
   opacity: .55;
+}
+
+/* --- Premium Theme Toggle "Circular Reveal" Animation --- */
+
+/* ============================================
+   LIGHT → DARK: Dark expands FROM click point
+   ============================================ */
+html.dark::view-transition-old(root) {
+  animation: none;
+  z-index: 1;
+}
+
+html.dark::view-transition-new(root) {
+  animation: 450ms cubic-bezier(0.4, 0, 0.2, 1) both expand-from-click;
+  z-index: 2;
+}
+
+@keyframes expand-from-click {
+  from { 
+    clip-path: circle(0% at var(--x) var(--y)); 
+  }
+  to { 
+    clip-path: circle(150vmax at var(--x) var(--y)); 
+  }
+}
+
+/* ============================================
+   DARK → LIGHT: Dark shrinks TO click point
+   ============================================ */
+html:not(.dark)::view-transition-old(root) {
+  animation: 450ms cubic-bezier(0.4, 0, 0.2, 1) both shrink-to-click;
+  z-index: 2;
+}
+
+html:not(.dark)::view-transition-new(root) {
+  animation: none;
+  z-index: 1;
+}
+
+@keyframes shrink-to-click {
+  from { 
+    clip-path: circle(150vmax at var(--x) var(--y)); 
+  }
+  to { 
+    clip-path: circle(0% at var(--x) var(--y)); 
+  }
 }

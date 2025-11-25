@@ -10,7 +10,9 @@ import TokenImage from '../ui/TokenImage';
 import TokenVerificationBadge from './TokenVerificationBadge';
 import QuickTokenWarning from './QuickTokenWarning';
 import { useTokenList } from '@/hooks/useTokenList';
+import { useFavoriteTokens } from '@/hooks/useFavoriteTokens';
 import { Token } from '@/config/tokens';
+import { FaStar } from 'react-icons/fa';
 
 export default function TokenSelector({ selectedToken, onSelect, disabledTokens = [] }: {
   selectedToken?: Token;
@@ -21,6 +23,18 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
   const [warningToken, setWarningToken] = useState<Token | null>(null);
   const [searchValue, setSearchValue] = useState('');
   const { tokens, loading, error, rateLimitError, retry, setSearchQuery: originalSetSearchQuery, searchFeedback } = useTokenList();
+  const { favoriteMints, toggleFavorite, isFavorite } = useFavoriteTokens();
+
+  // Get favorite token objects
+  const favoriteTokens = useMemo(() => {
+    // Create a quick lookup map of all tokens by their address
+    const tokenMap = new Map(tokens.map(token => [token.address, token]));
+    
+    // Map the favorite mints back to the full token objects
+    return favoriteMints
+      .map(mint => tokenMap.get(mint))
+      .filter(Boolean) as Token[]; // filter(Boolean) removes any undefined
+  }, [tokens, favoriteMints]);
 
   const debouncedSetSearchQuery = useMemo(() => debounce((value: string) => {
     originalSetSearchQuery(value);
@@ -73,7 +87,7 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
         style={style}
         onClick={() => !disabled && handleSelect(token)}
         className={`flex items-center w-full p-3 transition focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-inset rounded-xl ${
-          disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-900 hover:border hover:border-bankii-blue/20'
+          disabled ? 'opacity-40 cursor-not-allowed' : 'hover:bg-gray-100 dark:hover:bg-gray-900 hover:border hover:border-bankii-blue/20'
         }`}
         disabled={disabled}
         aria-label={`Select ${token.symbol} (${token.name})${disabled ? ' - disabled' : ''}`}
@@ -82,20 +96,37 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
         <TokenImage src={token.logoURI} alt={token.name} symbol={token.symbol} address={token.address} className="w-8 h-8 rounded-full" />
         <div className="ml-3 text-left truncate flex-1">
           <div className="flex items-center space-x-2">
-            <span className="font-semibold text-white truncate">{token.symbol}</span>
+            <span className="font-semibold truncate text-gray-900 dark:text-white">{token.symbol}</span>
             <TokenVerificationBadge token={token} size="sm" />
           </div>
-          <div className="text-sm text-gray-400 truncate">{token.name}</div>
+          <div className="text-sm truncate text-gray-600 dark:text-gray-400">{token.name}</div>
         </div>
+        
+        {/* --- FAVORITE BUTTON --- */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent the row from being clicked
+            toggleFavorite(token.address);
+          }}
+          className="p-2 hover:scale-110 transition-transform z-10"
+          aria-label={`${isFavorite(token.address) ? 'Remove from' : 'Add to'} favorites`}
+          type="button"
+        >
+          <FaStar 
+            className={`h-5 w-5 ${
+              isFavorite(token.address) ? 'text-yellow-500' : 'text-gray-400 dark:text-gray-600'
+            }`} 
+          />
+        </button>
       </button>
     );
-  }, [tokens, disabledTokens, handleSelect]);
+  }, [tokens, disabledTokens, handleSelect, toggleFavorite, isFavorite]);
 
   return (
     <div className="token-selector-wrapper">
       <button
         onClick={() => setIsOpen(true)}
-        className="w-full bg-[#0a0a0a] border-2 border-gray-800 hover:border-bankii-blue/50 p-3 rounded-xl text-white flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-offset-2 focus:ring-offset-black"
+        className="w-full p-3 rounded-xl flex items-center justify-between transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:ring-offset-2 bg-white border-2 border-gray-200 text-gray-900 hover:border-bankii-blue/40 hover:bg-gray-50 focus:ring-offset-white dark:bg-[#0a0a0a] dark:border-gray-800 dark:text-white dark:hover:border-bankii-blue/50 dark:hover:bg-gray-900 dark:focus:ring-offset-black"
         aria-label={selectedToken ? `Selected token: ${selectedToken.symbol}. Click to change.` : 'Select a token'}
         aria-haspopup="dialog"
         type="button"
@@ -125,12 +156,12 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
       <Transition show={isOpen} as={Fragment}>
         <Dialog onClose={() => setIsOpen(false)} className="fixed inset-0 z-50">
           <Transition.Child as={Fragment}>
-            <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" />
+            <div className="fixed inset-0 bg-black/40 dark:bg-black/80 backdrop-blur-sm" />
           </Transition.Child>
           <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="w-full max-w-md bg-[#0a0a0a] rounded-2xl shadow-2xl border-2 border-gray-800">
+            <Dialog.Panel className="w-full max-w-md rounded-2xl shadow-2xl border-2 bg-white border-gray-200 text-gray-900 dark:bg-[#0a0a0a] dark:border-gray-800 dark:text-white">
               <div className="p-6">
-                <Dialog.Title className="text-lg font-bold text-white mb-4">
+                <Dialog.Title className="text-lg font-bold text-gray-900 dark:text-white mb-4">
                   Select Token
                 </Dialog.Title>
                 <input
@@ -146,10 +177,37 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                       setIsOpen(false);
                     }
                   }}
-                  className="w-full p-3 mb-4 bg-black border-2 border-gray-800 rounded-xl text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:border-bankii-blue transition-colors"
+                  className="w-full p-3 mb-4 rounded-xl transition-colors focus:outline-none focus:ring-2 focus:ring-bankii-blue focus:border-bankii-blue bg-white border-2 border-gray-300 text-gray-900 placeholder:text-gray-500 focus:ring-offset-2 focus:ring-offset-white dark:bg-black dark:border-gray-800 dark:text-white dark:placeholder:text-gray-500 dark:focus:ring-offset-black"
                   autoFocus
                   aria-label="Search for tokens"
                 />
+
+                {/* --- Favorites Grid --- */}
+                {favoriteTokens.length > 0 && searchFeedback.searchTerm.length === 0 && (
+                  <div className="p-4 border-b border-gray-300 dark:border-gray-700 mb-4">
+                    <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Favorites</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {favoriteTokens.map(token => (
+                        <button
+                          key={token.address}
+                          onClick={() => handleSelect(token)}
+                          className="flex items-center gap-2 p-2 rounded-lg transition-colors bg-gray-100 hover:bg-gray-200 dark:bg-gray-900 dark:hover:bg-gray-800"
+                          aria-label={`Quick select ${token.symbol}`}
+                          type="button"
+                        >
+                          <TokenImage 
+                            src={token.logoURI} 
+                            alt={token.symbol} 
+                            symbol={token.symbol}
+                            address={token.address}
+                            className="h-6 w-6 rounded-full" 
+                          />
+                          <span className="text-sm font-medium text-gray-900 dark:text-white">{token.symbol}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
               {/* Show skeletons ONLY if main list is loading AND user is NOT searching */}
               {(() => {
@@ -161,10 +219,10 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                     <div className="space-y-2">
                       {Array.from({ length: 5 }).map((_, i) => (
                         <div key={i} className="flex items-center p-3">
-                          <div className="w-8 h-8 mr-3 bg-gray-900 border-2 border-gray-800 rounded-full animate-pulse" />
+                          <div className="w-8 h-8 mr-3 rounded-full animate-pulse bg-gray-200 border border-gray-200 dark:bg-gray-900 dark:border-gray-800" />
                           <div className="flex-1 space-y-1">
-                            <div className="w-1/4 h-4 bg-gray-900 border border-gray-800 rounded animate-pulse" />
-                            <div className="w-1/2 h-3 bg-gray-900 border border-gray-800 rounded animate-pulse" />
+                            <div className="w-1/4 h-4 rounded animate-pulse bg-gray-200 border border-gray-200 dark:bg-gray-900 dark:border-gray-800" />
+                            <div className="w-1/2 h-3 rounded animate-pulse bg-gray-200 border border-gray-200 dark:bg-gray-900 dark:border-gray-800" />
                           </div>
                         </div>
                       ))}
@@ -210,22 +268,22 @@ export default function TokenSelector({ selectedToken, onSelect, disabledTokens 
                       {searchFeedback.isSearching ? (
                         <>
                           <div className="animate-spin w-8 h-8 border-2 border-bankii-blue border-t-transparent rounded-full mb-4"></div>
-                          <p className="text-gray-300 font-medium mb-2">
+                          <p className="font-medium mb-2 text-gray-700 dark:text-gray-300">
                             {searchFeedback.message || 'Searching...'}
                           </p>
-                          <p className="text-gray-500 text-sm">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">
                             Looking for &ldquo;{searchFeedback.searchTerm}&rdquo;
                           </p>
                         </>
                       ) : (
                         <>
-                          <div className="w-16 h-16 bg-gray-900 border-2 border-gray-800 rounded-full flex items-center justify-center mb-4">
+                          <div className="w-16 h-16 rounded-full flex items-center justify-center mb-4 bg-gray-100 border-2 border-gray-200 dark:bg-gray-900 dark:border-gray-800">
                             <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
                           </div>
-                          <p className="text-gray-300 font-medium mb-2">No tokens found</p>
-                          <p className="text-gray-500 text-sm leading-relaxed max-w-sm">
+                          <p className="font-medium mb-2 text-gray-700 dark:text-gray-300">No tokens found</p>
+                          <p className="text-sm leading-relaxed max-w-sm text-gray-500 dark:text-gray-400">
                             {searchFeedback.message || `No results for &ldquo;${searchFeedback.searchTerm}&rdquo;`}
                           </p>
                           <button

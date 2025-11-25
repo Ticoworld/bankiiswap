@@ -19,9 +19,9 @@ export default function SuccessToast({ txHash, fromAmount, fromSymbol, toAmount,
     <div className="flex items-start gap-3">
       {/* Removed internal check icon container to avoid duplicate icons (toast system already provides one). */}
       <div className="min-w-0">
-  <div className="text-sm font-semibold text-white">{header}</div>
+  <div className="text-sm font-semibold text-gray-900 dark:text-white">{header}</div>
         <div
-          className="text-xs text-gray-300 mt-0.5 whitespace-normal break-words leading-relaxed max-w-[280px]"
+          className="text-xs mt-0.5 whitespace-normal break-words leading-relaxed max-w-[280px] text-gray-700 dark:text-gray-300"
           title={`You swapped ${fromAmount} ${fromSymbol} for ${toAmount} ${toSymbol}`}
         >
           You swapped {fromAmount} {fromSymbol} for {toAmount} {toSymbol}

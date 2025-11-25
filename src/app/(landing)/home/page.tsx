@@ -8,20 +8,20 @@ import TokenSpotlight from "@/components/landing/TokenSpotlight";
 import VisaCTA from "@/components/landing/VisaCTA";
 
 export const metadata: Metadata = {
-  title: "BankiiSwap | Swap $BNKY & Solana Tokens with Best Rates",
+  title: "BankiiSwap – The DeFi Heart of the Bankii Ecosystem",
   description:
-    "The official DEX for the Bankii ecosystem. Audited, secure, and connected to Bankii Finance.",
+    "Swap, earn, and access exclusive $BKP benefits, all powered by Solana’s fastest liquidity network.",
   openGraph: {
-    title: "BankiiSwap | Swap $BNKY & Solana Tokens with Best Rates",
+    title: "BankiiSwap – The DeFi Heart of the Bankii Ecosystem",
     description:
-      "The official DEX for the Bankii ecosystem. Audited, secure, and connected to Bankii Finance.",
+      "Swap, earn, and access exclusive $BKP benefits, all powered by Solana’s fastest liquidity network.",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "BankiiSwap | Swap $BNKY & Solana Tokens with Best Rates",
+    title: "BankiiSwap – The DeFi Heart of the Bankii Ecosystem",
     description:
-      "The official DEX for the Bankii ecosystem. Audited, secure, and connected to Bankii Finance.",
+      "Swap, earn, and access exclusive $BKP benefits, all powered by Solana’s fastest liquidity network.",
   },
 };
 

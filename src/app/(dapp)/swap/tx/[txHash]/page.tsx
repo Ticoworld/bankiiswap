@@ -61,15 +61,15 @@ export default function TransactionPage({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-700"
+        className="rounded-2xl p-6 shadow-xl border bg-white/90 border-gray-200 dark:bg-gray-800 dark:border-gray-700"
       >
         {!isValidTxHash ? (
           <div className="text-center">
             <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mb-4 mx-auto">
               <FaArrowLeft className="text-red-500 text-2xl" />
             </div>
-            <h1 className="text-xl font-bold mb-2 text-red-400">Invalid Transaction</h1>
-            <p className="text-gray-400 text-sm mb-6">The transaction hash appears to be invalid.</p>
+            <h1 className="text-xl font-bold mb-2 text-red-600 dark:text-red-400">Invalid Transaction</h1>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">The transaction hash appears to be invalid.</p>
             <button
               onClick={handleBackToSwap}
               className="w-full py-3 px-4 bg-brand-purple hover:bg-brand-purple/90 text-white font-medium rounded-xl transition-colors"
@@ -84,35 +84,35 @@ export default function TransactionPage({
               <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mb-4">
                 <FaCheck className="text-green-500 text-2xl" />
               </div>
-              <h1 className="text-2xl font-bold mb-1">Swap Completed!</h1>
-              <p className="text-gray-400 text-sm">Your transaction was successful</p>
+              <h1 className="text-2xl font-bold mb-1 text-gray-900 dark:text-white">Swap Completed!</h1>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">Your transaction was successful</p>
             </div>
 
             {/* Swap Details */}
             {sanitizedParams.fromToken && sanitizedParams.toToken && (
-              <div className="bg-gray-900 rounded-xl p-4 border border-gray-600 mb-6">
+              <div className="rounded-xl p-4 border bg-gray-50 border-gray-200 dark:bg-gray-900 dark:border-gray-600 mb-6">
                 <div className="flex justify-between items-center mb-4">
-                  <span className="text-gray-400">You Paid</span>
+                  <span className="text-gray-600 dark:text-gray-400">You Paid</span>
                   <div className="text-right">
-                    <div className="font-medium">{sanitizedParams.fromAmount} {sanitizedParams.fromToken}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">{sanitizedParams.fromAmount} {sanitizedParams.fromToken}</div>
                   </div>
                 </div>
 
                 <div className="flex justify-center my-2">
-                  <div className="h-px w-8 bg-gray-600"></div>
+                  <div className="h-px w-8 bg-gray-300 dark:bg-gray-600"></div>
                 </div>
 
                 <div className="flex justify-between items-center">
-                  <span className="text-gray-400">You Received</span>
+                  <span className="text-gray-600 dark:text-gray-400">You Received</span>
                   <div className="text-right">
-                    <div className="font-medium">{sanitizedParams.toAmount} {sanitizedParams.toToken}</div>
+                    <div className="font-medium text-gray-900 dark:text-white">{sanitizedParams.toAmount} {sanitizedParams.toToken}</div>
                   </div>
                 </div>
               </div>
             )}          {/* Transaction Hash */}
-          <div className="bg-gray-900 rounded-xl p-4 border border-gray-600 mb-6">
+          <div className="rounded-xl p-4 border bg-gray-50 border-gray-200 dark:bg-gray-900 dark:border-gray-600 mb-6">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-gray-400">Transaction</span>
+              <span className="text-gray-600 dark:text-gray-400">Transaction</span>
               <div className="flex items-center space-x-2">
                 <button
                   onClick={handleCopyHash}
@@ -132,7 +132,7 @@ export default function TransactionPage({
                 </a>
               </div>
             </div>
-            <div className="text-xs font-mono text-gray-300 break-all">
+            <div className="text-xs font-mono text-gray-700 dark:text-gray-300 break-all">
               {params.txHash}
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function TransactionPage({
             
             <button
               onClick={() => router.back()}
-              className="w-full py-3 px-4 bg-gray-700 hover:bg-gray-600 text-white font-medium rounded-xl transition-colors flex items-center justify-center"
+              className="w-full py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-900 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white font-medium rounded-xl transition-colors flex items-center justify-center"
             >
               <FaArrowLeft className="mr-2" />
               Go Back

@@ -15,8 +15,8 @@ export default function ErrorToast({ txId, message, title = 'Swap Failed' }: Err
   return (
     <div className="flex items-start gap-3">
       <div className="min-w-0">
-        <div className="text-sm font-semibold text-white">{title}</div>
-        <div className="text-xs text-gray-300 mt-0.5">
+            <div className="text-sm font-semibold text-gray-900 dark:text-white">{title}</div>
+            <div className="text-xs mt-0.5 text-gray-700 dark:text-gray-300">
           {message || defaultMessage}
         </div>
         {explorerUrl && (

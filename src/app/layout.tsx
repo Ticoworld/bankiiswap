@@ -2,6 +2,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import { Inter, Poppins } from "next/font/google";
 // Removed full-page GlobalLoader and RouteLoader for instant paint UX
+import { ThemeProvider } from "@/contexts/ThemeProvider";
 import Providers from "./providers";
 import StructuredData from "@/components/common/StructuredData";
 import PageTransition from "@/components/layout/PageTransition";
@@ -21,11 +22,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "BankiiSwap | Swap $BNKY & Solana Tokens",
-  description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
+  title: "BankiiSwap | Swap $BKP & Solana Tokens",
+  description: "Swap $BKP and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
   keywords: [
     "BankiiSwap",
-    "BNKY token",
+    "BKP token",
     "Solana DEX",
     "Jupiter aggregator",
     "crypto banking",
@@ -44,8 +45,8 @@ export const metadata: Metadata = {
     canonical: 'https://bankiiswap.com',
   },
   openGraph: {
-    title: "BankiiSwap | Swap $BNKY & Solana Tokens",
-    description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
+    title: "BankiiSwap | Swap $BKP & Solana Tokens",
+    description: "Swap $BKP and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
     url: 'https://bankiiswap.com',
     siteName: 'BankiiSwap',
     type: 'website',
@@ -55,14 +56,14 @@ export const metadata: Metadata = {
         url: '/assets/landing/hero-visual-v2.jpg',
         width: 1200,
         height: 630,
-        alt: 'BankiiSwap — Swap BNKY & Solana tokens',
+        alt: 'BankiiSwap — Swap BKP & Solana tokens',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: "BankiiSwap | Swap $BNKY & Solana Tokens",
-    description: "Swap $BNKY and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
+    title: "BankiiSwap | Swap $BKP & Solana Tokens",
+    description: "Swap $BKP and Solana tokens with best rates via Jupiter. Part of Bankii Finance.",
     images: ['/assets/landing/hero-visual-v2.jpg'],
     creator: '@BankiiFinance',
     site: '@BankiiFinance',
@@ -119,13 +120,15 @@ export default function RootLayout({
         <StructuredData />
       </head>
       <body className={`${inter.className} bg-white text-neutral-900 dark:bg-black dark:text-white overflow-x-hidden`}>
-        <Providers>
-          {/* PageTransition adds premium fade between routes */}
-          <PageTransition>
-            {/* Full-page loaders removed: relying on component-level skeletons */}
-            {children}
-          </PageTransition>
-        </Providers>
+        <ThemeProvider>
+          <Providers>
+            {/* PageTransition adds premium fade between routes */}
+            <PageTransition>
+              {/* Full-page loaders removed: relying on component-level skeletons */}
+              {children}
+            </PageTransition>
+          </Providers>
+        </ThemeProvider>
       </body>
     </html>
   );

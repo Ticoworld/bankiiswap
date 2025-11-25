@@ -81,7 +81,7 @@ class SmartTokenCache {
 
   // Preload popular tokens for instant display
   async preloadPopularTokens() {
-  const popularQueries = ['', 'SOL', 'USDC', 'USDT', 'BNKY'];
+  const popularQueries = ['', 'SOL', 'USDC', 'USDT', 'BKP'];
     
     for (const query of popularQueries) {
       try {

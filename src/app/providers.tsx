@@ -76,35 +76,12 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           position="bottom-right"
           toastOptions={{
             duration: 5000,
-            style: {
-              background: '#1a1a1a',
-              color: '#fff',
-              border: '1px solid #0049FF', // bankii-blue
-              padding: '12px 16px',
-              fontSize: '0.875rem',
-              fontWeight: '500'
-            },
+            className: 'rounded-xl shadow-lg border text-sm font-medium px-4 py-3 bg-white text-gray-900 border-gray-200 dark:bg-[#1a1a1a] dark:text-white dark:border-gray-800',
             success: {
-              style: {
-                background: '#1a1a1a',
-                color: '#fff',
-                border: '1px solid #10b981', // green-500
-              },
-              iconTheme: {
-                primary: '#10b981',
-                secondary: '#1a1a1a'
-              }
+              className: 'rounded-xl shadow-lg border px-4 py-3 bg-white text-gray-900 border-emerald-400 dark:bg-[#1a1a1a] dark:text-white dark:border-emerald-500'
             },
             error: {
-              style: {
-                background: '#1a1a1a',
-                color: '#fff',
-                border: '1px solid #ef4444', // red-500
-              },
-              iconTheme: {
-                primary: '#ef4444',
-                secondary: '#1a1a1a'
-              }
+              className: 'rounded-xl shadow-lg border px-4 py-3 bg-white text-gray-900 border-red-400 dark:bg-[#1a1a1a] dark:text-white dark:border-red-500'
             },
             iconTheme: {
               primary: '#0049FF', // bankii-blue

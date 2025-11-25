@@ -14,7 +14,7 @@ const LOCAL_TOKEN_ICONS: Record<string, string> = {
   SOL: '/assets/tokens/sol.png',
   USDC: '/assets/tokens/usdc.png',
   USDT: '/assets/tokens/usdt.png',
-  BNKY: '/assets/tokens/bnky.png',
+  BKP: '/assets/tokens/bkp.png',
 };
 
 // Jupiter-style multi-tier image source strategy for maximum reliability

@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import Link from "next/link";
+import { FaMobileAlt, FaBolt, FaStar } from "react-icons/fa";
 
 /**
  * A premium, dynamic "breakout" feature section.
@@ -59,22 +60,37 @@ export default function AppMockup() {
 
           {/* === The Card ("-") === */}
           {/* Sits on the left, holds the text. */}
-          <div className="relative z-10 w-full rounded-3xl bg-[#0c0c0c] border border-gray-800 py-7 pl-10 ">
+          <div className="relative z-10 w-full rounded-3xl bg-gray-50 dark:bg-[#0c0c0c] border border-gray-200 dark:border-gray-800 py-7 pl-10 ">
             <div className="flex flex-col items-start text-left">
               <h2
                 id="app-mockup-heading"
-                className="text-4xl md:text-5xl font-extrabold text-white leading-tight break-words max-w-md whitespace-pre-line"
+                className="text-4xl md:text-5xl font-extrabold text-gray-900 dark:text-white leading-tight break-words max-w-md whitespace-pre-line"
               >
-                Swap Smart, On the Go
+                Swap Anywhere, Anytime
               </h2>
-              <p className="mt-6 text-lg text-gray-400 max-w-md break-words whitespace-pre-line">
-                The BankiiSwap app is engineered for speed and clarity. Scan best
-                routes, save favorites, and swap in seconds with a clean,
-                mobile-first UI.
+              <p className="mt-6 text-lg text-gray-600 dark:text-gray-400 max-w-md break-words whitespace-pre-line">
+                Designed for speed and clarity, scan, save, and swap in seconds.
               </p>
+              
+              {/* Icon List */}
+              <div className="mt-8 flex flex-col gap-4 max-w-md">
+                <div className="flex items-center gap-3">
+                  <FaMobileAlt className="text-bankii-blue w-5 h-5 flex-shrink-0" />
+                  <span className="text-lg text-gray-700 dark:text-gray-300">Mobile-first UI</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FaBolt className="text-bankii-blue w-5 h-5 flex-shrink-0" />
+                  <span className="text-lg text-gray-700 dark:text-gray-300">Instant route tracking</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <FaStar className="text-bankii-blue w-5 h-5 flex-shrink-0" />
+                  <span className="text-lg text-gray-700 dark:text-gray-300">Save your favorite swap pairs</span>
+                </div>
+              </div>
+              
               <div className="mt-8 flex flex-wrap gap-4">
                 <Link href="/swap" className="btn-primary">
-                  Open Swap
+                  Open BankiiSwap
                 </Link>
                 <Link href="#security-vault" className="btn-secondary">
                   Learn more

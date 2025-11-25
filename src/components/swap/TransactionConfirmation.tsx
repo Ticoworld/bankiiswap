@@ -104,8 +104,8 @@ export default function SwapConfirmation({
 
       <div className="bg-bankii-blue/10 border-2 border-bankii-blue/20 rounded-xl p-3 text-center text-bankii-blue text-sm mb-6">
         🎉 {platformFee !== undefined
-          ? `${platformFee.toFixed(6)} ${fromToken?.symbol || ''} supports the Bankii ecosystem and BNKY utility`
-          : 'A portion of fees supports the Bankii ecosystem and BNKY utility'}
+          ? `${platformFee.toFixed(6)} ${fromToken?.symbol || ''} supports the Bankii ecosystem and BKP utility`
+          : 'A portion of fees supports the Bankii ecosystem and BKP utility'}
       </div>
 
       <button

@@ -224,7 +224,7 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
   }, [activeTab, history.length]);
 
   return (
-    <div className="bg-black/60 backdrop-blur-xl rounded-2xl border-2 border-bankii-blue/10 overflow-hidden">
+    <div className="bg-white/90 dark:bg-black/60 backdrop-blur-xl rounded-2xl border-2 border-bankii-blue/10 overflow-hidden">
       {/* Tabs Header */}
       <div className="flex border-b border-gray-800/50">
         {tabs.map((tab) => {
@@ -237,7 +237,7 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
               className={`flex-1 flex items-center justify-center gap-2 py-3 px-4 text-sm font-medium transition-all ${
                 isActive
                   ? 'text-bankii-blue border-b-2 border-bankii-blue bg-bankii-blue/5'
-                  : 'text-gray-400 hover:text-gray-200 hover:bg-gray-800/30'
+                  : 'text-gray-600 dark:text-gray-400 hover:text-gray-200 hover:bg-gray-800/30'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -258,8 +258,8 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
             transition={{ duration: 0.2 }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-semibold text-white">Your Swap History</h3>
-              <span className="text-xs text-gray-400">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Swap History</h3>
+              <span className="text-xs text-gray-600 dark:text-gray-400">
                 {history.length > 0 ? `${history.length} total swap${history.length !== 1 ? 's' : ''}` : 'Recent swaps'}
               </span>
             </div>
@@ -270,7 +270,7 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
                 <div className="w-16 h-16 rounded-full bg-gray-800/40 flex items-center justify-center mx-auto mb-4">
                   <FaHistory className="text-gray-500 text-2xl" />
                 </div>
-                <p className="text-gray-400 text-sm">
+                <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Your recent swaps made on this device will appear here.
                 </p>
               </div>
@@ -291,12 +291,12 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
                             <FaCheckCircle className="text-green-500 text-sm" />
                           </div>
                           <div className="min-w-0">
-                            <div className="text-sm font-medium text-white truncate">
+                            <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                               {entry.fromAmount.toFixed(4)} {entry.fromTokenSymbol}{' '}
                               <span className="text-gray-500">→</span>{' '}
                               {entry.toAmount.toFixed(4)} {entry.toTokenSymbol}
                             </div>
-                            <div className="text-xs text-gray-400 flex items-center gap-1">
+                            <div className="text-xs text-gray-600 dark:text-gray-400 flex items-center gap-1">
                               <FaClock className="h-3 w-3" />
                               <span
                                 data-tooltip-id="history-tooltip"
@@ -338,9 +338,9 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
                     </button>
 
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-gray-400">
-                        Page <span className="text-white font-semibold">{currentPage}</span> of{' '}
-                        <span className="text-white font-semibold">{totalPages}</span>
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        Page <span className="text-gray-900 dark:text-white font-semibold">{currentPage}</span> of{' '}
+                        <span className="text-gray-900 dark:text-white font-semibold">{totalPages}</span>
                       </span>
                     </div>
 
@@ -400,31 +400,31 @@ export default function TraderDashboardPanel({ history, isMobile = false }: Trad
             <div className="w-16 h-16 rounded-full bg-gradient-to-br from-purple-500/20 to-pink-500/20 flex items-center justify-center mx-auto mb-4">
               <FaCreditCard className="text-purple-400 text-2xl" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Spend Your Crypto Profits</h3>
-            <p className="text-gray-400 text-sm mb-6 max-w-md mx-auto">
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">Spend Your Crypto Profits</h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-6 max-w-md mx-auto">
               Get instant access to your trading profits in the real world with the bankii.finance VISA Card.
             </p>
             <a
               href="https://bankii.finance"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white font-semibold transition-all shadow-lg hover:shadow-purple-500/25"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-gray-900 dark:text-white font-semibold transition-all shadow-lg hover:shadow-purple-500/25"
             >
               Get the bankii.finance VISA Card
               <FaExternalLinkAlt className="h-4 w-4" />
             </a>
             <div className="mt-6 grid grid-cols-3 gap-4 max-w-md mx-auto">
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">0%</div>
-                <div className="text-xs text-gray-400">Annual Fee</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">0%</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Annual Fee</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">2%</div>
-                <div className="text-xs text-gray-400">Cashback</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">2%</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Cashback</div>
               </div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-white">Instant</div>
-                <div className="text-xs text-gray-400">Withdrawals</div>
+                <div className="text-2xl font-bold text-gray-900 dark:text-white">Instant</div>
+                <div className="text-xs text-gray-600 dark:text-gray-400">Withdrawals</div>
               </div>
             </div>
           </motion.div>
@@ -638,8 +638,8 @@ function PnlContent({
         <div className="w-16 h-16 rounded-full bg-gray-800/40 flex items-center justify-center mx-auto mb-4">
           <FaChartLine className="text-bankii-blue text-2xl" />
         </div>
-        <h3 className="text-lg font-semibold text-white mb-2">Connect your wallet</h3>
-        <p className="text-gray-400 text-sm">Connect to view your current holdings across traded tokens.</p>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Connect your wallet</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Connect to view your current holdings across traded tokens.</p>
       </div>
     );
   }
@@ -650,8 +650,8 @@ function PnlContent({
         <div className="w-16 h-16 rounded-full bg-gray-800/40 flex items-center justify-center mx-auto mb-4">
           <FaHistory className="text-gray-500 text-2xl" />
         </div>
-        <h3 className="text-lg font-semibold text-white mb-2">No trades yet</h3>
-        <p className="text-gray-400 text-sm">Your portfolio will appear here after your first swap.</p>
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">No trades yet</h3>
+        <p className="text-gray-600 dark:text-gray-400 text-sm">Your portfolio will appear here after your first swap.</p>
       </div>
     );
   }
@@ -662,11 +662,11 @@ function PnlContent({
       <div className="space-y-4">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h3 className="text-lg font-semibold text-white">Your Portfolio</h3>
-            <p className="text-xs text-gray-400">Assets you&#39;ve traded on BankiiSwap</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Portfolio</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Assets you&#39;ve traded on BankiiSwap</p>
           </div>
           <div className="text-right">
-            <div className="text-xs text-gray-400">Total Value</div>
+            <div className="text-xs text-gray-600 dark:text-gray-400">Total Value</div>
             <div className="h-8 w-24 bg-gray-700 rounded animate-pulse" />
           </div>
         </div>
@@ -694,8 +694,8 @@ function PnlContent({
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-semibold text-white">Your Portfolio</h3>
-            <p className="text-xs text-gray-400">Assets you&#39;ve traded on BankiiSwap</p>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Portfolio</h3>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Assets you&#39;ve traded on BankiiSwap</p>
           </div>
         </div>
         <div className="text-center py-6 text-red-400 text-sm">{error}</div>
@@ -708,12 +708,12 @@ function PnlContent({
       {/* Header with total value */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-white">Your Portfolio</h3>
-          <p className="text-xs text-gray-400">Assets you&#39;ve traded on BankiiSwap</p>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Your Portfolio</h3>
+          <p className="text-xs text-gray-600 dark:text-gray-400">Assets you&#39;ve traded on BankiiSwap</p>
         </div>
         <div className="text-right">
-          <div className="text-xs text-gray-400">Total Value</div>
-          <div className="text-2xl font-bold text-white">
+          <div className="text-xs text-gray-600 dark:text-gray-400">Total Value</div>
+          <div className="text-2xl font-bold text-gray-900 dark:text-white">
             {formatUSD(portfolio.reduce((sum, i) => sum + i.valueUSD, 0))}
           </div>
         </div>
@@ -738,13 +738,13 @@ function PnlContent({
                     }}
                   />
                   <div className="min-w-0">
-                    <div className="text-sm font-medium text-white truncate">{item.symbol}</div>
-                    <div className="text-xs text-gray-400 truncate">{item.balance.toFixed(6)} {item.symbol}</div>
+                    <div className="text-sm font-medium text-gray-900 dark:text-white truncate">{item.symbol}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 truncate">{item.balance.toFixed(6)} {item.symbol}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-white">{formatUSD(item.valueUSD)}</div>
-                  <div className="text-xs text-gray-400">${item.price.toFixed(4)} / {item.symbol}</div>
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">{formatUSD(item.valueUSD)}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400">${item.price.toFixed(4)} / {item.symbol}</div>
                 </div>
               </div>
             </div>

@@ -121,7 +121,7 @@ export default function Settings({ slippage, setSlippage }: SettingsProps) {
                 <div className="pt-4 border-t border-gray-700">
                   <h4 className="font-medium mb-2">Platform Fees</h4>
                   <p className="text-sm text-gray-300">
-                    BankiiSwap charges a 0.3% network fee on swaps to support platform infrastructure and BNKY utility rewards.
+                    BankiiSwap charges a 0.3% network fee on swaps to support platform infrastructure and BKP utility rewards.
                   </p>
                 </div>
               </div>

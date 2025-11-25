@@ -3,9 +3,10 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Image from "next/image";
+import { FaBolt, FaArrowDown, FaShieldAlt, FaPercentage, FaChartLine, FaStar, FaUsers } from "react-icons/fa";
 
 type Chapter = {
-  id: "routing" | "bnky" | "ecosystem";
+  id: "routing" | "bkp" | "ecosystem";
   title: string;
   description: string;
   image: string;
@@ -14,23 +15,23 @@ type Chapter = {
 const CHAPTERS: Chapter[] = [
   {
     id: "routing",
-    title: "Best Rates, Always.",
+    title: "Best Rates. Every Swap. Every Time.",
     description:
-      "Our smart order router is integrated directly with the Jupiter API. This means we scan all of Solana's liquidity sources—from major pools to the long-tail—to find you the most efficient swap routes. Stop losing value to high slippage. BankiiSwap guarantees the best price, every time.",
+      "BankiiSwap uses Jupiter’s advanced smart routing to scan every liquidity pool on Solana, from Raydium to Orca, guaranteeing you the best price and minimal slippage automatically. Real-time route scanning. Lowest possible fees. Lightning-fast settlement. Your swap, optimized for performance.",
     image: "/assets/landing/visual-routing.png",
   },
   {
-    id: "bnky",
-    title: "The Heart of $BNKY.",
+    id: "bkp",
+    title: "$BKP: Powering the Bankii Ecosystem",
     description:
-      "The $BNKY token is the key to unlocking the ecosystem. Holders receive exclusive benefits like fee discounts up to 50%, priority access to new features, and a share of platform revenue. BankiiSwap is the premier destination for $BNKY liquidity.",
-    image: "/assets/landing/visual-bnky-coin.png",
+      "The $BKP token fuels every feature across the Bankii ecosystem, from swaps to cards and staking. Fee Discounts – Up to 50% off swap fees. Revenue Share – Earn from platform performance. Priority Access – Be first to new products and card launches. Governance – Help shape Bankii's financial future.",
+    image: "/assets/landing/visual-bkp-coin.png",
   },
   {
     id: "ecosystem",
-    title: "Connected to Your Bank.",
+    title: "DeFi Meets Real Finance",
     description:
-      "BankiiSwap is not a standalone app; it's the DeFi engine for your Bankii.finance account. Seamlessly move from swapping tokens to spending them with your crypto debit card. One ecosystem, zero friction. This is the power of CeDeFi.",
+      "BankiiSwap is directly integrated with your Bankii.finance wallet and debit card. Instantly swap tokens, fund your account, and spend globally, all in one ecosystem. Swap → Load → Spend → Earn. The future of money is borderless. Bankii makes it real.",
     image: "/assets/landing/visual-ecosystem.png",
   },
 ];
@@ -39,7 +40,7 @@ export default function ValuePropSection() {
   const [activeFeature, setActiveFeature] = useState<Chapter["id"]>("routing");
   const chapterRefs = useRef<Record<Chapter["id"], HTMLDivElement | null>>({
     routing: null,
-    bnky: null,
+    bkp: null,
     ecosystem: null,
   });
 
@@ -97,8 +98,8 @@ export default function ValuePropSection() {
   }, [measureAndSetActive]);
 
   return (
-  <section className="py-24 bg-black" data-aos="fade-up">
-      <div className="max-w-7xl mx-auto px-4">
+  <section className="py-24 bg-white dark:bg-black" data-aos="fade-up">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-16">
           {/* Left: Chapters */}
           <div data-aos="fade-up" data-aos-delay="200">
@@ -110,8 +111,85 @@ export default function ValuePropSection() {
                 }}
                 className="py-12 md:py-24 md:min-h-screen flex flex-col md:justify-center"
               >
-                <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight">{c.title}</h3>
-                <p className="text-lg md:text-xl text-gray-400 max-w-xl leading-relaxed">{c.description}</p>
+                <h3 className="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 dark:text-white mb-6 leading-tight">{c.title}</h3>
+                
+                {/* Special layout for "routing" chapter */}
+                {c.id === "routing" ? (
+                  <>
+                    {/* Main description paragraph */}
+                    <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl leading-relaxed mb-8">
+                      BankiiSwap uses Jupiter&apos;s advanced smart routing to scan every liquidity pool on Solana, from Raydium to Orca, guaranteeing you the best price and minimal slippage automatically.
+                    </p>
+                    
+                    {/* Icon list */}
+                    <div className="flex flex-col gap-4 mb-6">
+                      <div className="flex items-center gap-3">
+                        <FaBolt className="text-bankii-blue w-5 h-5 flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Real-time route scanning</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <FaArrowDown className="text-bankii-blue w-5 h-5 flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Lowest possible fees</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <FaShieldAlt className="text-bankii-blue w-5 h-5 flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Lightning-fast settlement</span>
+                      </div>
+                    </div>
+                    
+                    {/* Concluding line */}
+                    <p className="text-xl font-semibold text-gray-900 dark:text-white">
+                      Your swap, optimized for performance.
+                    </p>
+                  </>
+                ) : c.id === "bkp" ? (
+                  <>
+                    {/* Sub-headline */}
+                    <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mb-8">
+                      The $BKP token fuels every feature across the Bankii ecosystem, from swaps to cards and staking.
+                    </p>
+                    
+                    {/* Icon list */}
+                    <div className="flex flex-col gap-4">
+                      <div className="flex items-center gap-3">
+                        <FaPercentage className="h-5 w-5 text-bankii-blue flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Fee Discounts – Up to 50% off swap fees</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <FaChartLine className="h-5 w-5 text-bankii-blue flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Revenue Share – Earn from platform performance</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <FaStar className="h-5 w-5 text-bankii-blue flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Priority Access – Be first to new products and card launches</span>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <FaUsers className="h-5 w-5 text-bankii-blue flex-shrink-0" />
+                        <span className="text-lg text-gray-700 dark:text-gray-300">Governance – Help shape Bankii&apos;s financial future</span>
+                      </div>
+                    </div>
+                  </>
+                ) : c.id === "ecosystem" ? (
+                  <>
+                    {/* Main paragraph */}
+                    <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mb-4">
+                      BankiiSwap is directly integrated with your Bankii.finance wallet and debit card. Instantly swap tokens, fund your account, and spend globally, all in one ecosystem.
+                    </p>
+                    
+                    {/* "Pop" text */}
+                    <p className="text-xl font-medium text-transparent bg-clip-text bg-gradient-to-r from-bankii-blue to-purple-500 mb-4">
+                      Swap → Load → Spend → Earn.
+                    </p>
+                    
+                    {/* Closing paragraph */}
+                    <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+                      The future of money is borderless. Bankii makes it real.
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-xl leading-relaxed">{c.description}</p>
+                )}
+                
                 {/* Mobile inline visual (sticky column hidden on <md) */}
                 <div className="mt-8 md:hidden flex items-center justify-center">
                   <Image

@@ -13,6 +13,7 @@ import { useSwapHistory } from '@/hooks/useSwapHistory';
 // Removed AnalyticsMenu and UserMenu in Bankii minimal surface
 const MobileDrawer = dynamic(() => import("@/components/navigation/MobileDrawer"), { ssr: false });
 import PremiumWalletButton from "@/components/ui/PremiumWalletButton";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
 
 export function DappHeader() {
   const pathname = usePathname();
@@ -47,9 +48,9 @@ export function DappHeader() {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-      scrolled ? 'bg-black/20 backdrop-blur-md' : 'bg-transparent'
+      scrolled ? 'bg-white/80 dark:bg-black/20 backdrop-blur-md' : 'bg-transparent'
     }`}>
-      <div className="container mx-auto px-4">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* Mobile: condensed status bar with logo icon only */}
           <Link href="/swap" className="flex items-center gap-2 group">
@@ -62,15 +63,16 @@ export function DappHeader() {
               priority
             />
             {/* Hide text on mobile, keep on desktop for branding */}
-            <span className="hidden md:inline text-xl font-heading font-heading-bold text-white group-hover:text-accent-start transition-colors">
+            <span className="hidden md:inline text-xl font-heading font-heading-bold text-gray-900 dark:text-white group-hover:text-accent-start transition-colors">
               BankiiSwap
             </span>
           </Link>
 
             {/* Desktop navigation removed for minimal surface */}
 
-          {/* Right side: Single unified PremiumWalletButton for all screens */}
-          <div className="flex items-center gap-2">
+          {/* Right side: Theme toggle and wallet button */}
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
             {isClient ? (
               <PremiumWalletButton onOpenDrawer={() => setIsDrawerOpen(true)} />
             ) : (

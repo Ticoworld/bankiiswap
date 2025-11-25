@@ -13,7 +13,7 @@ export default function StructuredData() {
           "width": 200,
           "height": 200
         },
-        "description": "Swap $BNKY and Solana tokens with best rates via Jupiter aggregator",
+        "description": "Swap $BKP and Solana tokens with best rates via Jupiter aggregator",
         "foundingDate": "2025",
         "sameAs": [
           "https://twitter.com/BankiiFinance",
@@ -25,7 +25,7 @@ export default function StructuredData() {
         "@id": "https://bankiiswap.com/#website",
         "url": "https://bankiiswap.com/",
         "name": "BankiiSwap",
-        "description": "Swap $BNKY & Solana tokens. Part of Bankii Finance ecosystem.",
+        "description": "Swap $BKP & Solana tokens. Part of Bankii Finance ecosystem.",
         "publisher": {
           "@id": "https://bankiiswap.com/#organization"
         },
@@ -45,7 +45,7 @@ export default function StructuredData() {
         "@id": "https://bankiiswap.com/#webapp",
         "name": "BankiiSwap DEX",
         "url": "https://bankiiswap.com/swap",
-        "description": "Solana DEX aggregator powered by Jupiter Protocol. Trade BNKY and Solana tokens.",
+        "description": "Solana DEX aggregator powered by Jupiter Protocol. Trade BKP and Solana tokens.",
         "applicationCategory": "DeFi",
         "operatingSystem": "Web Browser",
         "offers": {
@@ -56,7 +56,7 @@ export default function StructuredData() {
         "featureList": [
           "DEX aggregation",
           "Best swap rates",
-          "BNKY token utility",
+          "BKP token utility",
           "Solana blockchain",
           "Jupiter Protocol integration",
           "Bankii Finance ecosystem"
@@ -65,8 +65,8 @@ export default function StructuredData() {
       {
         "@type": "Article",
         "@id": "https://bankiiswap.com/#article",
-        "headline": "BankiiSwap - Swap BNKY & Solana Tokens",
-        "description": "Best rates for $BNKY swaps via Jupiter aggregator. Part of Bankii Finance crypto banking ecosystem.",
+        "headline": "BankiiSwap - Swap BKP & Solana Tokens",
+        "description": "Best rates for $BKP swaps via Jupiter aggregator. Part of Bankii Finance crypto banking ecosystem.",
         "author": {
           "@id": "https://bankiiswap.com/#organization"
         },

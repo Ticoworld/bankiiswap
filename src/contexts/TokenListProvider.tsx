@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo, useRef } from 'react';
 import fallbackTokens from '@/config/fallbackTokens.json';
-import { Token, BNKY_TOKEN } from '@/config/tokens';
+import { Token, BKP_TOKEN } from '@/config/tokens';
 import { debounce } from 'lodash';
 
 const CACHE_KEY = 'bankiiSwapTokenCache';
@@ -91,14 +91,14 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
     const cached = loadFromCache();
     if (cached && Array.isArray(cached.data)) {
       setTokens([
-        BNKY_TOKEN,
-        ...cached.data.filter((t) => t.address !== BNKY_TOKEN.address),
+        BKP_TOKEN,
+        ...cached.data.filter((t) => t.address !== BKP_TOKEN.address),
       ]);
       setLoading(false);
     } else {
       setTokens([
-        BNKY_TOKEN,
-        ...fallbackTokens.filter((t) => t.address !== BNKY_TOKEN.address),
+        BKP_TOKEN,
+        ...fallbackTokens.filter((t) => t.address !== BKP_TOKEN.address),
       ]);
       setLoading(false);
     }
@@ -135,11 +135,11 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
             }
             // Cross-check all tokens for verification
             const sorted = [
-              BNKY_TOKEN,
+              BKP_TOKEN,
               ...tokenList.map((t) => ({
                 ...t,
                 verified: t.verified || verifiedSetRef.current.has(t.address),
-              })).filter((t) => t.address !== BNKY_TOKEN.address),
+              })).filter((t) => t.address !== BKP_TOKEN.address),
             ];
             setTokens(sorted);
             saveToCache(sorted);
@@ -160,8 +160,8 @@ export function TokenListProvider({ children }: { children: React.ReactNode }) {
         if (!success) {
           const fallback = cached?.data || fallbackTokens;
           const sorted = [
-            BNKY_TOKEN,
-            ...fallback.filter((t) => t.address !== BNKY_TOKEN.address),
+            BKP_TOKEN,
+            ...fallback.filter((t) => t.address !== BKP_TOKEN.address),
           ];
           setTokens(sorted);
           setError(true);

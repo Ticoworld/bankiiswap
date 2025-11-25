@@ -3,8 +3,8 @@
 import React, { useRef } from 'react';
 import Image from 'next/image';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { Sparkles, TrendingUp, ShieldCheck } from 'lucide-react';
-import { BNKY_TOKEN_ADDRESS } from '@/config/tokens';
+import { Sparkles, TrendingUp, Unlock } from 'lucide-react';
+import { BKP_TOKEN_ADDRESS } from '@/config/tokens';
 
 interface UtilityProps {
   // Icons from lucide-react are React components that render an SVG.
@@ -24,19 +24,19 @@ const UtilityCallout: React.FC<UtilityProps> = ({ icon: Icon, title, description
   return (
     <div
       className={`flex flex-col ${itemAlign} ${textAlign} 
-        border border-white/10 rounded-2xl p-6 
+        bg-white dark:bg-black/40 shadow-md dark:shadow-none border border-gray-200 dark:border-gray-800 rounded-2xl p-6 
         transition-all duration-300 
         hover:border-bankii-blue/50 hover:shadow-lg hover:shadow-bankii-blue/10`}
     >
       <Icon className="w-8 h-8 text-bankii-blue mb-4" />
-      <h4 className="text-xl font-bold font-heading mb-2">{title}</h4>
-      <p className="text-bankii-grey max-w-xs">{description}</p>
+      <h4 className="text-xl font-bold font-heading mb-2 text-gray-900 dark:text-white">{title}</h4>
+      <p className="text-gray-600 dark:text-gray-400 max-w-xs">{description}</p>
     </div>
   );
 };
 
 const TokenSpotlight: React.FC = () => {
-  const buyHref = `/swap?from=USDC&to=${encodeURIComponent(BNKY_TOKEN_ADDRESS)}`;
+  const buyHref = `/swap?from=USDC&to=${encodeURIComponent(BKP_TOKEN_ADDRESS)}`;
 
   // Track scroll within this section for parallax effects
   const sectionRef = useRef<HTMLElement | null>(null);
@@ -51,7 +51,7 @@ const TokenSpotlight: React.FC = () => {
   const calloutRightY = useTransform(scrollYProgress, [0, 1], [-50, 50]);
 
   return (
-    <section ref={sectionRef} className="bg-black py-28 md:py-32 lg:py-40 relative overflow-hidden" data-aos="fade-up">
+    <section ref={sectionRef} className="bg-white dark:bg-black py-28 md:py-32 lg:py-40 relative overflow-hidden" data-aos="fade-up">
       {/* Subtle blue gradient at bottom for depth */}
       <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-bankii-blue/10 via-bankii-blue/5 to-transparent z-0" />
 
@@ -60,7 +60,7 @@ const TokenSpotlight: React.FC = () => {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.2 }}
         transition={{ duration: 0.6, ease: 'easeOut' }}
-        className="max-w-7xl mx-auto px-4 flex flex-col items-center relative z-10"
+        className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col items-center relative z-10"
       >
         {/* Spotlight grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-16 items-center mb-24 w-full">
@@ -69,13 +69,7 @@ const TokenSpotlight: React.FC = () => {
             <UtilityCallout
               icon={Sparkles}
               title="Fee Discounts"
-              description="Hold $BNKY to get up to 50% off all swap fees on the platform."
-              align="right"
-            />
-            <UtilityCallout
-              icon={TrendingUp}
-              title="Staking Rewards"
-              description="Stake your tokens to earn a share of platform revenue and rewards."
+              description="Hold $BKP to save up to 50% on swap fees."
               align="right"
             />
           </motion.div>
@@ -90,8 +84,8 @@ const TokenSpotlight: React.FC = () => {
             className="row-start-1 lg:row-start-auto"
           >
             <Image
-              src="/assets/landing/visual-bnky-3d-coin.png"
-              alt="$BNKY Token"
+              src="/assets/landing/visual-bkp-3d-coin.png"
+              alt="$BKP Token"
               width={400}
               height={400}
               className="w-64 h-64 lg:w-full lg:h-auto max-w-sm mx-auto"
@@ -102,12 +96,17 @@ const TokenSpotlight: React.FC = () => {
           {/* Right column */}
           <motion.div style={{ y: calloutRightY }} className="flex flex-col gap-12">
             <UtilityCallout
-              icon={ShieldCheck}
-              title="Ecosystem Access"
-              description="Unlock exclusive features and priority access within the Bankii.finance ecosystem."
+              icon={TrendingUp}
+              title="Staking Rewards"
+              description="Stake $BKP to earn platform revenue and rewards."
               align="left"
             />
-            {/* Optional: add a 4th callout here if needed */}
+            <UtilityCallout
+              icon={Unlock}
+              title="Ecosystem Access"
+              description="Unlock exclusive Bankii features, airdrops, and early beta access."
+              align="left"
+            />
           </motion.div>
         </div>
 
