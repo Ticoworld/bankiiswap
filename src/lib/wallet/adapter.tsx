@@ -19,7 +19,7 @@ export function WalletProvider({ children }: { children: React.ReactNode }) {
 
   const wallets = useMemo( 
     () => [ 
-      // new PhantomWalletAdapter(), // Removed for auto-discovery
+      new PhantomWalletAdapter(), 
       new SolflareWalletAdapter({ network }), 
     ], 
     [network] 
